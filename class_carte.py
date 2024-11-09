@@ -1,4 +1,7 @@
 class Carte:
+    ligne : int
+    colonne : int
+    
     def __init__(self,ligne : int ,colonne :int):
         self.ligne = ligne
         self.colonne= colonne
