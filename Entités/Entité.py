@@ -42,6 +42,10 @@ class Entité:
     pos : Vec2
     destination : Vec2
 
+    TEMP_CHARGEMENT : int
+    chargement : int
+    attaque_chargée : float
+
     dégats_défense : float
     dégats_libre : float
     dégats_charger : float
@@ -59,6 +63,9 @@ class Entité:
         self.dégats_libre = 1.0
         self.dégats_charger = 1.5
         self.vie = 100.0
+        self.TEMP_CHARGEMENT = 3
+        self.chargement = 0
+        self.attaque_chargée = 2.0
         pass
 
     def MiseÀJourIA(self):
