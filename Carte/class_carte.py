@@ -1,3 +1,5 @@
+from Maths.Vec2 import Vec2
+
 class Carte:
     ligne : int
     colonne : int
@@ -18,14 +20,15 @@ class Carte:
         return matrice
     
             
-    
+    def peutAller(self, pos : Vec2):
+        return True
 
-     def position(self):
-            dict_position = {}
-            for ligne in range(self.ligne):
-                for colonne in range(self.colonne):
-                    dict_position[ligne,colonne] = "0"
-            return dict_position
+    def position(self):
+        dict_position = {}
+        for ligne in range(self.ligne):
+            for colonne in range(self.colonne):
+                dict_position[ligne,colonne] = "0"
+        return dict_position
     
 
     

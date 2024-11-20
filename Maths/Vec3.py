@@ -6,7 +6,7 @@ class Vec3:
     z : float
 
     def __init__(self, x = None, y = None, z = None, xyz = 0, vec3 = None):
-        if vec3 == None and xyz == None and not (x == None or y == None or z == None) and ((type(x) and type(y) and type(z)) == int or float ):
+        if vec3 == None and xyz == 0 and not (x == None or y == None or z == None) and ((type(x) and type(y) and type(z)) == int or float ):
             self.x = x
             self.y = y
             self.z = z

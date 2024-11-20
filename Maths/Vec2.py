@@ -5,7 +5,7 @@ class Vec2:
     y : float
 
     def __init__(self, x = None, y = None, xy = 0, vec2 = None):
-        if vec2 == None and xy == None and not (x == None or y == None) and ((type(x) and type(y)) == int or float ):
+        if vec2 == None and xy == 0 and not (x == None or y == None) and ((type(x) and type(y)) == int or float ):
             self.x = x
             self.y = y
         elif (x == None or y == None) and vec2 == None and xy != None and (type(xy) == int or float):

@@ -1,7 +1,7 @@
 from typing_extensions import Self
 import sys
 from Maths.Vec2 import Vec2
-from class_carte import Carte
+from Carte.class_carte import Carte
 
 class État:
     RECHERCHE = "recherche"
@@ -33,74 +33,71 @@ class Attaque:
 
 class Entité:
 
-    estVivant : bool
+    estVivant : bool = True
     vie : float
 
-    état : État
-    étatCombat : ÉtatCombat
-    ennemi : Self
-    pos : Vec2
-    destination : Vec2
+    état : État = État()
+    étatCombat : ÉtatCombat = ÉtatCombat()
+    ennemi : Self = None
+    pos : Vec2 = Vec2(0)
+    destination : Vec2 = Vec2(0)
 
     TEMP_CHARGEMENT : int
-    chargement : int
+    chargement : int = 0
     attaque_chargée : float
 
     dégats_défense : float
     dégats_libre : float
     dégats_charger : float
 
-    chemin : list[Tuile] # TODO implémenter Tuiles
+    chemin : list[int] = []# TODO implémenter Tuiles
 
-    def __init__(self):
-        self.estVivant = True
-        self.état = État()
-        self.étatCombat = ÉtatCombat()
-        self.ennemi = None
-        self.pos = Vec2(0,0)
-        self.destination = Vec2(0,0)
+    carte : Carte
+
+    def __init__(self, carte : Carte):
         self.dégats_défense = 0.5
         self.dégats_libre = 1.0
         self.dégats_charger = 1.5
         self.vie = 100.0
         self.TEMP_CHARGEMENT = 3
-        self.chargement = 0
         self.attaque_chargée = 2.0
+        self.carte = carte
         pass
 
     def MiseÀJourIA(self):
-        carte = Carte()
+        from Ressources import Ressources
+        res = Ressources.avoirRessources()
         if self.état.v == État.RECHERCHE:
             ennemiPlusPrès = None
             distanceMinimale = sys.float_info.max
-            for ennemi in carte.ennemis:
+            for ennemi in res.entités:
                 if distance(ennemi,self) < distanceMinimale:    # TODO implémenter distance entre entitées
                     ennemiPlusPrès = ennemi
                     distanceMinimale = distance(ennemi,self)
             if ennemiPlusPrès != None:
-                self.état = État.DÉPLACEMENT
+                self.état.v = État.DÉPLACEMENT
                 self.destination = ennemi.pos
         
         if self.état.v == État.DÉPLACEMENT:
             faire_pathfinding = True
             if len(self.chemin) > 0:
-                if carte.peutAller(self.chemin[0].pos):
+                if self.carte.peutAller(self.chemin[0].pos):
                     self.pos = self.chemin[0].pos.copie()
                     faire_pathfinding = False
 
-                    for ennemi in carte.ennemis:
+                    for ennemi in res.entités:
                         if distance(ennemi, self) <= 1:
                             self.état.v = État.COMBAT
                             self.ennemi = ennemi
                             break
                     if self.ennemi == None and self.pos == self.destination:
-                        self.état = État.RECHERCHE
+                        self.état.v = État.RECHERCHE
                 else:
                     self.chemin = []
                     faire_pathfinding = True
 
             if faire_pathfinding:
-                self.chemin = self.A_étoile(carte, self.pos, self.destination)
+                self.chemin = self.A_étoile(self.carte, self.pos, self.destination)
         
         if self.état.v == État.COMBAT:
             if self.ennemi.estVivant and distance(self.ennemi, self) <= 1:
@@ -137,4 +134,7 @@ class Entité:
         return attaque
 
     def A_étoile(self, carte : Carte, départ : Vec2, arrivé : Vec2):
-        pass    # TODO implémenter Entitié.A_étoile()
+        return []   # TODO implémenter Entitié.A_étoile()
+
+def distance(a,b):
+    return 0
