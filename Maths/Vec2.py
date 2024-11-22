@@ -46,14 +46,7 @@ class Vec2:
     def distance(self, b : Self):
         if type(b) != Self:
             raise TypeError("Vec2.distance(b : Vec2) n'accepte pas d'argument de type " + str(type(b)) + ", seulement de type Vec2.")
-        return Vec2.distance(self,b)
-    
-    def distance(a : Self, b : Self):
-        if type(a) != Self:
-            raise TypeError("Vec2.distance(a : Vec2, b: Vec2) n'accepte pas d'arguement de type a : " + str(type(a)) + ", seulement de type Vec2.")
-        if type(b) != Self:
-            raise TypeError("Vec2.distance(a : Vec2, b: Vec2) n'accepte pas d'arguement de type b : " + str(type(b)) + ", seulement de type Vec2.")
-        return sqrt((a.x-b.x)*(a.x-b.x) + (a.y-b.y)*(a.y-b.y))
+        return distance(self,b)
     
     def __add__(a : Self,b : Self):
         if type(b) == Self:
@@ -118,3 +111,99 @@ class Vec2:
     
     def len(self):
         return len(self)
+    
+    def norm(self):
+        l = self.len()
+        self.x /= l
+        self.y /= l
+        return self
+    
+    def __iadd__(self, b : Self):
+        if type(b) == Self:
+            self.x += b.x
+            self.y += b.y
+        elif type(b) == float or type(b) == int:
+            self.x += b
+            self.y += b
+        else:
+            raise TypeError("Type " + str(type(b)) + " n'est pas accepté pour l'opération +=")
+    
+    def __isub__(self, b : Self):
+        if type(b) == Self:
+            self.x -= b.x
+            self.y -= b.y
+        elif type(b) == float or type(b) == int:
+            self.x -= b
+            self.y -= b
+        else:
+            raise TypeError("Type " + str(type(b)) + " n'est pas accepté pour l'opération -=")
+    
+    def __imatmul__(self, b : Self):
+        if type(b) == Self:
+            self.x @= b.x
+            self.y @= b.y
+        elif type(b) == float or type(b) == int:
+            self.x @= b
+            self.y @= b
+        else:
+            raise TypeError("Type " + str(type(b)) + " n'est pas accepté pour l'opération @=")
+
+    def __imult__(self, b : Self):
+        if type(b) == Self:
+            self.x *= b.x
+            self.y *= b.y
+        elif type(b) == float or type(b) == int:
+            self.x *= b
+            self.y *= b
+        else:
+            raise TypeError("Type " + str(type(b)) + " n'est pas accepté pour l'opération *=")
+
+    def __itruediv__(self, b : Self):
+        if type(b) == Self:
+            self.x /= b.x
+            self.y /= b.y
+        elif type(b) == float or type(b) == int:
+            self.x /= b
+            self.y /= b
+        else:
+            raise TypeError("Type " + str(type(b)) + " n'est pas accepté pour l'opération /=")
+    
+    def __ifloordiv__(self, b : Self):
+        if type(b) == Self:
+            self.x //= b.x
+            self.y //= b.y
+        elif type(b) == float or type(b) == int:
+            self.x //= b
+            self.y //= b
+        else:
+            raise TypeError("Type " + str(type(b)) + " n'est pas accepté pour l'opération //=")
+    
+    def __imod__(self, b : Self):
+        if type(b) == Self:
+            self.x %= b.x
+            self.y %= b.y
+        elif type(b) == float or type(b) == int:
+            self.x %= b
+            self.y %= b
+        else:
+            raise TypeError("Type " + str(type(b)) + " n'est pas accepté pour l'opération %=")
+    
+    def __ipow__(self, b : Self):
+        if type(b) == Self:
+            self.x **= b.x
+            self.y **= b.y
+        elif type(b) == float or type(b) == int:
+            self.x **= b
+            self.y **= b
+        else:
+            raise TypeError("Type " + str(type(b)) + " n'est pas accepté pour l'opération **=")
+    
+def norm(a : Vec2):
+    return a.copie.norm()
+    
+def distance(a : Vec2, b : Vec2):
+    if type(a) != Vec2:
+        raise TypeError("Vec2.distance(a : Vec2, b: Vec2) n'accepte pas d'arguement de type a : " + str(type(a)) + ", seulement de type Vec2.")
+    if type(b) != Vec2:
+        raise TypeError("Vec2.distance(a : Vec2, b: Vec2) n'accepte pas d'arguement de type b : " + str(type(b)) + ", seulement de type Vec2.")
+    return sqrt((a.x-b.x)*(a.x-b.x) + (a.y-b.y)*(a.y-b.y))

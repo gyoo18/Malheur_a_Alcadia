@@ -48,14 +48,7 @@ class Vec3:
     def distance(self, b : Self):
         if type(b) != Self:
             raise TypeError("Vec3.distance(b : Vec3) n'accepte pas d'argument de type " + str(type(b)) + ", seulement de type Vec3.")
-        return Vec3.distance(self,b)
-    
-    def distance(a : Self, b : Self):
-        if type(a) != Self:
-            raise TypeError("Vec3.distance(a : Vec3, b: Vec3) n'accepte pas d'arguement de type a : " + str(type(a)) + ", seulement de type Vec3.")
-        if type(b) != Self:
-            raise TypeError("Vec3.distance(a : Vec3, b: Vec3) n'accepte pas d'arguement de type b : " + str(type(b)) + ", seulement de type Vec3.")
-        return sqrt((a.x-b.x)*(a.x-b.x) + (a.y-b.y)*(a.y-b.y) + (a.z-b.z)*(a.z-b.z))
+        return distance(self,b)
     
     def __add__(a : Self,b : Self):
         if type(b) == Self:
@@ -120,3 +113,116 @@ class Vec3:
     
     def len(self):
         return len(self)
+
+    def norm(self):
+        l = self.len()
+        self.x /= l
+        self.y /= l
+        self.z /= l
+        return self
+    
+    def __iadd__(self, b : Self):
+        if type(b) == Self:
+            self.x += b.x
+            self.y += b.y
+            self.z += b.z
+        elif type(b) == float or type(b) == int:
+            self.x += b
+            self.y += b
+            self.z += b
+        else:
+            raise TypeError("Type " + str(type(b)) + " n'est pas accepté pour l'opération +=")
+    
+    def __isub__(self, b : Self):
+        if type(b) == Self:
+            self.x -= b.x
+            self.y -= b.y
+            self.z -= b.z
+        elif type(b) == float or type(b) == int:
+            self.x -= b
+            self.y -= b
+            self.z -= b
+        else:
+            raise TypeError("Type " + str(type(b)) + " n'est pas accepté pour l'opération -=")
+    
+    def __imatmul__(self, b : Self):
+        if type(b) == Self:
+            self.x @= b.x
+            self.y @= b.y
+            self.z @= b.z
+        elif type(b) == float or type(b) == int:
+            self.x @= b
+            self.y @= b
+            self.z @= b
+        else:
+            raise TypeError("Type " + str(type(b)) + " n'est pas accepté pour l'opération @=")
+
+    def __imult__(self, b : Self):
+        if type(b) == Self:
+            self.x *= b.x
+            self.y *= b.y
+            self.z *= b.z
+        elif type(b) == float or type(b) == int:
+            self.x *= b
+            self.y *= b
+            self.z *= b
+        else:
+            raise TypeError("Type " + str(type(b)) + " n'est pas accepté pour l'opération *=")
+
+    def __itruediv__(self, b : Self):
+        if type(b) == Self:
+            self.x /= b.x
+            self.y /= b.y
+            self.z /= b.z
+        elif type(b) == float or type(b) == int:
+            self.x /= b
+            self.y /= b
+            self.z /= b
+        else:
+            raise TypeError("Type " + str(type(b)) + " n'est pas accepté pour l'opération /=")
+    
+    def __ifloordiv__(self, b : Self):
+        if type(b) == Self:
+            self.x //= b.x
+            self.y //= b.y
+            self.z //= b.z
+        elif type(b) == float or type(b) == int:
+            self.x //= b
+            self.y //= b
+            self.z //= b
+        else:
+            raise TypeError("Type " + str(type(b)) + " n'est pas accepté pour l'opération //=")
+    
+    def __imod__(self, b : Self):
+        if type(b) == Self:
+            self.x %= b.x
+            self.y %= b.y
+            self.z %= b.z
+        elif type(b) == float or type(b) == int:
+            self.x %= b
+            self.y %= b
+            self.z %= b
+        else:
+            raise TypeError("Type " + str(type(b)) + " n'est pas accepté pour l'opération %=")
+    
+    def __ipow__(self, b : Self):
+        if type(b) == Self:
+            self.x **= b.x
+            self.y **= b.y
+            self.z **= b.z
+        elif type(b) == float or type(b) == int:
+            self.x **= b
+            self.y **= b
+            self.z **= b
+        else:
+            raise TypeError("Type " + str(type(b)) + " n'est pas accepté pour l'opération **=")
+    
+def norm(a : Vec3):
+    return a.copie().norm()
+
+def distance(a : Vec3, b : Vec3):
+    if type(a) != Vec3:
+        raise TypeError("Vec3.distance(a : Vec3, b: Vec3) n'accepte pas d'arguement de type a : " + str(type(a)) + ", seulement de type Vec3.")
+    if type(b) != Vec3:
+        raise TypeError("Vec3.distance(a : Vec3, b: Vec3) n'accepte pas d'arguement de type b : " + str(type(b)) + ", seulement de type Vec3.")
+    return sqrt((a.x-b.x)*(a.x-b.x) + (a.y-b.y)*(a.y-b.y) + (a.z-b.z)*(a.z-b.z))
