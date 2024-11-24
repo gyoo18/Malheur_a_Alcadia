@@ -1,8 +1,11 @@
 from Maths.Vec2 import Vec2
+from Entités.Entité import Entité
 
 class Carte:
     ligne : int
     colonne : int
+
+    entitées : list[Entité]
     
     def __init__(self,ligne : int ,colonne :int):
         self.ligne = ligne

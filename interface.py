@@ -35,5 +35,5 @@ def miseÀJour(jeu : Jeu):
     if i == "o":
         print("Mise à jour des entitées.")
         for i in range(len(res.entités)):
-            res.entités[i].MiseÀJourIA()
+            res.entités[i]._MiseÀJourIA()
         print("Entitées mises à jours.")

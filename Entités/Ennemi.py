@@ -5,7 +5,7 @@ class Ennemi(Entité):
     def __init__(self):
         super().__init__()
 
-    def AttaquerEnnemi(self):
+    def _AttaquerEnnemi(self):
         match self.étatCombat.v:
             case ÉtatCombat.CHARGER:
                 self.chargement += 1
