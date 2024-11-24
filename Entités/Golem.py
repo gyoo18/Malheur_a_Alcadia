@@ -1,4 +1,5 @@
 from Entités.Entité import *
+from Entités.Paysan import *
 from Entités.Attaque import Attaque, Élément
 from Maths.Vec2 import *
 
@@ -48,6 +49,8 @@ class Commande:
 class Golem(Entité):
 
     def __init__(self):
+        self.camp = "Golem"
+        self.campsEnnemis = ["Paysans"]
         super().__init__()
 
     def commande(self, commande : Commande):
@@ -78,8 +81,8 @@ class Golem(Entité):
             self.chargement = 0
 
         self.état.v = ÉtatIA.DÉPLACEMENT
-        self.ennemi = commande.ennemi_cible
-        self.naviguerVers(self.ennemi.pos)
+        self.cible = commande.ennemi_cible
+        self.naviguerVers(self.cible.pos)
     def _commandeAttaqueSpéciale(self, commande : Commande):
         if self.étatCombat.v == ÉtatCombat.CHARGER:
             self.chargement = 0
@@ -106,17 +109,17 @@ class Golem(Entité):
     def _modeCombat(self):
         if self.étatCombat.v == ÉtatCombat.CHARGER:
             self.chargement += 1
-        elif self.ennemi.estVivant and Vec2.distance(self.ennemi.pos, self.pos) <= 1:
+        elif self.cible.estVivant and Vec2.distance(self.cible.pos, self.pos) <= 1:
             self._AttaquerEnnemi()
         else:
             self.état.v = ÉtatIA.RECHERCHE
             self.estAttaqué = False
+            self.cible = None
 
     def _AttaquerEnnemi(self):
         attaque = Attaque(self)
         attaque.dégats = self.attaque_normale_dégats + self.attaque_chargée*self.chargement
-        self.ennemi.Attaquer(attaque)
-        
+        self.cible.Attaquer(attaque)      
 
 class GolemTerre(Golem):
     ATTAQUE_FRAPPER_SOL = "frapper sol"
@@ -133,7 +136,7 @@ class GolemTerre(Golem):
             attaque = Attaque(self)
             attaque.dégats = self.attaque_sol_dégats + self.attaque_chargée*self.chargement
             attaque.élément = Élément.TERRE
-            for ennemi in self.carte.entitées:
+            for ennemi in self.carte.entités:
                 if distance(self.pos, ennemi.pos) < self.attaque_sol_rayon:
                     attaque.distance = distance(self.pos,ennemi.pos)
                     attaque.direction = ennemi.pos-self.pos
@@ -143,7 +146,7 @@ class GolemTerre(Golem):
         attaque = Attaque(self)
         attaque.dégats = self.attaque_normale_dégats + self.attaque_chargée*self.chargement
         attaque.élément = Élément.TERRE
-        self.ennemi.Attaquer(attaque)
+        self.cible.Attaquer(attaque)
         self.chargement = 0
 
 class GolemEau(Golem):
@@ -171,14 +174,10 @@ class GolemEau(Golem):
 
 
     def _modeRecherche(self):
-        # Obtenir une liste des ressources du jeu
-        from Ressources import Ressources
-        res = Ressources.avoirRessources()
-        
         ennemiPlusPrès = None
         distanceMinimale = sys.float_info.max
-        for ennemi in res.entités:
-            if Vec2.distance(ennemi.pos,self.pos) < distanceMinimale and Vec2.distance(ennemi.pos,self.pos) <= self.max_distance_attaque:
+        for ennemi in self.carte.entités:
+            if Vec2.distance(ennemi.pos,self.pos) < distanceMinimale and Vec2.distance(ennemi.pos,self.pos) <= self.max_distance_attaque and ennemi.camp in self.campsEnnemis:
                 ennemiPlusPrès = ennemi
                 distanceMinimale = Vec2.distance(ennemi.pos,self.pos)
         if ennemiPlusPrès != None:
@@ -190,8 +189,8 @@ class GolemEau(Golem):
         attaque.dégats = self.attaque_normale_dégats + self.attaque_chargée*self.chargement
         attaque.élément = Élément.EAU
         attaque.est_projectile = True
-        attaque.distance = Vec2.distance(self.pos, self.ennemi.pos)
-        self.ennemi.Attaquer(attaque)
+        attaque.distance = Vec2.distance(self.pos, self.cible.pos)
+        self.cible.Attaquer(attaque)
         self.chargement = 0
 
 class GolemFeu(Golem):
@@ -216,5 +215,5 @@ class GolemFeu(Golem):
         attaque = Attaque(self)
         attaque.dégats = self.attaque_normale_dégats + self.attaque_chargée*self.chargement
         attaque.élément = Élément.FEU
-        self.ennemi.Attaquer(attaque)
+        self.cible.Attaquer(attaque)
         self.chargement = 0

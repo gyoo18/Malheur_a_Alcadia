@@ -5,7 +5,7 @@ class Carte:
     ligne : int
     colonne : int
 
-    entitées : list[Entité]
+    entités : list[Entité]
     
     def __init__(self,ligne : int ,colonne :int):
         self.ligne = ligne

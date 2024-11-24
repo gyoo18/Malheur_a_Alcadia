@@ -9,8 +9,9 @@ class ÉtatIA:
     RECHERCHE = "recherche" # Recherche une entitée ennemie
     COMBAT = "combat"       # Est en combat avec une entitée ennemie
     DÉPLACEMENT = "déplacement" # Se déplace vers une entitée ennemie
-    DÉPLACEMENT_IMMOBILE = "déplacement_commande"
+    DÉPLACEMENT_IMMOBILE = "déplacement immobile" # Se déplace après en avoir reçus l'ordre. Serat immobile par la suite.
     IMMOBILE = "immobile"   # Est immobile en attente d'instructions
+    GUÉRISON = "guérison" # Est en processus de guérir un allié
 
     v : str
 
@@ -31,14 +32,16 @@ class ÉtatCombat:
 # Classe abstraite de base d'une entitée
 class Entité:
     estVivant : bool = True
+    vieMax : int    # Points de vies maximum
     vie : float     # Points de vies restants
 
     état : ÉtatIA = ÉtatIA()    # État de l'IA
     étatCombat : ÉtatCombat = ÉtatCombat()  # État de combat
-    ennemi : Self = None    # Entitée ennemie avec laquelle on est en combat
+    cible : Self = None    # Entitée ennemie avec laquelle on est en combat ou entité allié que nous guérissons
     estAttaqué : bool = False
     pos : Vec2 = Vec2(0)    # Position actuelle
     destination : Vec2 = Vec2(0)    # Destination vers laquelle on se dirige
+    direction : Vec2 = Vec2(0)      # Direction vers laquelle l'entité fait face
 
     TEMP_CHARGEMENT : int   # Temps nécessaire pour charger une attaque puissante
     chargement : int = 0    # Temps passé à charger l'attque puissante jusqu'à présent
@@ -50,14 +53,18 @@ class Entité:
 
     attaque_normale_dégats : int
 
-    chemin : list[int] = [] # Liste des tuiles sur le chemin précalculé      # TODO implémenter Tuiles
+    chemin : list[Vec2] = [] # Liste des tuiles sur le chemin précalculé
 
     carte : Carte   # Référence à la carte jouée en ce moment
+
+    camp : str = ""                 # Dans quel camp se trouve cette entité?
+    campsEnnemis : list[str] = []   # Liste des camps ennemis à cette entité.
 
     def __init__(self, carte : Carte):
         self.dégats_défense = 0.5
         self.dégats_libre = 1.0
         self.dégats_charger = 1.5
+        self.vieMax = 100
         self.vie = 100.0
         self.TEMP_CHARGEMENT = 3
         self.attaque_chargée = 2.0
@@ -85,9 +92,9 @@ class Entité:
         #        |   +----------+   |   |chemin |  +--|déplacement| |  |  +------------------+  |
         #        |                  |   +-------+  |  +-----------+ |  |  |Ennemi mort/parti?|  |
         #        |                  |              V          ↑     |  |  +------------------+  |
-        #        |                  |       +--------------+ Oui    |  |           |            |
+        #        |                  |       +--------------+ Non    |  |           |            |
         #        |                  |       |Ennemi à porté|--+     |  |          Oui           |
-        #        |                  |       |  d'attaque?  |---Non-----+           |            |
+        #        |                  |       |  d'attaque?  |---Oui-----+           |            |
         #        |                  |       +--------------+        |              |            |
         #        +-----------------------------------------------------------------+            |
         #                           |                               |                           |
@@ -98,59 +105,43 @@ class Entité:
             case ÉtatIA.DÉPLACEMENT:
                 self._modeDéplacement()
             case ÉtatIA.DÉPLACEMENT_IMMOBILE:
-                self._modeDéplacementImmobile()
+                self._modeDéplacement()
             case ÉtatIA.COMBAT:
                 self._modeCombat()
             case ÉtatIA.IMMOBILE:
                 self._modeImmobile()
+            case ÉtatIA.GUÉRISON:
+                self._modeGuérison()
     
-    def _modeRecherche(self):
-        # Obtenir une liste des ressources du jeu
-        from Ressources import Ressources
-        res = Ressources.avoirRessources()
+    def _estEnnemi(self,ennemi : Self):
+        return ennemi.camp in self.campsEnnemis
 
+    def _modeRecherche(self):
         ennemiPlusPrès = None
         distanceMinimale = sys.float_info.max
-        for ennemi in res.entités:
-            if distance(ennemi.pos,self.pos) < distanceMinimale:
+        for ennemi in self.carte.entités:
+            if distance(ennemi.pos,self.pos) < distanceMinimale and self._estEnnemi(ennemi):
                 ennemiPlusPrès = ennemi
                 distanceMinimale = distance(ennemi.pos,self.pos)
         if ennemiPlusPrès != None:
             self.état.v = ÉtatIA.DÉPLACEMENT
-            self.destination = ennemi.pos
+            self.destination = ennemiPlusPrès.pos
     def _modeDéplacement(self):
         faire_pathfinding = True
         if len(self.chemin) > 0:
             if self.carte.peutAller(self.chemin[0].pos):
+                self.direction = self.chemin[0].pos - self.pos
                 self.pos = self.chemin[0].pos.copie()
                 faire_pathfinding = False
 
-                for ennemi in res.entités:
-                    if distance(ennemi.pos, self.pos) <= 1:
+                for ennemi in self.carte.entités:
+                    if distance(ennemi.pos, self.pos) <= 1 and ennemi.camp in self.campsEnnemis:
                         self.état.v = ÉtatIA.COMBAT
-                        self.ennemi = ennemi
+                        self.cible = ennemi
                         break
-                if self.ennemi == None and self.pos == self.destination:
+                if self.cible == None and self.pos == self.destination and self.état.v == ÉtatIA.DÉPLACEMENT:
                     self.état.v = ÉtatIA.RECHERCHE
-            else:
-                self.chemin = []
-                faire_pathfinding = True
-
-        if faire_pathfinding:
-            self.chemin = self._A_étoile(self.carte, self.pos, self.destination)
-    def _modeDéplacementImmobile(self):
-        faire_pathfinding = True
-        if len(self.chemin) > 0:
-            if self.carte.peutAller(self.chemin[0].pos):
-                self.pos = self.chemin[0].pos.copie()
-                faire_pathfinding = False
-
-                for ennemi in res.entités:
-                    if distance(ennemi.pos, self.pos) <= 1:
-                        self.état.v = ÉtatIA.COMBAT
-                        self.ennemi = ennemi
-                        break
-                if self.ennemi == None and self.pos == self.destination:
+                elif self.cible == None and self.pos == self.destination and self.état.v == ÉtatIA.DÉPLACEMENT_IMMOBILE:
                     self.état.v = ÉtatIA.IMMOBILE
             else:
                 self.chemin = []
@@ -159,26 +150,29 @@ class Entité:
         if faire_pathfinding:
             self.chemin = self._A_étoile(self.carte, self.pos, self.destination)
     def _modeCombat(self):
-        if self.ennemi.estVivant and distance(self.ennemi.pos, self.pos) <= 1:
+        if self.cible.estVivant and distance(self.cible.pos, self.pos) <= 1:
             self._AttaquerEnnemi()
         else:
             self.état.v = ÉtatIA.RECHERCHE
             self.estAttaqué = False
+            self.cible = None
     def _modeImmobile(self):
         if self.estAttaqué:
             self.état.v = ÉtatIA.COMBAT
+    def _modeGuérison(self):
+        pass
 
     # Attaque l'ennemi qui est enregistré dans Entité.ennemi
     def _AttaquerEnnemi(self):
         attaque = Attaque(self)
         attaque.dégats = self.attaque_normale_dégats
-        self.ennemi.Attaquer(attaque)
+        self.cible.Attaquer(attaque)
 
     # Fonction pour recevoir une attaque
     def Attaquer(self, attaque : Attaque):
         if not self.estAttaqué:
             self.estAttaqué = True
-            self.ennemi = attaque.provenance
+            self.cible = attaque.provenance
         
         attaque = self._Défense(attaque)
         self.vie -= attaque.dégats
