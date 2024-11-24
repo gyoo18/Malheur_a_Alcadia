@@ -1,6 +1,6 @@
 from Maths.Vec2 import Vec2
 from Entités.Entité import Entité
-
+from Carte.Tuile import Tuiles
 class Carte:
     ligne : int
     colonne : int
@@ -24,7 +24,11 @@ class Carte:
     
             
     def peutAller(self, pos : Vec2):
-        return True
+        tuiles = self.matrice[int(pos.x)][int(pos.y)]
+        if tuiles.type == Tuiles.TYPE_MUR:
+            return False
+        else:
+            return True
 
     def position(self):
         dict_position = {}
