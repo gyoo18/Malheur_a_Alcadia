@@ -32,8 +32,9 @@ def miseÀJour(jeu : Jeu):
         case ÉtatJeu.TERMINÉ:
             return
 
-    if i == "o":
+    if i == "O":
         print("Mise à jour des entitées.")
         for i in range(len(res.entités)):
-            res.entités[i].MiseÀJourIA()
+            res.entités[i]._MiseÀJourIA()
         print("Entitées mises à jours.")
+        res.cartes[0].dessiner()

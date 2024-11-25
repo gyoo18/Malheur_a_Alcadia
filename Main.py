@@ -1,17 +1,28 @@
 import interface
 from Ressources import Ressources
 from Carte.class_carte import Carte
-from Entités.Entité import Entité
+from Entités.Paysan import *
+from Entités.Golem import *
 from Jeu import Jeu, ÉtatJeu
+from random import randrange
 
 jeu : Jeu = None
 
 def Constructeur():
     res = Ressources.avoirRessources()
     carte = Carte(5,5)
-    entité = Entité(carte)
+    carte.creation()
+    paysan = Gosse()
+    paysan.pos = Vec2(randrange(0,4),randrange(0,4))
+    golem = GolemTerre()
+    golem.pos = Vec2(randrange(0,4),randrange(0,4))
+    golem.carte = carte
+    paysan.carte = carte
+    carte.entités.append(paysan)
+    carte.entités.append(golem)
     res.cartes.append(carte)
-    res.entités.append(entité)
+    res.entités.append(paysan)
+    res.entités.append(golem)
 
     global jeu
     jeu = Jeu()

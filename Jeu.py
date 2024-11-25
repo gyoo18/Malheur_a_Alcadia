@@ -21,3 +21,4 @@ class Jeu:
 
     def miseÀJour(self):
         interface.miseÀJour(self)
+        
