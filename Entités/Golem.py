@@ -19,18 +19,18 @@ class Earth_golem(Golem):
 
     def Stats_Earth_golem():
          HP=150
-         ATT=int(random.choice(range(10,16)))
-         DEF=int(random.choice(range(39,46)))
+         ATT=Entité.Random_Stats(10,16)
+         DEF=Entité.Random_Stats(39,46)
          
 class water_golems(Golem):
     def Stats_water_golem():
         HP=90
-        ATT=int(random.choice(range(20,26)))
-        DEF=int(random.choice(range(25,31)))
+        ATT=Entité.Random_Stats(20,26)
+        DEF=Entité.Random_Stats(25,31)
 
 class Fire_Golem(Golem):
      def Stats_Fire_golem():
          HP=120
-         ATT=int(random.choice(range(26,29)))
-         DEF=int(random.choice(range(35,39)))
+         ATT=Entité.Random_Stats(26,29)
+         DEF=Entité.Random_Stats(35,39)
     
