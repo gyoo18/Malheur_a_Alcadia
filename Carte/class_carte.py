@@ -1,31 +1,36 @@
 from Maths.Vec2 import Vec2
-from Entités.Entité import Entité
+from Entités.Entité import *
 from Carte.Tuile import Tuiles
+from Entités.Golem import *
 class Carte:
     ligne : int
     colonne : int
+    matrice : list[list[Tuiles]]
 
     entitées : list[Entité]
     
     def __init__(self,ligne : int ,colonne :int):
         self.ligne = ligne
-        self.colonne= colonne
+        self.colonne = colonne
+        self.matrice = []
 
     
 
     def creation(self):
-        matrice = []
+        self.matrice = []
         for ligne in range(self.ligne):
             ligne_donnee = []
             for colonne in range(self.colonne):
-                ligne_donnee.append("0")
-            matrice.append(ligne_donnee)
-        return matrice
+                ligne_donnee.append(Tuiles(Tuiles.TYPE_TERRE))
+            self.matrice.append(ligne_donnee)
+        
     
             
-    def peutAller(self, pos : Vec2):
+    def peutAller(self, entite: Entité, pos: Vec2):
         tuiles = self.matrice[int(pos.x)][int(pos.y)]
         if tuiles.type == Tuiles.TYPE_MUR:
+            return False
+        elif tuiles.type == Tuiles.TYPE_EAU and type(entite) != GolemEau:
             return False
         else:
             return True
@@ -83,43 +88,5 @@ mape=creation_unite(2,2,"unite_1")
 print(mape)
 #print(positions)
 
-def mouvement(i,j,w,a,s,d):
-    if w==1:
-        creation_unite(i-1,j)
-        effacer_unite(i,j)
-    elif a==1:
-        creation_unite (i,j-1)
-        effacer_unite(i,j)
 
-    elif s==1:
-        creation_unite(i+1,j)
-        effacer_unite(i,j)
-
-    elif d==1:
-        creation_unite(i,j+1)
-        effacer_unite(i,j)
-    
-'''''
-print (mape)
-mouvement(1,1,1,0,0,0)
-print (mape)
-mouvement(0,1,0,1,0,0)
-print (mape)
-mouvement(0,0,0,0,1,0)
-print (mape)
-mouvement(1,0,0,0,0,1)
-print (mape)
-'''''
-def distance(unite_1,unite_2):
-    for key1,value1 in positions.items():
-        if "unite_1" == value1:
-             x1,y1 = key1
-    
-    for key2,value2 in positions.items():
-        if "unite_2" == value2:
-            x2,y2= key2
-
-    dist = (((x2-x1)**2+(y2-y1)**2))**0.5
-    return dist
-
-print(distance("unite_1","unite_2"))
+   
