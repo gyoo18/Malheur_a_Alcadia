@@ -1,6 +1,7 @@
+from __future__ import annotations
 from typing_extensions import Self
 from Maths.Vec2 import Vec2
-from Entités.Entité import Entité
+from InclusionsCirculaires.Entité_Attaque import *
 
 class Élément:
     TERRE = "terre"

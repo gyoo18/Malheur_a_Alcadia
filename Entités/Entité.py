@@ -1,8 +1,9 @@
+from __future__ import annotations
 from typing_extensions import Self
 import sys
 from Maths.Vec2 import *
-from Carte.class_carte import Carte
-from Entités.Attaque import Attaque
+from InclusionsCirculaires.Entité_Attaque import *
+from InclusionsCirculaires.Entité_Carte import *
 
 # État de l'IA
 class ÉtatIA:
@@ -55,12 +56,12 @@ class Entité:
 
     chemin : list[Vec2] = [] # Liste des tuiles sur le chemin précalculé
 
-    carte : Carte   # Référence à la carte jouée en ce moment
+    carte : Carte = None  # Référence à la carte jouée en ce moment
 
     camp : str = ""                 # Dans quel camp se trouve cette entité?
     campsEnnemis : list[str] = []   # Liste des camps ennemis à cette entité.
 
-    def __init__(self, carte : Carte):
+    def __init__(self):
         self.dégats_défense = 0.5
         self.dégats_libre = 1.0
         self.dégats_charger = 1.5
@@ -69,7 +70,6 @@ class Entité:
         self.TEMP_CHARGEMENT = 3
         self.attaque_chargée = 2.0
         self.attaque_normale_dégats = 1
-        self.carte = carte
         pass
 
     def MiseÀJour(self):
@@ -148,7 +148,7 @@ class Entité:
                 faire_pathfinding = True
 
         if faire_pathfinding:
-            self.chemin = self._A_étoile(self.carte, self.pos, self.destination)
+            self.chemin = self._A_étoile()
     def _modeCombat(self):
         if self.cible.estVivant and distance(self.cible.pos, self.pos) <= 1:
             self._AttaquerEnnemi()
@@ -164,6 +164,7 @@ class Entité:
 
     # Attaque l'ennemi qui est enregistré dans Entité.ennemi
     def _AttaquerEnnemi(self):
+        from Entités.Attaque import Attaque
         attaque = Attaque(self)
         attaque.dégats = self.attaque_normale_dégats
         self.cible.Attaquer(attaque)

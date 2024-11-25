@@ -49,7 +49,7 @@ class Commande:
 class Golem(Entité):
 
     def __init__(self):
-        self.camp = "Golem"
+        self.camp = "Golems"
         self.campsEnnemis = ["Paysans"]
         super().__init__()
 

@@ -22,7 +22,7 @@ class Vec2:
              - Vec2(x : float | int)
              - Vec2(x : Vec2)
         """
-        if (type(x) and type(y)) == float or int:
+        if (type(x) == float or type(x) == int) and (type(y) == float or type(y) == int):
             self.x = x
             self.y = y
         elif (type(x) == float or int) and y == None:
