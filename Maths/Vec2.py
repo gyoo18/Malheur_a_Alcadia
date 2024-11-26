@@ -47,12 +47,12 @@ class Vec2:
         return Vec2(vec2=self)
     
     def __eq__(a : Self,b : Self):
-        if type(b) != Self:
+        if type(b) != Vec2:
             return False
         return a.x == b.x and a.y == b.y
     
     def __neq__(a : Self, b : Self):
-        if type(b) != Self:
+        if type(b) != Vec2:
             return True
         return a.x != b.x or a.y != b.y
     
@@ -79,12 +79,12 @@ class Vec2:
         Returns:
             float : distance entre self et b
         """
-        if type(b) != Self:
+        if type(b) != Vec2:
             raise TypeError("Vec2.distance(b : Vec2) n'accepte pas d'argument de type " + str(type(b)) + ", seulement de type Vec2.")
-        return distance(self,b)
+        return Vec2.distance(self,b)
     
     def __add__(a : Self,b : Self):
-        if type(b) == Self:
+        if type(b) == Vec2:
             return Vec2(a.x+b.x, a.y+b.y)
         elif type(b) == int or type(b) == float :
             return Vec2(a.x + b, a.y + b)
@@ -92,7 +92,7 @@ class Vec2:
             raise TypeError("b doit être de type Vec2, float ou int, pas " + str(type(b)) + ".")
     
     def __sub__(a : Self, b : Self):
-        if type(b) == Self:
+        if type(b) == Vec2:
             return Vec2(a.x-b.x, a.y-b.y)
         elif type(b) == int or type(b) == float :
             return Vec2(a.x - b, a.y - b)
@@ -100,7 +100,7 @@ class Vec2:
             raise TypeError("b doit être de type Vec2, float ou int, pas " + str(type(b)) + ".")
     
     def __mul__(a : Self, b):
-        if type(b) == Self:
+        if type(b) == Vec2:
             return Vec2(a.x*b.x, a.y*b.y)
         elif type(b) == int or type(b) == float :
             return Vec2(a.x * b, a.y * b)
@@ -108,7 +108,7 @@ class Vec2:
             raise TypeError("b doit être de type Vec2, float ou int, pas " + str(type(b)) + ".")
     
     def __div__(a : Self, b):
-        if type(b) == Self:
+        if type(b) == Vec2:
             return Vec2(a.x/b.x, a.y/b.y)
         elif type(b) == int or type(b) == float :
             return Vec2(a.x / b, a.y / b)
@@ -116,7 +116,7 @@ class Vec2:
             raise TypeError("b doit être de type Vec2, float ou int, pas " + str(type(b)) + ".")
     
     def __floordiv__(a : Self, b):
-        if type(b) == Self:
+        if type(b) == Vec2:
             return Vec2(a.x//b.x, a.y//b.y)
         elif type(b) == int or type(b) == float :
             return Vec2(a.x // b, a.y // b)
@@ -139,12 +139,12 @@ class Vec2:
         Returns:
             float : renvoie a•b
         """
-        if type(b) != Self:
+        if type(b) != Vec2:
             raise TypeError("b doit être de type Vec2, pas " + str(type(b)) + ".")
         return a.x*b.x + a.y*b.y
     
     def __mod__(a : Self, b):
-        if type(b) == Self:
+        if type(b) == Vec2:
             return Vec2(a.x%b.x, a.y%b.y)
         elif type(b) == float or type(b) == int:
             return Vec2(a.x%b, a.y%b)
@@ -167,7 +167,7 @@ class Vec2:
         Returns:
             float : renvoie ||a^b||
         """
-        if type(b) != Self:
+        if type(b) != Vec2:
             raise TypeError("b doit être de type Vec2, pas " + str(type(b)) + ".")
         return a.x*b.y - a.y*b.x
     
@@ -203,7 +203,7 @@ class Vec2:
         return self
     
     def __iadd__(self, b : Self):
-        if type(b) == Self:
+        if type(b) == Vec2:
             self.x += b.x
             self.y += b.y
         elif type(b) == float or type(b) == int:
@@ -213,7 +213,7 @@ class Vec2:
             raise TypeError("Type " + str(type(b)) + " n'est pas accepté pour l'opération +=")
     
     def __isub__(self, b : Self):
-        if type(b) == Self:
+        if type(b) == Vec2:
             self.x -= b.x
             self.y -= b.y
         elif type(b) == float or type(b) == int:
@@ -223,7 +223,7 @@ class Vec2:
             raise TypeError("Type " + str(type(b)) + " n'est pas accepté pour l'opération -=")
     
     def __imatmul__(self, b : Self):
-        if type(b) == Self:
+        if type(b) == Vec2:
             self.x @= b.x
             self.y @= b.y
         elif type(b) == float or type(b) == int:
@@ -233,7 +233,7 @@ class Vec2:
             raise TypeError("Type " + str(type(b)) + " n'est pas accepté pour l'opération @=")
 
     def __imult__(self, b : Self):
-        if type(b) == Self:
+        if type(b) == Vec2:
             self.x *= b.x
             self.y *= b.y
         elif type(b) == float or type(b) == int:
@@ -243,7 +243,7 @@ class Vec2:
             raise TypeError("Type " + str(type(b)) + " n'est pas accepté pour l'opération *=")
 
     def __itruediv__(self, b : Self):
-        if type(b) == Self:
+        if type(b) == Vec2:
             self.x /= b.x
             self.y /= b.y
         elif type(b) == float or type(b) == int:
@@ -253,7 +253,7 @@ class Vec2:
             raise TypeError("Type " + str(type(b)) + " n'est pas accepté pour l'opération /=")
     
     def __ifloordiv__(self, b : Self):
-        if type(b) == Self:
+        if type(b) == Vec2:
             self.x //= b.x
             self.y //= b.y
         elif type(b) == float or type(b) == int:
@@ -263,7 +263,7 @@ class Vec2:
             raise TypeError("Type " + str(type(b)) + " n'est pas accepté pour l'opération //=")
     
     def __imod__(self, b : Self):
-        if type(b) == Self:
+        if type(b) == Vec2:
             self.x %= b.x
             self.y %= b.y
         elif type(b) == float or type(b) == int:
@@ -273,7 +273,7 @@ class Vec2:
             raise TypeError("Type " + str(type(b)) + " n'est pas accepté pour l'opération %=")
     
     def __ipow__(self, b : Self):
-        if type(b) == Self:
+        if type(b) == Vec2:
             self.x **= b.x
             self.y **= b.y
         elif type(b) == float or type(b) == int:
@@ -282,23 +282,23 @@ class Vec2:
         else:
             raise TypeError("Type " + str(type(b)) + " n'est pas accepté pour l'opération **=")
     
-def norm(a : Vec2):
-    """norm 
+    def norm(a : Self):
+        """norm 
 
-    Normalise le vecteur a
-    S'écrit a.norm() et effectue (1/||a||)*a
+        Normalise le vecteur a
+        S'écrit a.norm() et effectue (1/||a||)*a
 
-    Args:
-        a (Vec2) : Vecteur à normaliser
+        Args:
+            a (Vec2) : Vecteur à normaliser
 
-    Returns:
-        Vec2 : renvoie (1/||a||)*a
-    """
-    return a.copie.norm()
-    
-def distance(a : Vec2, b : Vec2):
-    if type(a) != Vec2:
-        raise TypeError("Vec2.distance(a : Vec2, b: Vec2) n'accepte pas d'arguement de type a : " + str(type(a)) + ", seulement de type Vec2.")
-    if type(b) != Vec2:
-        raise TypeError("Vec2.distance(a : Vec2, b: Vec2) n'accepte pas d'arguement de type b : " + str(type(b)) + ", seulement de type Vec2.")
-    return sqrt((a.x-b.x)*(a.x-b.x) + (a.y-b.y)*(a.y-b.y))
+        Returns:
+            Vec2 : renvoie (1/||a||)*a
+        """
+        return a.copie.norm()
+        
+    def distance(a : Self, b : Self):
+        if type(a) != Vec2:
+            raise TypeError("Vec2.distance(a : Vec2, b: Vec2) n'accepte pas d'arguement de type a : " + str(type(a)) + ", seulement de type Vec2.")
+        if type(b) != Vec2:
+            raise TypeError("Vec2.distance(a : Vec2, b: Vec2) n'accepte pas d'arguement de type b : " + str(type(b)) + ", seulement de type Vec2.")
+        return sqrt((a.x-b.x)*(a.x-b.x) + (a.y-b.y)*(a.y-b.y))
