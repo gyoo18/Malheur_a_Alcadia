@@ -1,4 +1,4 @@
-#exemple de ui possible
+# in game UI
 
 import os
 import time
@@ -7,7 +7,7 @@ import time
 def clearScreen():
     os.system("cls" if os.name == 'nt' else CLEAR)
 
-def dysplayUI(game_map):
+def ingameUI(game_map):
     clearScreen()
 
     header = "=" * 50
@@ -22,7 +22,7 @@ def dysplayUI(game_map):
 
 
     footer = "=" * 50
-    controls = "w (up) s (down) a (left) d (right) q (quit)"
+    controls = "y va avoir le dialogue ici"
     footer_end = "=" * 50
 
     print(footer)
@@ -36,9 +36,8 @@ def main():
     game_map = [["." for _ in range(width)] for _ in range(eight)]
 
     while True:
-        dysplayUI(game_map)
+        ingameUI(game_map)
         break
 
 if __name__ == "__main__":
     main()
-
