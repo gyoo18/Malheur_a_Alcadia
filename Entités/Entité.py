@@ -63,9 +63,9 @@ class Entité:
     campsEnnemis : list[str] = []   # Liste des camps ennemis à cette entité.
 
     def __init__(self):
-        self.dégats_défense = 0.5
+        self.dégats_défense = 0.5*self.dégats_libre
         self.dégats_libre = 1.0
-        self.dégats_charger = 1.5
+        self.dégats_charger = 1.5*self.dégats_libre
         self.vieMax = 100
         self.vie = 100.0
         self.TEMP_CHARGEMENT = 3
@@ -80,7 +80,7 @@ class Entité:
 
     def MiseÀJour(self):
         self._MiseÀJourIA()
-
+        
     # Mise à jour de l'IA de base
     def _MiseÀJourIA(self):
         # L'IA est basée sur une machine d'états
