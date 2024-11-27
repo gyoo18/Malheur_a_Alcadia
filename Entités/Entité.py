@@ -1,5 +1,6 @@
 from __future__ import annotations
 from typing_extensions import Self
+import random
 import sys
 from Maths.Vec2 import *
 from InclusionsCirculaires.Entité_Attaque import *
@@ -63,19 +64,24 @@ class Entité:
     campsEnnemis : list[str] = []   # Liste des camps ennemis à cette entité.
 
     def __init__(self):
-        self.dégats_défense = 0.5
+        self.dégats_défense = 0.5*self.dégats_libre
         self.dégats_libre = 1.0
-        self.dégats_charger = 1.5
+        self.dégats_charger = 1.5*self.dégats_libre
         self.vieMax = 100
         self.vie = 100.0
         self.TEMP_CHARGEMENT = 3
         self.attaque_chargée = 2.0
         self.attaque_normale_dégats = 1
+
+    def Random_Stats(x,y):
+        Stats=int(random.choice(range(x,y)))
+        return Stats
+    
         pass
 
     def MiseÀJour(self):
         self._MiseÀJourIA()
-
+        
     # Mise à jour de l'IA de base
     def _MiseÀJourIA(self):
         # L'IA est basée sur une machine d'états
