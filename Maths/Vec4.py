@@ -7,40 +7,40 @@ class Vec4:
     z : float
     w : float
 
-    def __init__(self, x = None, y = None, z = None, w = None, xyzw = 0, vec4 = None):
-        if vec4 == None and xyzw == 0 and not (x == None or y == None or z == None or w == None) and ((type(x) and type(y) and type(z) and type(w)) == int or float ):
+    def __init__(self, x = None, y = None, z = None, w = None):
+        if (type(x) == float or type(x) == int) and (type(y) == float or type(y) == int) and (type(z) == float or type(z) == int) and (type(w) == float or type(w) == int):
             self.x = x
             self.y = y
             self.z = z
             self.w = w
-        elif (x == None or y == None or z == None or w == None) and vec4 == None and xyzw != None and (type(xyzw) == int or float):
-            self.x = xyzw
-            self.y = xyzw
-            self.z = xyzw
-            self.w = xyzw
-        elif (x == None or y == None or z == None or w == None) and xyzw == None and vec4 != None and type(vec4) == Self:
-            self.x = vec4.x
-            self.y = vec4.y
-            self.z = vec4.z
-            self.w = vec4.w
-        elif (x == None or y == None or z == None or w == None) and xyzw == None and vec4 == None:
+        elif (type(x) == int or type(x) ==float) and type(y) == None and type(z) == None and type(w) == None:
+            self.x = x
+            self.y = x
+            self.z = x
+            self.w = w
+        elif type(x) == Vec4 and type(y) == None and type(z) == None and type(w) == None:
+            self.x = x.x
+            self.y = x.y
+            self.z = x.z
+            self.w = x.w
+        elif type(x) == None and type(y) == None and type(z) == None and type(w) == None:
             self.x = 0
             self.y = 0
             self.z = 0
             self.w = 0
         else:
-            raise ValueError("Les paramètre d'entrés de vec4 ne sont pas valides")
+            raise ValueError("Les paramètre d'entrés de Vec4 ne sont pas valides")
         
     def copie(self):
         return Vec4(vec4=self)
     
     def __eq__(a : Self,b : Self):
-        if type(b) != Self:
+        if type(b) != Vec4:
             return False
         return a.x == b.x and a.y == b.y and a.z == b.z and a.w == b.w
     
     def __neq__(a : Self, b : Self):
-        if type(b) != Self:
+        if type(b) != Vec4:
             return True
         return a.x != b.x or a.y != b.y or a.z != b.z or a.w != b.w
     
@@ -51,12 +51,12 @@ class Vec4:
         return Vec4(abs(a.x),abs(a.y),abs(a.z), abs(a.w))
     
     def distance(self, b : Self):
-        if type(b) != Self:
+        if type(b) != Vec4:
             raise TypeError("vec4.distance(b : vec4) n'accepte pas d'argument de type " + str(type(b)) + ", seulement de type vec4.")
         return distance(self,b)
     
     def __add__(a : Self,b : Self):
-        if type(b) == Self:
+        if type(b) == Vec4:
             return Vec4(a.x+b.x, a.y+b.y, a.z+b.z, a.w+b.w)
         elif type(b) == int or type(b) == float :
             return Vec4(a.x + b, a.y + b, a.z + b, a.w + b)
@@ -64,7 +64,7 @@ class Vec4:
             raise TypeError("b doit être de type Vec4, float ou int, pas " + str(type(b)) + ".")
     
     def __sub__(a : Self, b : Self):
-        if type(b) == Self:
+        if type(b) == Vec4:
             return Vec4(a.x-b.x, a.y-b.y, a.z-b.z, a.w-b.w)
         elif type(b) == int or type(b) == float :
             return Vec4(a.x - b, a.y - b, a.z - b, a.w - b)
@@ -72,7 +72,7 @@ class Vec4:
             raise TypeError("b doit être de type Vec4, float ou int, pas " + str(type(b)) + ".")
     
     def __mul__(a : Self, b):
-        if type(b) == Self:
+        if type(b) == Vec4:
             return Vec4(a.x*b.x, a.y*b.y, a.z*b.z, a.w*b.w)
         elif type(b) == int or type(b) == float :
             return Vec4(a.x * b, a.y * b, a.z * b, a.w * b)
@@ -80,7 +80,7 @@ class Vec4:
             raise TypeError("b doit être de type vec4, float ou int, pas " + str(type(b)) + ".")
     
     def __div__(a : Self, b):
-        if type(b) == Self:
+        if type(b) == Vec4:
             return Vec4(a.x/b.x, a.y/b.y, a.z/b.z, a.w/b.w)
         elif type(b) == int or type(b) == float :
             return Vec4(a.x / b, a.y / b, a.z / b, a.w / b)
@@ -88,7 +88,7 @@ class Vec4:
             raise TypeError("b doit être de type vec4, float ou int, pas " + str(type(b)) + ".")
     
     def __floordiv__(a : Self, b):
-        if type(b) == Self:
+        if type(b) == Vec4:
             return Vec4(a.x//b.x, a.y//b.y, a.z//b.z, a.w//b.w)
         elif type(b) == int or type(b) == float :
             return Vec4(a.x // b, a.y // b, a.z // b, a.w//b)
@@ -96,12 +96,12 @@ class Vec4:
             raise TypeError("b doit être de type vec4, float ou int, pas " + str(type(b)) + ".")
     
     def __matmul__(a : Self, b : Self):
-        if type(b) != Self:
+        if type(b) != Vec4:
             raise TypeError("b doit être de type Vec4, pas " + str(type(b)) + ".")
         return a.x*b.x + a.y*b.y + a.z*b.z + a.w*b.w
     
     def __mod__(a : Self, b):
-        if type(b) == Self:
+        if type(b) == Vec4:
             return Vec4(a.x%b.x, a.y%b.y, a.z%b.z, a.w%b.w)
         elif type(b) == float or type(b) == int:
             return Vec4(a.x%b, a.y%b, a.z%b, a.w%b)
@@ -109,7 +109,7 @@ class Vec4:
             raise TypeError("b doit être de type vec4, float ou int, pas " + str(type(b)) + ".")
     
     def __pow__(a : Self, b):
-        if type(b) == Self:
+        if type(b) == Vec4:
             return Vec4(a.x**b.x,a.y**b.y,a.z**b.z,a.w**b.w)
         elif type(b) == float or type(b) == int:
             return Vec4(a.x ** b,a.y ** b,a.z ** b,a.w ** b)
@@ -131,7 +131,7 @@ class Vec4:
         return self
     
     def __iadd__(self, b : Self):
-        if type(b) == Self:
+        if type(b) == Vec4:
             self.x += b.x
             self.y += b.y
             self.z += b.z
@@ -145,7 +145,7 @@ class Vec4:
             raise TypeError("Type " + str(type(b)) + " n'est pas accepté pour l'opération +=")
     
     def __isub__(self, b : Self):
-        if type(b) == Self:
+        if type(b) == Vec4:
             self.x -= b.x
             self.y -= b.y
             self.z -= b.z
@@ -159,7 +159,7 @@ class Vec4:
             raise TypeError("Type " + str(type(b)) + " n'est pas accepté pour l'opération -=")
     
     def __imatmul__(self, b : Self):
-        if type(b) == Self:
+        if type(b) == Vec4:
             self.x @= b.x
             self.y @= b.y
             self.z @= b.z
@@ -173,7 +173,7 @@ class Vec4:
             raise TypeError("Type " + str(type(b)) + " n'est pas accepté pour l'opération @=")
 
     def __imult__(self, b : Self):
-        if type(b) == Self:
+        if type(b) == Vec4:
             self.x *= b.x
             self.y *= b.y
             self.z *= b.z
@@ -187,7 +187,7 @@ class Vec4:
             raise TypeError("Type " + str(type(b)) + " n'est pas accepté pour l'opération *=")
 
     def __itruediv__(self, b : Self):
-        if type(b) == Self:
+        if type(b) == Vec4:
             self.x /= b.x
             self.y /= b.y
             self.z /= b.z
@@ -201,7 +201,7 @@ class Vec4:
             raise TypeError("Type " + str(type(b)) + " n'est pas accepté pour l'opération /=")
     
     def __ifloordiv__(self, b : Self):
-        if type(b) == Self:
+        if type(b) == Vec4:
             self.x //= b.x
             self.y //= b.y
             self.z //= b.z
@@ -215,7 +215,7 @@ class Vec4:
             raise TypeError("Type " + str(type(b)) + " n'est pas accepté pour l'opération //=")
     
     def __imod__(self, b : Self):
-        if type(b) == Self:
+        if type(b) == Vec4:
             self.x %= b.x
             self.y %= b.y
             self.z %= b.z
@@ -229,7 +229,7 @@ class Vec4:
             raise TypeError("Type " + str(type(b)) + " n'est pas accepté pour l'opération %=")
     
     def __ipow__(self, b : Self):
-        if type(b) == Self:
+        if type(b) == Vec4:
             self.x **= b.x
             self.y **= b.y
             self.z **= b.z
@@ -242,13 +242,13 @@ class Vec4:
         else:
             raise TypeError("Type " + str(type(b)) + " n'est pas accepté pour l'opération **=")
     
-def norm(a : Vec4):
-    return a.copie().norm()
+    def norm(a : Self):
+        return a.copie().norm()
 
-    
-def distance(a : Vec4, b : Vec4):
-    if type(a) != Vec4:
-        raise TypeError("vec4.distance(a : vec4, b: vec4) n'accepte pas d'arguement de type a : " + str(type(a)) + ", seulement de type vec4.")
-    if type(b) != Vec4:
-        raise TypeError("vec4.distance(a : vec4, b: vec4) n'accepte pas d'arguement de type b : " + str(type(b)) + ", seulement de type vec4.")
-    return sqrt((a.x-b.x)*(a.x-b.x) + (a.y-b.y)*(a.y-b.y) + (a.z-b.z)*(a.z-b.z) + (a.w-b.w)*(a.w-b.w))
+        
+    def distance(a : Self, b : Self):
+        if type(a) != Vec4:
+            raise TypeError("vec4.distance(a : vec4, b: vec4) n'accepte pas d'arguement de type a : " + str(type(a)) + ", seulement de type vec4.")
+        if type(b) != Vec4:
+            raise TypeError("vec4.distance(a : vec4, b: vec4) n'accepte pas d'arguement de type b : " + str(type(b)) + ", seulement de type vec4.")
+        return sqrt((a.x-b.x)*(a.x-b.x) + (a.y-b.y)*(a.y-b.y) + (a.z-b.z)*(a.z-b.z) + (a.w-b.w)*(a.w-b.w))
