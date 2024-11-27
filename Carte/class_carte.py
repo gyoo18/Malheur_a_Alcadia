@@ -27,6 +27,8 @@ class Carte:
     
             
     def peutAller(self, entite: Entité, pos: Vec2):
+        if pos.x<0 or pos.x>len(self.matrice)-1 or pos.y<0 or pos.y>len(self.matrice[0])-1:
+            return False
         tuiles = self.matrice[int(pos.x)][int(pos.y)]
         if tuiles.type == Tuiles.TYPE_MUR:
             return False
