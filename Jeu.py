@@ -1,10 +1,10 @@
 from typing_extensions import Self
 import interface
-import menu
 from Ressources import Ressources
 
 class ÉtatJeu:
     MENU = "menu"
+    INTRODUCTION = "introduction"
     ZONE1 = "zone1"
     ZONE2 = "zone2"
     ZONE3 = "zone3"
@@ -22,6 +22,10 @@ class Jeu:
         self.état = ÉtatJeu(ÉtatJeu.ZONE1)
 
     def miseÀJour(self):
+        import menu
         res = Ressources.avoirRessources()
-        menu.displayUI(res.cartes[0])
+        if self.état.v == ÉtatJeu.MENU:
+            menu.displayUI(res.cartes[0],self)
+        else :
+            menu.ingameUI(res.cartes[0],self)
         

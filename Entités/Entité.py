@@ -64,8 +64,8 @@ class Entité:
     campsEnnemis : list[str] = []   # Liste des camps ennemis à cette entité.
 
     def __init__(self):
-        self.dégats_défense = 0.5*self.dégats_libre
         self.dégats_libre = 1.0
+        self.dégats_défense = 0.5*self.dégats_libre
         self.dégats_charger = 1.5*self.dégats_libre
         self.vieMax = 100
         self.vie = 100.0
@@ -171,7 +171,7 @@ class Entité:
         # Si on n'a pas atteint le bout du chemin
         if len(self.chemin) > 0:
             # Avancer sur le chemin
-            if self.carte.peutAller(self.chemin[0]):
+            if self.carte.peutAller(self,self.chemin[0]):
                 self.direction = self.chemin[0] - self.pos
                 self.pos = self.chemin.pop(0)
                 faire_pathfinding = False
@@ -440,7 +440,7 @@ class Entité:
                 ny_dans_passif = ny_dans_passif or ny == pos
             
             # Si la case n'est pas dans les passives ou les actives et qu'on peut y aller
-            if not px_dans_passif and self.carte.peutAller(px):
+            if not px_dans_passif and self.carte.peutAller(self,px):
                 cases_actives.append(px) # ajouter case adjascente aux cases actives
                 n_pas.append(n_pas[curseur] + 1) # Ajouter la distance parcourue
                 # Ajouter le chemin à parcourir
@@ -450,7 +450,7 @@ class Entité:
                 # Ajouter le poid
                 poids.append(n_pas[-1] + Vec2.distance(px,self.destination))
 
-            if not py_dans_passif and self.carte.peutAller(py):
+            if not py_dans_passif and self.carte.peutAller(self,py):
                 cases_actives.append(py) # ajouter case adjascente aux cases actives
                 n_pas.append(n_pas[curseur] + 1) # Ajouter la distance parcourue
                 # Ajouter le chemin à parcourir
@@ -460,7 +460,7 @@ class Entité:
                 # Ajouter le poid
                 poids.append(n_pas[-1] + Vec2.distance(py,self.destination))
 
-            if not nx_dans_passif and self.carte.peutAller(nx):
+            if not nx_dans_passif and self.carte.peutAller(self,nx):
                 cases_actives.append(nx) # ajouter case adjascente aux cases actives
                 n_pas.append(n_pas[curseur] + 1) # Ajouter la distance parcourue
                 # Ajouter le chemin à parcourir
@@ -470,7 +470,7 @@ class Entité:
                 # Ajouter le poid
                 poids.append(n_pas[-1] + Vec2.distance(nx,self.destination))
 
-            if not ny_dans_passif and self.carte.peutAller(ny):
+            if not ny_dans_passif and self.carte.peutAller(self,ny):
                 cases_actives.append(ny) # ajouter case adjascente aux cases actives
                 n_pas.append(n_pas[curseur] + 1) # Ajouter la distance parcourue
                 # Ajouter le chemin à parcourir
