@@ -1,10 +1,12 @@
 #premier test de UI
 import os
 import time
+from Carte.class_carte import Carte
+from Ressources import Ressources
 
 def clearScreen():
-    os.system("cls" if os.name == 'nt' else CLEAR)
-def ingameUI(game_map):
+    os.system("cls" if os.name == 'nt' else "clear")
+def ingameUI(game_map : Carte):
     """Display the in-game UI."""
     clearScreen()
 
@@ -18,8 +20,7 @@ def ingameUI(game_map):
     print(header3)
 
     # Display game map
-    for row in game_map:
-        print("".join(row))
+    print(game_map.dessiner())
 
     # Footer
     footer = "=" * 50
@@ -29,6 +30,13 @@ def ingameUI(game_map):
     print(footer)
     print(controls)
     print(footer_end)
+
+    res = Ressources.avoirRessources()
+    print("Mise à jour des entitées.")
+    for i in range(len(res.entités)):
+        res.entités[i]._MiseÀJourIA()
+    print("Entitées mises à jours.")
+    res.cartes[0].dessiner()
 
 def displayUI(game_map):
     clearScreen()

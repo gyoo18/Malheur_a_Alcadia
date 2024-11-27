@@ -152,6 +152,7 @@ class Entité:
             # Se mettre en mode déplacement vers l'ennemi
             self.état.v = ÉtatIA.DÉPLACEMENT
             self.destination = ennemiPlusPrès.pos
+            self.cible = ennemiPlusPrès
     
     def _modeDéplacement(self):
         """ Se déplace vers la cible sélectionnée
@@ -164,8 +165,8 @@ class Entité:
         # Si on n'a pas atteint le bout du chemin
         if len(self.chemin) > 0:
             # Avancer sur le chemin
-            if self.carte.peutAller(self.chemin[0].pos):
-                self.direction = self.chemin[0].pos - self.pos
+            if self.carte.peutAller(self.chemin[0]):
+                self.direction = self.chemin[0] - self.pos
                 self.pos = self.chemin.pop(0)
                 faire_pathfinding = False
 

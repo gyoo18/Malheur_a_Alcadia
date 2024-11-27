@@ -1,5 +1,7 @@
 from typing_extensions import Self
 import interface
+import menu
+from Ressources import Ressources
 
 class ÉtatJeu:
     MENU = "menu"
@@ -20,5 +22,6 @@ class Jeu:
         self.état = ÉtatJeu(ÉtatJeu.ZONE1)
 
     def miseÀJour(self):
-        interface.miseÀJour(self)
+        res = Ressources.avoirRessources()
+        menu.displayUI(res.cartes[0])
         

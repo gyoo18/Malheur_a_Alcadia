@@ -30,7 +30,7 @@ class Carte:
             self.matrice.append(ligne_donnee)    
             
     def peutAller(self, pos : Vec2):
-        tuiles = self.matrice[int(pos.x)][int(pos.y)]
+        tuiles = self.matrice[int(pos.x)][int(pos.y)] # TODO #9 [Bug] L'IA tente d'accéder à une tuile à l'extérieur de la carte et le programme plante
         if tuiles.type == Tuiles.TYPE_MUR:
             return False
         else:
@@ -101,7 +101,7 @@ class Carte:
                     case _:
                         raise TypeError("Tuile " + str(self.matrice[x][y]) + " de type " + str(self.matrice[x][y].type) + " n'a pas de type valide.")
             dessin += ligne + '\n'
-        print(dessin)
+        return dessin
     
 carte_1 = Carte(5,5) 
 
