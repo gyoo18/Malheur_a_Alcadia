@@ -1,90 +1,93 @@
 from Jeu import Jeu, ÉtatJeu
 from Ressources import Ressources
+from TFX import * # TFX pour TerminalFX
 
-def zone_1(): 
-    print("Le château se fait attaquer par une menace extérieure,l'attaque est donnée du côté de la porte condamnée qui se trouve sur la montagne sacrée.")
-    print("Le roi donne l'ordre au bataillon d'alchimistes de défendre le château.")
-    success  = combat_simple()
-    if success :
-        print("Il y a beaucoup trop de monstres, nous devons nous replier vers la cité!")
-        return "success"
-    else:
-        print("Je n'était sûrement pas destiné à la vie d'alchimiste, j'aimerais revoir une seule fois avant de mourir.")
-        return "failure"
-    
-def zone_2():
-    print("Vous êtes dans la cité. Les monstres attaquent également de ce côté")
-    # TODO #2 Compléter la phrase
-    print("Chef Alchimiste : « Vous avez maintenant une très grande expérience de combat réel, vous êtes de ce fait suffisamment près pour utiliser le nouveau ... »")
-    print("Le sol a une composition différente. Je pense que ça ferait un résultat intéréssant.")
-    print("Le Cher Alchimiste explique comment invoquer un golem.")
-    input("Appuyez sur entrée pour invoquer un golem.")
-    success = combat_complexe()
-    if success:
-        print("Vous avez repoussé les monstres, mais un monstre paralant approche.")
-        choix = input("Le monstre vous supplie d'arrêter. Que faites-vous?(1: fuir avec le monstre, 2: le tuer)")
-        if choix == "1":
-            print("Le protagoniste s'enfuit avec l'enfant du monstre non genré, mais ne sait pas si sa décision est la bonne.")
-            return "fuir"
-        else:
-            print("Il tue le monstre et une alarme retenti en sommant toute la population de retourner à l'intérieur du château.")
-            return "success"
-    else: 
-            print("J'espère que ma famille est en sécurité et que le chef pourra exterminer tout ces monstres.")
-            return"failure"
-    
-def zone_3(fin_zone_2):
-    print("Vous arrivez au château. Le roi compte sur vous pour le protéger.")
-    # TODO #3 Compléter la phrase
-    print("Le chef est mort et le bataillon est réduit de son effectif de départ, il est informé et on le désigne pour devenir le nouveau chef du batillon ...")
-    if fin_zone_2 == "fuir":
-        print("Vous êtes tourmenté par votre décision de fuir les monstres.")
-    else:
-        print("Votre rage vous pousse à accepter et à combatre avec tout ce qui vous reste.")
-        combat = combat_final()
-        if combat:
-            print("Vous avez vaincus tous les monstres. Mais un choix difficile vous attend.")
-            choix = input("Le roi vous demande de tuer votre épouse [1/2/3]")
-            return choix
-        else:
-            print("Vous êtes tombés au combat, soulagé de mourir après tant de sacrifices.")
-            return "failure"
-    
-def combat_simple():
-    return input("Tapez 'gagner' pour simuler une victoire, sinon vous perdez : ").lower() == "gagner"
+def dialogue(texte, personnage) :
+    # Melios = protag / # Guildart / # Roi / #Enfant / #Partenaire
+    print(f"{personnage} : {texte}")
 
-def combat_complexe():
-    return input("Tapez 'gagner' pour simuler une victoire, sinon, vous perdez : ").lower() == "gagner"
+def script(Zone, Timing, jeu : Jeu) :
+    if(Zone == "Introduction") :
+        print("Vous êtes Melios, un alchimiste atteint de Glaucoma, un type de malvoyance, chargé de protéger le roi.")
+        print("Très tôt ce matin, l'alarme d'invasion avait retentie dans l'enceinte de la paisible ville d'Alcadia.")
+        return
+    elif(Zone == "Prairie"):
+        if(Timing == "Debut"):
+            print("Le château est attaqué par une menace extérieure ! Une multitude de créature ont émergées de la montagne sacrée, ravageant tout sur leur passage.")
+            print("Le roi ordonne au bataillon d'alchimistes de défendre la plaine.")
+            print("________ Plaine ________")
+            return    
+        elif(Timing == "Success"):
+            print("Félicitation !") 
+            print("Vous avez réussi à protéger la plaine ! Néanmoins, les ennemis sont de plus en plus nombreux, vous devez faire marche arrière dans la cité.")
+            dialogue("Soldat ! Défendez la cité.", "Guildart")
+            return 
+        elif(Timing == "Failure"):
+            dialogue("Peut-être que je n'étais jamais destiné à être un guerrier, pardonnez-moi, j'ai échoué...", "Melios")
+            print("Fin_01 : Vous êtes tombé en défendant la plaine.")
+            jeu.état.v = ÉtatJeu.TERMINÉ 
+            return
+    elif(Zone == "Cite"):
+        if(Timing == "Introduction"):
+            #res = Ressources.avoirRessources()
+            print("________ Cité ________")
+            print("Les monstres se sont infiltré dans nos remparts.")
+            dialogue("Soldat ! Défendez la cité.", "Guildart")
+            dialogue("Votre expérience de combat vous permet d'utilise un nouveau golem !")
+            dialogue("Le sol a une composition différente. Je pense que ça ferait un résultat intéréssant.", "Melios")
+        elif(Timing == "Success"):
+            print("Vous avez réussi ! Néanmoins le corps d'un ami gis au sol. Guildart s'est sacrifié pour protéger sa ville.")
+            print("Mais pas le temps de le pleurer : un nouvel ennemis s'approche, mais au lieu d'attaquer, il se mit à parler.")
+            print("Sa voix était rauque, à peine audible, mais emprunte de tristesse.")
+            dialogue("S'il vous plait, cessez cette folie... Rentrons à la maison...","Petit Monstre")
+            choix = input("Que faites-vous ? (fuir : Fuir avec le monstre / tuer : Tuer le monstre)")
+            if choix == "fuir":
+                print("Vous lachez vos armes, prenez la main du petit monstre et traversez les ruines de la cité pour partir.")
+                print("Un regard en arrière vous retient, était-ce vraiment la bonne décision de fuir ses responsabilités ?")
+                print("Le petit monstre n'a rien de dangereux, il est même frêle, ces monstres ont détruit leur ville, mais envoyait également leurs enfants ?")
+                print("Et la question vous hante ; Pourquoi ?")
+                jeu.état.v = ÉtatJeu.TERMINÉ 
+                return
+            else:
+                print("D'un geste bref, votre golem abbat le Petit Monstre. Il est inutile de prendez pitié pour l'ennemi.")
+                print("Ils ont tués le chef du bataillon, Guildart, il ne méritait pas ce destin.")
+                return
+        elif(Timing == "Failure"):
+                dialogue("J'espère que ma famille est en sécurité... Je suis désolé de ne pas avoir pu vous protéger...","Melios")
+                jeu.état.v = ÉtatJeu.TERMINÉ 
+                return
+        return
+    elif(Zone == "Chateau"):
+        if(Timing == "Introduction"):
+            print("________ Château, Salle du trône ________")
+            print("Après l'annonce de la mort de Guildart. Vous êtes désigné pour devenir le nouveau chef du bataillon ...")
+            print("Le roi compte sur vous pour le protéger. Il n'y a plus que vous.")
+            print("Votre rage vous pousse à accepter et à combatre avec tout ce qui vous reste.")
+            dialogue("Je vous protègerais au péril de ma vie, Majestée.", "Melios")
+        if(Timing == "Success"):
+            print("Il n'y a plus de monstres... Plus que des tas de chaire flous répendues sur le sol.")
+            print("Le roi est vivant, sain et sauf. Vous avez réussi.")
+            print("Alors que vous pensiez enfin pouvoir vous reposer, un ennemi apparu entre les immenses portes.")
+            dialogue("Melios ! Qu'est ce que tu fais ?","Monstre (?)")
+            dialogue("Monstre ! Comment connais-tu mon nom ?!","Melios")
+            dialogue("Ce n'est pas important, tuez-le.","Roi")
+            dialogue("Non Melios ! C'est moi, Delain, tu te rappelles ? Le roi nous avait tous enfermés dans la montagne sacrée mais nous avons réussit à sortir !","Monstre (?)")
+            dialogue("Mensonges !","Roi")
+            dialogue("Melios ! Je t'en conjure, arrêtons cette folie, tout le monde est mort...","Monstre (?)")
+            dialogue("Soldat ! Tuez ce monstre !","Roi")
+            choix = input("Que faites vous ? (fuir : Fuir avec le monstre / tuer : Tuer le monstre / assassiner : Tuer le roi)")
+            if choix == "assassiner":
+                print("Fin_06 : Vous tuez le roi, prenez le trône. Vous et Delain reignez sur la ville pour réparer les erreurs du Roi précédent.")
+                jeu.état.v = ÉtatJeu.TERMINÉ 
+            elif choix == "tuer":
+                print("Fin_05 : Vous tuez le monstre et vivez dans le luxe. Chaque verre de vin ingurgité vous rappelle que vous étiez à deux doigts de mourir, maintes fois. Vous aimez la sensation d'oublier une fois saoul.")
+                jeu.état.v = ÉtatJeu.TERMINÉ 
+            else :
+                print("Fin_07 : Vous attrapez la main du monstre, Delain, votre partenaire. En un instant vous fuyez les ruines de la ville, vous vous précipiter dans les décombres, trébuchez sur les cadavres pour sortir jusque dans la forêt. Là bas, vous construirez un chalet et vivrez calmement pour le reste de vos vies.")
+                jeu.état.v = ÉtatJeu.TERMINÉ 
+        if(Timing == "Failure"):
+            dialogue("J'aurais voulu faire plus... Mais je ne peux pas... Pardon... Pardon...","Melios")
+            print("Fin_04 : Vous êtes tombé en défendant le château.")
+            jeu.état.v = ÉtatJeu.TERMINÉ 
+            return
 
-def combat_final():
-    return input("Tatpez 'gagner' pour simuler une vicoire, sinon vous perdez : ").lower() == "gagner"
-
-def jeu_principal(jeu : Jeu):
-    match jeu.état.v:
-        case ÉtatJeu.ZONE1:
-            print("Introduction : Vous êtes un alchimiste malvoyant chargé de protéger le roi.")
-            resultat_zone_1 = zone_1()
-            if resultat_zone_1 == "failure":
-                print("Fin_01 : vous êtes tombé lors du premier combat.")
-                jeu.état.v = ÉtatJeu.TERMINÉ
-        case ÉtatJeu.ZONE2:
-            res = Ressources.avoirRessources()
-            res.resultat_zone_2 = zone_2()
-            if res.resultat_zone_2 == "failure":
-                print("Fin_02 : vous êtes tombé en défendant la cité.")
-                jeu.état.v = ÉtatJeu.TERMINÉ
-        case ÉtatJeu.ZONE3:
-            res = Ressources.avoirRessources()
-            resultat_zone_3 = zone_3(res.resultat_zone_2)
-            if resultat_zone_3 == "failure":
-                print("Fin_04 : vous êtes mort en défendant le château.")
-                jeu.état.v = ÉtatJeu.TERMINÉ
-            elif resultat_zone_3 == "1":
-                print("Fin_06 : vous tuez le roi et prenez le trône.")
-                jeu.état.v = ÉtatJeu.TERMINÉ
-            elif resultat_zone_3 == "2":
-                print("Fin_05 : vous tuez votre épouse transformée en monstre et vivez dans le luxe et la tourmente.")
-                jeu.état.v = ÉtatJeu.TERMINÉ
-            elif resultat_zone_3 == "3":
-                print("Fin_07 : vous partez vivre dans la montagne avec votre épouse trasformée en monstre.")
-                jeu.état.v = ÉtatJeu.TERMINÉ
