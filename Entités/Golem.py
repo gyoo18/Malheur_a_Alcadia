@@ -1,4 +1,5 @@
 from Entités.Entité import *
+import random
 from Entités.Paysan import *
 from Entités.Attaque import Attaque, Élément
 from Maths.Vec2 import *
@@ -125,6 +126,10 @@ class Golem(Entité):
         self.campsEnnemis = ["Paysans"]
         super().__init__()
 
+    def nom_aléatoire(liste):
+        nom=random.choice(liste)
+        return nom
+    
     def commande(self, commande : Commande):
         """commande Reçoit et interpète une commande donnée par le joueur
 
@@ -262,7 +267,10 @@ class GolemTerre(Golem):
         super().__init__()
         self.attaque_sol_dégats = 1.0
         self.attaque_sol_rayon = 2.0
-
+        HP=150
+        attaque_normale_dégats=Entité.Random_Stats(10,16)
+        dégats_libre=Entité.Random_Stats(39,46)
+        nom=Golem.nom_aléatoire(["Gorb","Bob","Pierre","Fero","Crys"])
     def _commandeAttaqueSpéciale(self, commande : Commande):
         if commande.attaque_spéciale == self.ATTAQUE_FRAPPER_SOL:
             attaque = Attaque(self)
@@ -300,7 +308,10 @@ class GolemEau(Golem):
 
     def __init__(self):
         super().__init__()
-
+        vieMax=90
+        attaque_normale_dégats=Entité.Random_Stats(20,26)
+        dégats_libre=Entité.Random_Stats(25,31)
+        nom=Golem.nom_aléatoire(["Blob","Plouf","Sploch","Casca","Rive"])
     def _commandeAttaqueSpéciale(self, commande):
         if commande.attaque_spéciale == self.ATTAQUE_TORNADE and Vec2.distance(self.pos, commande.ennemi_cible.pos) <= self.max_distance_attaque:
             for i in range(self.tornade_pousser_distance + self.chargement):
@@ -354,7 +365,10 @@ class GolemFeu(Golem):
 
     def __init__(self):
         super().__init__()
-    
+        vieMax=120
+        attaque_normale_dégats=Entité.Random_Stats(26,29)
+        dégats_libre=Entité.Random_Stats(35,39)
+        nom=Golem.nom_aléatoire(["Magme","Fusio","Larva","Manta","Ardenne"])
     def _commandeAttaqueSpéciale(self, commande):
         if commande.attaque_spéciale == self.ATTAQUE_BOULE_FEU and Vec2.distance(self.pos,commande.ennemi_cible.pos) <= self.attaque_normale_dégats:
             attaque = Attaque(self)
@@ -371,3 +385,26 @@ class GolemFeu(Golem):
         attaque.élément = Élément.FEU
         self.cible.Attaquer(attaque)
         self.chargement = 0
+
+
+class Earth_golem(Golem):
+    def __init__(self):
+        super().__init__()
+
+    def Stats_Earth_golem():
+         HP=150
+         ATT=Entité.Random_Stats(10,16)
+         DEF=Entité.Random_Stats(39,46)
+         
+class water_golems(Golem):
+    def Stats_water_golem():
+        HP=90
+        ATT=Entité.Random_Stats(20,26)
+        DEF=Entité.Random_Stats(25,31)
+
+class Fire_Golem(Golem):
+     def Stats_Fire_golem():
+         HP=120
+         ATT=Entité.Random_Stats(26,29)
+         DEF=Entité.Random_Stats(35,39)
+    

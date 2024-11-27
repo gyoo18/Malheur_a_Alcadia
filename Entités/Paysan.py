@@ -1,6 +1,5 @@
 from Entités.Entité import *
-from Entités.Golem import *
-from Entités.Attaque import *
+from InclusionsCirculaires.Entité_Attaque import *
 from Maths.Vec2 import *
 from math import acos, sqrt
 
@@ -47,7 +46,10 @@ class Gosse(Paysan):
 
     def __init__(self):
         super().__init__()
-    
+        vieMax=75
+        attaque_normale_dégats=Entité.Random_Stats(8,11)
+        dégats_libre=Entité.Random_Stats(5,11)
+
     def _exécuterAttaque(self):
         attaque = Attaque(self)
         attaque.dégats = self.attaque_normale_dégats + self.chargement*self.attaque_chargée
@@ -59,6 +61,9 @@ class Mineur(Paysan):
 
     def __init__(self):
         super().__init__()
+        vieMax=75
+        attaque_normale_dégats=Entité.Random_Stats(14,21)
+        dégats_libre=Entité.Random_Stats(10,16)
 
     def _exécuterAttaque(self):
         attaque = Attaque(self)
@@ -73,6 +78,9 @@ class Prêtre(Paysan):
 
     def __init__(self):
         super().__init__()
+        vieMax=75
+        attaque_normale_dégats=Entité.Random_Stats(12,17)
+        dégats_libre=Entité.Random_Stats(12,15)
 
     def _modeRecherche(self):
         ennemiPlusPrès = None
@@ -140,7 +148,10 @@ class Prêtre(Paysan):
 class Chevalier(Paysan):
     def __init__(self):
         super().__init__()
-    
+        vieMax=125
+        attaque_normale_dégats=Entité.Random_Stats(19,26)
+        dégats_libre=Entité.Random_Stats(30,36)
+
     def _exécuterAttaque(self):
         attaque = Attaque(self)
         attaque.dégats = self.attaque_normale_dégats + self.chargement*self.attaque_chargée
@@ -178,7 +189,10 @@ class Arbaletier(Paysan):
 
     def __init__(self):
         super().__init__()
-    
+        vieMax=int(50)
+        attaque_normale_dégats=Entité.Random_Stats(30,33)
+        dégats_libre=Entité.Random_Stats(5,11)
+
     def _modeRecherche(self):
         ennemiPlusPrès = None
         alliéPlusPrès = None
