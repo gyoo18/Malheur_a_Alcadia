@@ -64,8 +64,8 @@ class Entité:
     campsEnnemis : list[str] = []   # Liste des camps ennemis à cette entité.
 
     def __init__(self):
-        self.dégats_défense = 0.5*self.dégats_libre
         self.dégats_libre = 1.0
+        self.dégats_défense = 0.5*self.dégats_libre
         self.dégats_charger = 1.5*self.dégats_libre
         self.vieMax = 100
         self.vie = 100.0
@@ -107,18 +107,25 @@ class Entité:
         #                           |                               |                           |
         #
         # L'algorithme fonctionne sur une base de fonctions, pour faciliter la spécialisation dans les classes enfants
+        print("Mise à jour de l'IA de " + str(self) +", état : " + self.état.v)
         match self.état.v:
             case ÉtatIA.RECHERCHE:
+                print("Mode recherche activé.")
                 self._modeRecherche()
             case ÉtatIA.DÉPLACEMENT:
+                print("Mode déplacement activé")
                 self._modeDéplacement()
             case ÉtatIA.DÉPLACEMENT_IMMOBILE:
+                print("Mode déplacement immobile activé")
                 self._modeDéplacement()
             case ÉtatIA.COMBAT:
+                print("Mode combat activé")
                 self._modeCombat()
             case ÉtatIA.IMMOBILE:
+                print("Mode immobile activé")
                 self._modeImmobile()
             case ÉtatIA.GUÉRISON:
+                print("Mode guérison activé")
                 self._modeGuérison()
     
     def _estEnnemi(self,ennemi : Self):
@@ -144,6 +151,7 @@ class Entité:
         # Passe à travers tout les ennemis, si l'ennemi évalué est plus près que le plus près trouvé jusqu'à présent,
         #   il est l'ennemi le plus près, jusqu'à nouvel ordre
 
+        print("Recherche d'ennemi")
         ennemiPlusPrès = None   # Ennemi le plus près
         distanceMinimale = sys.float_info.max   # Distance à laquelle se trouve l'ennemi trouvé le plus près
 
@@ -155,6 +163,7 @@ class Entité:
                 distanceMinimale = Vec2.distance(ennemi.pos,self.pos)
         # Si on a trouvé un ennemi le plus près
         if ennemiPlusPrès != None:
+            print("Ennemi trouvé : " + str(ennemiPlusPrès))
             # Se mettre en mode déplacement vers l'ennemi
             self.état.v = ÉtatIA.DÉPLACEMENT
             self.destination = ennemiPlusPrès.pos
@@ -170,8 +179,10 @@ class Entité:
         faire_pathfinding = True
         # Si on n'a pas atteint le bout du chemin
         if len(self.chemin) > 0:
+            print("Un chemin existe")
             # Avancer sur le chemin
-            if self.carte.peutAller(self.chemin[0]):
+            if self.carte.peutAller(self,self.chemin[0]):
+                print("Le chemin est praticable, avançons.")
                 self.direction = self.chemin[0] - self.pos
                 self.pos = self.chemin.pop(0)
                 faire_pathfinding = False
@@ -180,11 +191,13 @@ class Entité:
                 for ennemi in self.carte.entités:
                     # Chercher un ennemi à une distance de 1 ou moins de nous (sur une case adjascente)
                     if Vec2.distance(ennemi.pos, self.pos) <= 1 and ennemi.camp in self.campsEnnemis:
+                        print("Un ennemi est à proximité! Mode combat activé.")
                         self.état.v = ÉtatIA.COMBAT
                         self.cible = ennemi
                         break
                 # Si on n'a pas trouvé d'ennemi, mais qu'on est arrivé au bout du chemin,
                 if self.cible == None and self.pos == self.destination and self.état.v == ÉtatIA.DÉPLACEMENT:
+                    print("Arrivé à destination. Aucun ennemi à l'horison, Mode recherche activé.")
                     # Chercher un autre ennemi si on est dans la boucle normale,
                     # Rester immobile si on se déplace à cause d'une commande
                     if self.état.v == ÉtatIA.DÉPLACEMENT:
@@ -192,11 +205,13 @@ class Entité:
                     elif self.état.v == ÉtatIA.DÉPLACEMENT_IMMOBILE:
                         self.état.v = ÉtatIA.IMMOBILE
             else:
+                print("Le chemin n'est pas praticable.")
                 # Si on ne peut pas se déplacer sur le chemin, en trouver un nouveau
                 self.chemin = []
                 faire_pathfinding = True
 
         if faire_pathfinding:
+            print("Recherche d'un chemin.")
             self.chemin = self._A_étoile()
 
     def _modeCombat(self):
@@ -205,8 +220,10 @@ class Entité:
         Vire en mode recherche si l'ennemi est mort ou partis.
         """
         if self.cible.estVivant and Vec2.distance(self.cible.pos, self.pos) <= 1:
+            print("Attaque de l'ennemi")
             self._AttaquerCible()
         else:
+            print("L'ennemi est soit mort, soit partis. À la rcherche d'un nouvel ennemi.")
             self.état.v = ÉtatIA.RECHERCHE
             self.estAttaqué = False
             self.cible = None
@@ -217,6 +234,7 @@ class Entité:
         Vire en mode combat s'il reçoit une attaque
         """
         if self.estAttaqué:
+            print("Je suis attaqué! Mode combat activé.")
             self.état.v = ÉtatIA.COMBAT
 
     def _modeGuérison(self):
@@ -233,6 +251,7 @@ class Entité:
         Appelle self.cible.Attaquer(). Appelé durant le combat.
         """
         from Entités.Attaque import Attaque
+        print("Attaque de base.")
         # Attaque de base
         attaque = Attaque(self)
         attaque.dégats = self.attaque_normale_dégats
@@ -246,8 +265,10 @@ class Entité:
         Args:
             attaque (Attaque): Un objet Attaque qui contient les informations nécessaires pour subir une attaque.
         """
+        print(str(self) + " reçoit une attaque de " + str(attaque.provenance))
         # Virer au mode combat, si on n'y est pas déjà
         if not self.estAttaqué:
+            print(str(self) + " passe en mode combat.")
             self.estAttaqué = True
             self.cible = attaque.provenance
         
@@ -297,6 +318,7 @@ class Entité:
         Args:
             destination (Vec2): Position de la destination voulue
         """
+        print("Navigue vers : (" + str(destination.x) + ';' + str(destination.y) + ')')
         self.état.v = ÉtatIA.DÉPLACEMENT
         self.destination = destination
         self.chemin = self._A_étoile()
@@ -386,6 +408,7 @@ class Entité:
         .=======================================================+=======================================================+
         """
         
+        print("Recherche d'un chemin à l'aide de A*")
         curseur = 0 # Curseur
         cases_actives = [self.pos] # Liste des cases actives
         cases_passives = [] # Liste des cases déjà évaluées
@@ -414,7 +437,10 @@ class Entité:
             #Vérifier si le poid le plus petit est la destination
             if cases_actives[curseur] == self.destination:
                 print("Chemin trouvé")
-                print(chemins[curseur])
+                ligne = "Chemin : "
+                for i in range(len(chemins[curseur])):
+                    ligne += '(' + str(chemins[curseur][i].x) + ';' + str(chemins[curseur][i].y) + ')'
+                print(ligne)
                 return chemins[curseur]
             
             #Ajouter les connexions du curseur à aux cases actives
@@ -440,7 +466,7 @@ class Entité:
                 ny_dans_passif = ny_dans_passif or ny == pos
             
             # Si la case n'est pas dans les passives ou les actives et qu'on peut y aller
-            if not px_dans_passif and self.carte.peutAller(px):
+            if not px_dans_passif and self.carte.peutAller(self,px):
                 cases_actives.append(px) # ajouter case adjascente aux cases actives
                 n_pas.append(n_pas[curseur] + 1) # Ajouter la distance parcourue
                 # Ajouter le chemin à parcourir
@@ -450,7 +476,7 @@ class Entité:
                 # Ajouter le poid
                 poids.append(n_pas[-1] + Vec2.distance(px,self.destination))
 
-            if not py_dans_passif and self.carte.peutAller(py):
+            if not py_dans_passif and self.carte.peutAller(self,py):
                 cases_actives.append(py) # ajouter case adjascente aux cases actives
                 n_pas.append(n_pas[curseur] + 1) # Ajouter la distance parcourue
                 # Ajouter le chemin à parcourir
@@ -460,17 +486,17 @@ class Entité:
                 # Ajouter le poid
                 poids.append(n_pas[-1] + Vec2.distance(py,self.destination))
 
-            if not nx_dans_passif and self.carte.peutAller(nx):
+            if not nx_dans_passif and self.carte.peutAller(self,nx):
                 cases_actives.append(nx) # ajouter case adjascente aux cases actives
                 n_pas.append(n_pas[curseur] + 1) # Ajouter la distance parcourue
                 # Ajouter le chemin à parcourir
-                cc = deepcopy(chemins[curseur])
+                c = deepcopy(chemins[curseur])
                 c.append(nx)
                 chemins.append(c)
-                # Ajouter le poid
+                # Ajouter le poidà
                 poids.append(n_pas[-1] + Vec2.distance(nx,self.destination))
 
-            if not ny_dans_passif and self.carte.peutAller(ny):
+            if not ny_dans_passif and self.carte.peutAller(self,ny):
                 cases_actives.append(ny) # ajouter case adjascente aux cases actives
                 n_pas.append(n_pas[curseur] + 1) # Ajouter la distance parcourue
                 # Ajouter le chemin à parcourir

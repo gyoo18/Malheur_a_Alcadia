@@ -5,6 +5,7 @@ from Ressources import Ressources
 
 class ÉtatJeu:
     MENU = "menu"
+    INTRODUCTION = "introduction"
     ZONE1 = "zone1"
     ZONE2 = "zone2"
     ZONE3 = "zone3"
@@ -12,7 +13,7 @@ class ÉtatJeu:
 
     v : str
 
-    def __init__(self, valeur = ZONE1):
+    def __init__(self, valeur = INTRODUCTION):
         self.v = valeur
 
 class Jeu:
@@ -24,4 +25,5 @@ class Jeu:
     def miseÀJour(self):
         res = Ressources.avoirRessources()
         menu.displayUI(res.cartes[0])
+        # interface.miseÀJour(self)
         

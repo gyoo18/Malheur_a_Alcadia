@@ -1,6 +1,7 @@
 from Ressources import Ressources
 from Jeu import Jeu, ÉtatJeu
 import dialogue
+import message
 
 def miseÀJour(jeu : Jeu):
     res = Ressources.avoirRessources()
@@ -11,16 +12,33 @@ def miseÀJour(jeu : Jeu):
         jeu.état.v = ÉtatJeu.TERMINÉ
 
     match jeu.état.v:
+        case ÉtatJeu.INTRODUCTION:
+            message.script("Introduction",None,jeu)
         case ÉtatJeu.ZONE1:
-            dialogue.jeu_principal(jeu)
+            # dialogue.jeu_principal(jeu)
+            message.script("Prairie","Debut",jeu)
+            if input("Tapez G").capitalize() == 'G':
+                message.script("Prairie","Success",jeu)
+            else:
+                message.script("Prairie","Failure",jeu)
             if jeu.état.v != ÉtatJeu.TERMINÉ:
                 jeu.état.v = ÉtatJeu.ZONE2
         case ÉtatJeu.ZONE2:
-            dialogue.jeu_principal(jeu)
+            # dialogue.jeu_principal(jeu)
+            message.script("Cite","Debut",jeu)
+            if input("Tapez G").capitalize() == 'G':
+                message.script("Cite","Success",jeu)
+            else:
+                message.script("Cite","Failure",jeu)
             if jeu.état.v != ÉtatJeu.TERMINÉ:
                 jeu.état.v = ÉtatJeu.ZONE3
         case ÉtatJeu.ZONE3:
-            dialogue.jeu_principal(jeu)
+            # dialogue.jeu_principal(jeu)
+            message.script("Chateau","Debut",jeu)
+            if input("Tapez G").capitalize() == 'G':
+                message.script("Chateau","Success",jeu)
+            else:
+                message.script("Chateau","Failure",jeu)
             if jeu.état.v != ÉtatJeu.TERMINÉ:
                 jeu.état.v = ÉtatJeu.TERMINÉ
         case ÉtatJeu.MENU:
