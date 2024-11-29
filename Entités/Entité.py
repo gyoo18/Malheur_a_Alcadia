@@ -76,7 +76,10 @@ class Entité:
         Stats=int(random.choice(range(x,y)))
         return Stats
     
-        pass
+    def nom_aléatoire(liste):
+        nom=random.choice(liste)
+        return nom
+        
 
     def MiseÀJour(self):
         self._MiseÀJourIA()
