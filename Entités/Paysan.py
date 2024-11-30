@@ -90,12 +90,12 @@ class Prêtre(Paysan):
         distanceMinimaleEnnemi = sys.float_info.max
         distanceMinimaleAllié = sys.float_info.max
         for entité in self.carte.entités:
-            if distance(entité.pos,self.pos) < distanceMinimaleEnnemi and self._estEnnemi(entité):
+            if Vec2.distance(entité.pos,self.pos) < distanceMinimaleEnnemi and self._estEnnemi(entité):
                 ennemiPlusPrès = entité
-                distanceMinimaleEnnemi = distance(entité.pos,self.pos)
-            elif distance(entité.pos,self.pos) < distanceMinimaleAllié and entité.camp == self.camp:
+                distanceMinimaleEnnemi = Vec2.distance(entité.pos,self.pos)
+            elif Vec2.distance(entité.pos,self.pos) < distanceMinimaleAllié and entité.camp == self.camp:
                 alliéPlusPrès = entité
-                distanceMinimaleAllié = distance(entité.pos,self.pos)
+                distanceMinimaleAllié = Vec2.distance(entité.pos,self.pos)
         if ennemiPlusPrès != None and alliéPlusPrès == None:
             self.état.v = ÉtatIA.DÉPLACEMENT
             self.destination = ennemiPlusPrès.pos
@@ -117,11 +117,11 @@ class Prêtre(Paysan):
                 faire_pathfinding = False
 
                 for ennemi in self.carte.entités:
-                    if distance(ennemi.pos, self.pos) <= 1 and self.cible.camp in self.campsEnnemis:
+                    if Vec2.distance(ennemi.pos, self.pos) <= 1 and self.cible.camp in self.campsEnnemis:
                         self.état.v = ÉtatIA.COMBAT
                         self.cible = ennemi
                         break
-                    elif distance(ennemi.pos, self.pos) <= 1 and self.cible.camp == self.camp:
+                    elif Vec2.distance(ennemi.pos, self.pos) <= 1 and self.cible.camp == self.camp:
                         self.état.v = ÉtatIA.GUÉRISON
                         break
                 if self.cible == None and self.pos == self.destination and self.état.v == ÉtatIA.DÉPLACEMENT:
@@ -141,7 +141,7 @@ class Prêtre(Paysan):
         self.cible.Attaquer(attaque)
     
     def _modeGuérison(self):
-        if self.cible.vie < self.cible.vieMax and distance(self.cible.pos, self.pos) <= 1:
+        if self.cible.vie < self.cible.vieMax and Vec2.distance(self.cible.pos, self.pos) <= 1:
             self.cible.vie += self.vie
         else:
             self.état.v = ÉtatIA.RECHERCHE
@@ -181,7 +181,7 @@ class Chevalier(Paysan):
                 #                 +-----+-----+-----+         +-----+-----+-----+
                 #                            
                 """
-                if angle <= 47 and distance(self.pos, entité.pos) <= sqrt(2.1):
+                if angle <= 47 and Vec2.distance(self.pos, entité.pos) <= sqrt(2.1):
                     entité.Attaquer(attaque)
         else:
             self.cible.Attaquer(attaque)
@@ -202,12 +202,12 @@ class Arbaletier(Paysan):
         distanceMinimaleEnnemi = sys.float_info.max
         distanceMinimaleAllié = sys.float_info.max
         for entité in self.carte.entités:
-            if distance(entité.pos,self.pos) < distanceMinimaleEnnemi and self._estEnnemi(entité):
+            if Vec2.distance(entité.pos,self.pos) < distanceMinimaleEnnemi and self._estEnnemi(entité):
                 ennemiPlusPrès = entité
-                distanceMinimaleEnnemi = distance(entité.pos,self.pos)
-            elif distance(entité.pos,self.pos) < distanceMinimaleAllié and entité.camp == self.camp:
+                distanceMinimaleEnnemi = Vec2.distance(entité.pos,self.pos)
+            elif Vec2.distance(entité.pos,self.pos) < distanceMinimaleAllié and entité.camp == self.camp:
                 alliéPlusPrès = entité
-                distanceMinimaleAllié = distance(entité.pos,self.pos)
+                distanceMinimaleAllié = Vec2.distance(entité.pos,self.pos)
         if ennemiPlusPrès != None and alliéPlusPrès == None:
             self.état.v = ÉtatIA.DÉPLACEMENT
             self.destination = ennemiPlusPrès.pos
@@ -229,12 +229,12 @@ class Arbaletier(Paysan):
                 faire_pathfinding = False
 
                 for entité in self.carte.entités:
-                    if distance(entité.pos, self.pos) <= self.min_distance_ennemi and entité.camp in self.campsEnnemis:
+                    if Vec2.distance(entité.pos, self.pos) <= self.min_distance_ennemi and entité.camp in self.campsEnnemis:
                         faire_pathfinding = True
                         break
                 if not faire_pathfinding:
                     for ennemi in self.carte.entités:
-                        if distance(ennemi.pos, self.pos) <= self.max_distance_attaque:
+                        if Vec2.distance(ennemi.pos, self.pos) <= self.max_distance_attaque:
                             self.état.v = ÉtatIA.COMBAT
                             self.cible = ennemi
                             break
@@ -252,9 +252,9 @@ class Arbaletier(Paysan):
     
     def _modeCombat(self):
         for entité in self.carte.entités:
-            if distance(self.pos, entité.pos) <= self.min_distance_ennemi:
+            if Vec2.distance(self.pos, entité.pos) <= self.min_distance_ennemi:
                 self.état.v = ÉtatIA.DÉPLACEMENT
-                direction = norm(self.pos - entité.pos)
+                direction = Vec2.norm(self.pos - entité.pos)
 
                 xp = direction @ Vec2(1.0,0.0)
                 yp = direction @ Vec2(0.0,1.0)
@@ -273,7 +273,7 @@ class Arbaletier(Paysan):
                 
                 self.cible = None
                 break
-        if self.cible.estVivant and distance(self.cible.pos, self.pos) <= 1:
+        if self.cible.estVivant and Vec2.distance(self.cible.pos, self.pos) <= 1:
             self._AttaquerEnnemi()
         else:
             self.état.v = ÉtatIA.RECHERCHE

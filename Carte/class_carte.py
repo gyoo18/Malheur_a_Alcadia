@@ -29,9 +29,13 @@ class Carte:
                 ligne_donnee.append(Tuiles(Tuiles.TYPE_TERRE))
             self.matrice.append(ligne_donnee)    
             
-    def peutAller(self, pos : Vec2):
+    def peutAller(self, entite: Entité, pos: Vec2):
+        if pos.x<0 or pos.x>len(self.matrice)-1 or pos.y<0 or pos.y>len(self.matrice[0])-1:
+            return False
         tuiles = self.matrice[int(pos.x)][int(pos.y)]
         if tuiles.type == Tuiles.TYPE_MUR:
+            return False
+        elif tuiles.type == Tuiles.TYPE_EAU and type(entite) != GolemEau:
             return False
         else:
             return True
@@ -101,7 +105,7 @@ class Carte:
                     case _:
                         raise TypeError("Tuile " + str(self.matrice[x][y]) + " de type " + str(self.matrice[x][y].type) + " n'a pas de type valide.")
             dessin += ligne + '\n'
-        print(dessin)
+        return dessin
     
 carte_1 = Carte(5,5) 
 
