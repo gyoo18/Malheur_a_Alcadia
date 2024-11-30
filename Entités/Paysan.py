@@ -6,9 +6,10 @@ from math import acos, sqrt
 class Paysan(Entité):
 
     def __init__(self):
+        super().__init__()
         self.camp = "Paysans"
         self.campsEnnemis = ["Golems"]
-        super().__init__()
+        self.nom = "Paysan"
 
     def _AttaquerEnnemi(self):
         match self.étatCombat.v:
@@ -46,9 +47,10 @@ class Gosse(Paysan):
 
     def __init__(self):
         super().__init__()
-        vieMax=75
-        attaque_normale_dégats=Entité.Random_Stats(8,11)
-        dégats_libre=Entité.Random_Stats(5,11)
+        self.vieMax=75
+        self.vie = self.vieMax
+        self.attaque_normale_dégats=Entité.Random_Stats(8,11)
+        self.dégats_libre=Entité.Random_Stats(5,11)
 
     def _exécuterAttaque(self):
         attaque = Attaque(self)
@@ -57,13 +59,14 @@ class Gosse(Paysan):
         self.chargement = 0
 
 class Mineur(Paysan):
-    bonus_terre : int = 2 # Bonus contre les golems de terre
 
     def __init__(self):
         super().__init__()
-        vieMax=75
-        attaque_normale_dégats=Entité.Random_Stats(14,21)
-        dégats_libre=Entité.Random_Stats(10,16)
+        self.vieMax=75
+        self.vie = self.vieMax
+        self.attaque_normale_dégats=Entité.Random_Stats(14,21)
+        self.dégats_libre=Entité.Random_Stats(10,16)
+        self.bonus_terre : int = 2 # Bonus contre les golems de terre
 
     def _exécuterAttaque(self):
         attaque = Attaque(self)
@@ -78,9 +81,11 @@ class Prêtre(Paysan):
 
     def __init__(self):
         super().__init__()
-        vieMax=75
-        attaque_normale_dégats=Entité.Random_Stats(12,17)
-        dégats_libre=Entité.Random_Stats(12,15)
+        slef.vieMax=75
+        self.vie = self.vieMax
+        slef.attaque_normale_dégats=Entité.Random_Stats(12,17)
+        slef.dégats_libre=Entité.Random_Stats(12,15)
+        self.vieAddition : int = 2
 
     def _modeRecherche(self):
         ennemiPlusPrès = None
@@ -148,9 +153,10 @@ class Prêtre(Paysan):
 class Chevalier(Paysan):
     def __init__(self):
         super().__init__()
-        vieMax=125
-        attaque_normale_dégats=Entité.Random_Stats(19,26)
-        dégats_libre=Entité.Random_Stats(30,36)
+        self.vieMax=125
+        self.vie = self.vieMax
+        self.attaque_normale_dégats=Entité.Random_Stats(19,26)
+        self.dégats_libre=Entité.Random_Stats(30,36)
 
     def _exécuterAttaque(self):
         attaque = Attaque(self)
@@ -184,14 +190,15 @@ class Chevalier(Paysan):
             self.cible.Attaquer(attaque)
     
 class Arbaletier(Paysan):
-    max_distance_attaque : float = 3.0
-    min_distance_ennemi : float = 1.5
 
     def __init__(self):
         super().__init__()
-        vieMax=int(50)
-        attaque_normale_dégats=Entité.Random_Stats(30,33)
-        dégats_libre=Entité.Random_Stats(5,11)
+        self.vieMax=int(50)
+        self.vie = self.vieMax
+        self.attaque_normale_dégats=Entité.Random_Stats(30,33)
+        self.dégats_libre=Entité.Random_Stats(5,11)
+        self.max_distance_attaque : float = 3.0
+        self.min_distance_ennemi : float = 1.5
 
     def _modeRecherche(self):
         ennemiPlusPrès = None

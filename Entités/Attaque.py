@@ -10,24 +10,19 @@ class Élément:
     EAU = "eau"
     AIR = "air"
 
-    v : str
-
     def __init__(self, valeur = TERRE):
-        self.v = valeur
+        self.v : str = valeur
 
 # Décrit une attaque et ses composantes
 class Attaque:
 
-    provenance : Entité = None
-
-    dégats : float # Dégats infligés à l'ennemi
-
-    est_projectile = False
-    distance : float = 1.0
-    élément : Élément = None
-    repousse : int = 0
-    direction : Vec2 = Vec2(0)
-
     def __init__(self, provenance : Entité):
-        self.dégats = 0
-        self.provenance = provenance
+        self.provenance : Entité = provenance
+
+        self.dégats : float = 0 # Dégats infligés à l'ennemi
+
+        self.est_projectile = False
+        self.distance : float = 1.0
+        self.élément : Élément = None
+        self.repousse : int = 0
+        self.direction : Vec2 = Vec2(0)

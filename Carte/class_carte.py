@@ -14,10 +14,10 @@ class Carte:
     entités : list[Entité]
     
     def __init__(self,ligne : int ,colonne :int):
-        self.ligne = ligne
-        self.colonne = colonne
-        self.matrice = []
-        self.entités = []
+        self.ligne : int = ligne
+        self.colonne : int = colonne
+        self.matrice : list[list[Tuiles]] = []
+        self.entités : list[Entité] = []
 
     
 
@@ -92,6 +92,14 @@ class Carte:
                                     break
                                 case _:
                                     raise TypeError("Entité " + str(e) + " n'est pas un golem valide.")
+                    if en == "  " and len(e.chemin) > 0:
+                        for pos in e.chemin:
+                            if pos.x == x and pos.y == y:
+                                if e.camp == "Paysans":
+                                    en = gras(coul("++",ROUGE))
+                                if e.camp == "Golems":
+                                    en = gras(coul("••",NOIR))
+                                break
                 
                 match self.matrice[x][y].type:
                     case Tuiles.TYPE_EAU:
