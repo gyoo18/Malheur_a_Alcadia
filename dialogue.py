@@ -1,9 +1,21 @@
-
+from Jeu import Jeu, ÉtatJeu
+from Ressources import Ressources
+from TFX import * # TFX pour TerminalFX
+from Maths.Vec3 import Vec3
 
 def dialogue(texte, personnage) :
     # Melios = protag / # Guildart / # Roi / #Enfant / #Partenaire
     return "\n" + (f"{personnage} : {texte}")
 
+def titre(nombreZone):
+    if(nombreZone == 1):
+        return "Prairie"
+    elif(nombreZone == 2):
+        return "Cite"
+    elif(nombreZone == 3):
+        return "Chateau"
+    else:
+        return "Il faut retourner un numero entre 1 et 3"
 
 #Le jeu a été enlevé parce qu'on ne peut plus cloturer le jeu après un return :) ni avant, 
 # vu que ca fermerait le jeu avant l'aparition du message
