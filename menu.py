@@ -4,24 +4,30 @@ import time
 from Carte.class_carte import Carte
 from Ressources import Ressources
 from Jeu import *
-import message
+import dialogue
 
 def clearScreen():
-    os.system("cls" if os.name == 'nt' else "clear")
+    # os.system("cls" if os.name == 'nt' else "clear")
     pass
 def ingameUI(game_map : Carte, jeu : Jeu):
     """Display the in-game UI."""
     clearScreen()
 
-    res = Ressources.avoirRessources()
-    print("Mise à jour des entitées.")
-    for i in range(len(res.cartes[0].entités)):
-        res.cartes[0].entités[i]._MiseÀJourIA()
-    print("Entitées mises à jours.")
-
     # Header
     header = "=" * 50
-    header2 = "Insérez Titre".center(50)
+    header2 = ""
+    match jeu.chapitre.v:
+        case Chapitre.INTRODUCTION:
+            header2 = "Titre du jeu"
+        case Chapitre.CHAPITRE1:
+            header2 = dialogue.titre(1)
+        case Chapitre.CHAPITRE2:
+            header2 = dialogue.titre(2)
+        case Chapitre.CHAPITRE3:
+            header2 = dialogue.titre(3)
+        case _:
+            raise ValueError("Le chapitre " + str(jeu.chapitre.v) + " n'est pas un chapitre valide.")
+    header2 = header2.center(50)
     header3 = "=" * 50
 
     print(header)
@@ -33,53 +39,25 @@ def ingameUI(game_map : Carte, jeu : Jeu):
     
     # Footer
     footer = "=" * 50
-    controls = "Y va avoir le dialogue ici".center(50)
+    controls = ""
+    #print(controls)
+    if jeu.état.v == ÉtatJeu.JEU:
+        controls = "Y va avoir les contrôles ici"
+    else :
+        controls = dialogue.script(jeu.chapitre.v,jeu.état.v,jeu.choix,jeu)
+    controls = controls.center(50)
     footer_end = "=" * 50
 
     print(footer)
-    #print(controls)
-    match jeu.état.v:
-        case ÉtatJeu.INTRODUCTION:
-            message.script("Introduction",None,None)
-        case ÉtatJeu.ZONE1:
-            message.script("Prairie","Debut",jeu)
-        case ÉtatJeu.ZONE2:
-            message.script("Cite","Debut",jeu)
-        case ÉtatJeu.ZONE3:
-            message.script("Chateau","Debut",jeu)
+    print(controls)
     print(footer_end)
-    g = input("Tapez G : ").capitalize() == "G"
-    match jeu.état.v:
-        case ÉtatJeu.INTRODUCTION:
-            jeu.état.v = ÉtatJeu.ZONE1
-        case ÉtatJeu.ZONE1:
-            if g:
-                message.script("Prairie","Success",jeu)
-            else:
-                message.script("Prairie","Failure",jeu)
-            if jeu.état.v != ÉtatJeu.TERMINÉ:
-                jeu.état.v = ÉtatJeu.ZONE2
-        case ÉtatJeu.ZONE2:
-            if g:
-                message.script("Cite","Success",jeu)
-            else:
-                message.script("Cite","Failure",jeu)
-            if jeu.état.v != ÉtatJeu.TERMINÉ:
-                jeu.état.v = ÉtatJeu.ZONE3
-        case ÉtatJeu.ZONE3:
-            if g:
-                message.script("Chateau","Success",jeu)
-            else:
-                message.script("Chateau","Failure",jeu)
-            if jeu.état.v != ÉtatJeu.TERMINÉ:
-                jeu.état.v = ÉtatJeu.TERMINÉ
-
-    res = Ressources.avoirRessources()
-    print("Mise à jour des entitées.")
-    for i in range(len(res.entités)):
-        res.entités[i]._MiseÀJourIA()
-    print("Entitées mises à jours.")
-    res.cartes[0].dessiner()
+    if jeu.état.v == ÉtatJeu.CHOIX:
+        jeu.choix = input("Melios > ")
+    elif jeu.état.v == ÉtatJeu.DÉBUT:
+        jeu.état.v = ÉtatJeu.JEU
+        input("")
+    else:
+        input("")
 
 def displayUI(game_map, jeu : Jeu):
     clearScreen()
@@ -106,7 +84,7 @@ def displayUI(game_map, jeu : Jeu):
     key = input("Que voulez-vous faire? ").strip().lower()
     if key == "s":
         # ingameUI(game_map)  # Pass the game map to the in-game UI
-        jeu.état.v = ÉtatJeu.INTRODUCTION
+        jeu.état.v = ÉtatJeu.DÉBUT
     elif key == "t":
         print("W (haut), S (bas), A (gauche), D (droite)")
         time.sleep(2)
