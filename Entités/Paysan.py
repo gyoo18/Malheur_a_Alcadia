@@ -49,6 +49,7 @@ class Gosse(Paysan):
         vieMax=75
         attaque_normale_dégats=Entité.Random_Stats(8,11)
         dégats_libre=Entité.Random_Stats(5,11)
+        nom=Entité.nom_aléatoire(["Lhucra","Karck","Gryui","Vhynch"])
 
     def _exécuterAttaque(self):
         attaque = Attaque(self)
@@ -64,6 +65,7 @@ class Mineur(Paysan):
         vieMax=75
         attaque_normale_dégats=Entité.Random_Stats(14,21)
         dégats_libre=Entité.Random_Stats(10,16)
+        nom=Entité.nom_aléatoire([])
 
     def _exécuterAttaque(self):
         attaque = Attaque(self)
@@ -81,7 +83,7 @@ class Prêtre(Paysan):
         vieMax=75
         attaque_normale_dégats=Entité.Random_Stats(12,17)
         dégats_libre=Entité.Random_Stats(12,15)
-
+        nom=Entité.nom_aléatoire([])
     def _modeRecherche(self):
         ennemiPlusPrès = None
         alliéPlusPrès = None
@@ -151,6 +153,7 @@ class Chevalier(Paysan):
         vieMax=125
         attaque_normale_dégats=Entité.Random_Stats(19,26)
         dégats_libre=Entité.Random_Stats(30,36)
+        nom=Entité.nom_aléatoire(["Sir Raudryguish","Sir Harchurt","Sir Morline","Sir Lrimqu"])
 
     def _exécuterAttaque(self):
         attaque = Attaque(self)
@@ -192,7 +195,7 @@ class Arbaletier(Paysan):
         vieMax=int(50)
         attaque_normale_dégats=Entité.Random_Stats(30,33)
         dégats_libre=Entité.Random_Stats(5,11)
-
+        nom=Entité.nom_aléatoire(["Rambo",])
     def _modeRecherche(self):
         ennemiPlusPrès = None
         alliéPlusPrès = None
