@@ -47,7 +47,7 @@ class Jeu:
         if self.état.v == ÉtatJeu.MENU:
             menu.displayUI(res.cartes[0],self)
         elif self.état.v == ÉtatJeu.MENU_CONTEXTUEL:
-            pass # TODO Implémenter les menus contextuels
+            pass # TODO #11 Implémenter les menus contextuels
         else :
             menu.ingameUI(res.cartes[0],self)
 

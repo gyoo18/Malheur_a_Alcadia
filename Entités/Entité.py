@@ -6,6 +6,7 @@ from Maths.Vec2 import *
 from InclusionsCirculaires.Entité_Attaque import *
 from InclusionsCirculaires.Entité_Carte import *
 from copy import deepcopy
+from TFX import *
 
 # État de l'IA
 class ÉtatIA:
