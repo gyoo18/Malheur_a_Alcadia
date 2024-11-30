@@ -7,7 +7,7 @@ def dialogue(texte, personnage) :
     # Melios = protag / # Guildart / # Roi / #Enfant / #Partenaire
     print(f"{personnage} : {texte}")
 
-def script(Zone : str, Timing : str, jeu : Jeu) :
+def script(Zone, Timing, jeu : Jeu) :
     if(Zone == "Introduction") :
         print("Vous êtes Melios, un alchimiste atteint de Glaucoma, un type de malvoyance, chargé de protéger le roi.")
         print("Très tôt ce matin, l'alarme d'invasion avait retentie dans l'enceinte de la paisible ville d'Alcadia.")
@@ -29,12 +29,12 @@ def script(Zone : str, Timing : str, jeu : Jeu) :
             jeu.état.v = ÉtatJeu.TERMINÉ 
             return
     if(Zone == "Cite"):
-        if(Timing == "Introduction"):
+        if(Timing == "Debut"):
             #res = Ressources.avoirRessources()
             print("________ Cité ________")
             print("Les monstres se sont infiltré dans nos remparts.")
             dialogue("Soldat ! Défendez la cité.", "Guildart")
-            dialogue("Votre expérience de combat vous permet d'utilise un nouveau golem !")
+            dialogue("Votre expérience de combat vous permet d'utilise un nouveau golem !","Guildart")
             dialogue("Le sol a une composition différente. Je pense que ça ferait un résultat intéréssant.", "Melios")
         elif(Timing == "Success"):
             print("Vous avez réussi ! Néanmoins le corps d'un ami gis au sol. Guildart s'est sacrifié pour protéger sa ville.")
@@ -59,7 +59,7 @@ def script(Zone : str, Timing : str, jeu : Jeu) :
                 return
         return
     if(Zone == "Chateau"):
-        if(Timing == "Introduction"):
+        if(Timing == "Debut"):
             print("________ Château, Salle du trône ________")
             print("Après l'annonce de la mort de Guildart. Vous êtes désigné pour devenir le nouveau chef du bataillon ...")
             print("Le roi compte sur vous pour le protéger. Il n'y a plus que vous.")
