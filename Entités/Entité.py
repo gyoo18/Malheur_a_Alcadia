@@ -63,8 +63,8 @@ class Entité:
     campsEnnemis : list[str] = []   # Liste des camps ennemis à cette entité.
 
     def __init__(self):
-        self.dégats_défense = 0.5*self.dégats_libre
         self.dégats_libre = 1.0
+        self.dégats_défense = 0.5*self.dégats_libre
         self.dégats_charger = 1.5*self.dégats_libre
         self.vieMax = 100
         self.vie = 100.0
