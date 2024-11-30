@@ -6,9 +6,16 @@ from Ressources import Ressources
 
 def clearScreen():
     os.system("cls" if os.name == 'nt' else "clear")
+    pass
 def ingameUI(game_map : Carte):
     """Display the in-game UI."""
     clearScreen()
+
+    res = Ressources.avoirRessources()
+    print("Mise à jour des entitées.")
+    for i in range(len(res.cartes[0].entités)):
+        res.cartes[0].entités[i]._MiseÀJourIA()
+    print("Entitées mises à jours.")
 
     # Header
     header = "=" * 50
@@ -30,13 +37,6 @@ def ingameUI(game_map : Carte):
     print(footer)
     print(controls)
     print(footer_end)
-
-    res = Ressources.avoirRessources()
-    print("Mise à jour des entitées.")
-    for i in range(len(res.entités)):
-        res.entités[i]._MiseÀJourIA()
-    print("Entitées mises à jours.")
-    res.cartes[0].dessiner()
 
 def displayUI(game_map):
     clearScreen()

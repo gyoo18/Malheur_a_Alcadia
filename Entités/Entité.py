@@ -16,10 +16,8 @@ class ÉtatIA:
     IMMOBILE = "immobile"   # Est immobile en attente d'instructions
     GUÉRISON = "guérison" # Est en processus de guérir un allié
 
-    v : str
-
     def __init__(self, valeur = RECHERCHE):
-        self.v = valeur
+        self.v : str = valeur
 
 # État de combat
 class ÉtatCombat:
@@ -27,57 +25,51 @@ class ÉtatCombat:
     DÉFENSE = "défense" # Est en mode défense, réduit les dégats des attaques, mais ne peut pas attaquer
     CHARGER = "charger" # Est en train de charger une attaque plus puissante, mais est vulnérable aux attaques
 
-    v : str
-
     def __init__(self, valeur = LIBRE):
-        self.v = valeur
+        self.v : str = valeur
 
 # Classe abstraite de base d'une entitée
 class Entité:
-    estVivant : bool = True
-    vieMax : int    # Points de vies maximum
-    vie : float     # Points de vies restants
-
-    état : ÉtatIA = ÉtatIA()    # État de l'IA
-    étatCombat : ÉtatCombat = ÉtatCombat()  # État de combat
-    cible : Self = None    # Entitée ennemie avec laquelle on est en combat ou entité allié que nous guérissons
-    estAttaqué : bool = False
-    pos : Vec2 = Vec2(0)    # Position actuelle
-    destination : Vec2 = Vec2(0)    # Destination vers laquelle on se dirige
-    direction : Vec2 = Vec2(0)      # Direction vers laquelle l'entité fait face
-
-    TEMP_CHARGEMENT : int   # Temps nécessaire pour charger une attaque puissante
-    chargement : int = 0    # Temps passé à charger l'attque puissante jusqu'à présent
-    attaque_chargée : float # Dégats associés à l'attaque chargée
-
-    dégats_défense : float  # Pourcentage de réduction des dégats en mode défense
-    dégats_libre : float    # Pourcentage de réduction des dégats en mode libre
-    dégats_charger : float  # Pourcentage de réduction des dégats en mode charger
-
-    attaque_normale_dégats : int
-
-    chemin : list[Vec2] = []  # Liste des tuiles sur le chemin précalculé
-
-    carte : Carte = None  # Référence à la carte jouée en ce moment
-
-    camp : str = ""                 # Dans quel camp se trouve cette entité?
-    campsEnnemis : list[str] = []   # Liste des camps ennemis à cette entité.
 
     def __init__(self):
-        self.dégats_libre = 1.0
-        self.dégats_défense = 0.5*self.dégats_libre
-        self.dégats_charger = 1.5*self.dégats_libre
-        self.vieMax = 100
-        self.vie = 100.0
-        self.TEMP_CHARGEMENT = 3
-        self.attaque_chargée = 2.0
-        self.attaque_normale_dégats = 1
+        # Charactérisitques décrivant l'entité
+        self.vieMax : int = 100         # Points de vies maximum
+        self.vie : float = self.vieMax  # Points de vies restants
+
+        self.TEMP_CHARGEMENT : int = 3      # Temps nécessaire pour charger une attaque puissante
+        self.attaque_chargée : float = 30.0 # Dégats associés à l'attaque chargée
+
+        self.dégats_défense : float = 30.0  # Pourcentage de réduction des dégats en mode défense
+        self.dégats_libre : float = 10.0    # Pourcentage de réduction des dégats en mode libre
+        self.dégats_charger : float = 0.0   # Pourcentage de réduction des dégats en mode charger  
+
+        self.attaque_normale_dégats : int = 10.0
+
+        self.camp : str = ""                 # Dans quel camp se trouve cette entité?
+        self.campsEnnemis : list[str] = []   # Liste des camps ennemis à cette entité.
+
+        self.nom : str = "Entité"
+
+        # Variables de fonctionnement interne
+        self.estVivant : bool = True
+
+        self.état : ÉtatIA = ÉtatIA()    # État de l'IA
+        self.étatCombat : ÉtatCombat = ÉtatCombat()  # État de combat
+        self.cible : Self = None    # Entitée ennemie avec laquelle on est en combat ou entité allié que nous guérissons
+        self.estAttaqué : bool = False
+        self.chargement : int = 0    # Temps passé à charger l'attque puissante jusqu'à présent
+
+        self.pos : Vec2 = Vec2(0)   # Position actuelle
+        self.destination : Vec2 = Vec2(0)  # Destination vers laquelle on se dirige
+        self.direction : Vec2 = Vec2(0)    # Direction vers laquelle l'entité fait face
+
+        self.chemin : list[Vec2] = []  # Liste des tuiles sur le chemin précalculé
+        self.carte : Carte = None  # Référence à la carte jouée en ce moment
+
 
     def Random_Stats(x,y):
         Stats=int(random.choice(range(x,y)))
         return Stats
-    
-        pass
 
     def MiseÀJour(self):
         self._MiseÀJourIA()
@@ -107,7 +99,7 @@ class Entité:
         #                           |                               |                           |
         #
         # L'algorithme fonctionne sur une base de fonctions, pour faciliter la spécialisation dans les classes enfants
-        print("Mise à jour de l'IA de " + str(self) +", état : " + self.état.v)
+        print("Mise à jour de l'IA de " + self.nom + ", état : " + self.état.v)
         match self.état.v:
             case ÉtatIA.RECHERCHE:
                 print("Mode recherche activé.")
@@ -163,7 +155,7 @@ class Entité:
                 distanceMinimale = Vec2.distance(ennemi.pos,self.pos)
         # Si on a trouvé un ennemi le plus près
         if ennemiPlusPrès != None:
-            print("Ennemi trouvé : " + str(ennemiPlusPrès))
+            print("Ennemi trouvé : " + ennemiPlusPrès.nom + " à " + str(ennemiPlusPrès.pos.x) + ":" + str(ennemiPlusPrès.pos.y))
             # Se mettre en mode déplacement vers l'ennemi
             self.état.v = ÉtatIA.DÉPLACEMENT
             self.destination = ennemiPlusPrès.pos
@@ -175,6 +167,15 @@ class Entité:
         Calcule un chemin vers la cible et s'y déplace. Vire vers le mode combat s'il est attaqué en chemin ou trouve la cible au bout du chemin
         et vire vers le mode recherche si on ne trouve pas la cible au bout du chemin.
         """
+        # Si un ennemi se trouve sur une case adjascente, virer en mode combat
+        for ennemi in self.carte.entités:
+            # Chercher un ennemi à une distance de 1 ou moins de nous (sur une case adjascente)
+            if Vec2.distance(ennemi.pos, self.pos) <= 1 and ennemi.camp in self.campsEnnemis:
+                print("Un ennemi est à proximité! Mode combat activé.")
+                self.chemin = []
+                self.état.v = ÉtatIA.COMBAT
+                self.cible = ennemi
+                return
 
         faire_pathfinding = True
         # Si on n'a pas atteint le bout du chemin
@@ -192,11 +193,12 @@ class Entité:
                     # Chercher un ennemi à une distance de 1 ou moins de nous (sur une case adjascente)
                     if Vec2.distance(ennemi.pos, self.pos) <= 1 and ennemi.camp in self.campsEnnemis:
                         print("Un ennemi est à proximité! Mode combat activé.")
+                        self.chemin = []
                         self.état.v = ÉtatIA.COMBAT
                         self.cible = ennemi
-                        break
+                        return
                 # Si on n'a pas trouvé d'ennemi, mais qu'on est arrivé au bout du chemin,
-                if self.cible == None and self.pos == self.destination and self.état.v == ÉtatIA.DÉPLACEMENT:
+                if self.pos == self.destination:
                     print("Arrivé à destination. Aucun ennemi à l'horison, Mode recherche activé.")
                     # Chercher un autre ennemi si on est dans la boucle normale,
                     # Rester immobile si on se déplace à cause d'une commande
@@ -245,7 +247,7 @@ class Entité:
         """
         pass
 
-    def _AttaquerCible(self) -> None:
+    def _AttaquerCible(self):
         """_AttaquerEnnemi Attaque la cible enregistré dans Entité.cible
 
         Appelle self.cible.Attaquer(). Appelé durant le combat.
@@ -265,19 +267,22 @@ class Entité:
         Args:
             attaque (Attaque): Un objet Attaque qui contient les informations nécessaires pour subir une attaque.
         """
-        print(str(self) + " reçoit une attaque de " + str(attaque.provenance))
+        print(self.nom + " reçoit une attaque de " + attaque.provenance.nom)
+        print(self.nom + " a " + str(self.vie) + " PV, l'attaque fait " + str(attaque.dégats) + " PD")
         # Virer au mode combat, si on n'y est pas déjà
         if not self.estAttaqué:
-            print(str(self) + " passe en mode combat.")
+            print(self.nom + " passe en mode combat.")
             self.estAttaqué = True
             self.cible = attaque.provenance
-        
+    
         attaque = self._Défense(attaque)    # Évaluer la défense
         self.vie -= attaque.dégats          # Retirer les points de vies
         # Évaluer si on est morts
         if self.vie <= 0.0:
+            print(self.nom + " est mort.")
             self.vie = 0.0
             self.estVivant = False
+            self.carte.entités.remove(self)
 
     def _Défense(self, attaque : Attaque):
         """ Réduit les points d'attaques en fonction des points de défenses.
@@ -298,13 +303,18 @@ class Entité:
         """
         match self.étatCombat.v:
             case ÉtatCombat.DÉFENSE:
+                print(self.nom + " bloque " + str(self.dégats_défense) + f"% des dégats.")
                 attaque.dégats -= attaque.dégats*(self.dégats_défense/100)
             case ÉtatCombat.LIBRE:
-                attaque.dégats *= attaque.dégats*(self.dégats_libre/100)
+                print(self.nom + " bloque " + str(self.dégats_libre) + f"% des dégats.")
+                attaque.dégats -= attaque.dégats*(self.dégats_libre/100)
             case ÉtatCombat.CHARGER:
-                attaque.dégats *= attaque.dégats*(self.dégats_charger/100)
+                print(self.nom + " bloque " + str(self.dégats_charger) + f"% des dégats.")
+                attaque.dégats -= attaque.dégats*(self.dégats_charger/100)
             case _:
                 raise ValueError("Éntité.Défense() L'état de combat " + self.étatCombat.v + " n'est pas un état valide.")
+        
+        print("L'attaque fait " + str(attaque.dégats) + " PD")
 
         return attaque
 

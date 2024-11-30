@@ -4,11 +4,9 @@ class Tuiles:
     TYPE_EAU ="~"
     TYPE_FEUX ="*"
     TYPE_MUR ="#"
-    
-    
-    type : str
+
     def __init__(self,type):
-        self.type = type
+        self.type : str = type
 
     
 

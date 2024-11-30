@@ -7,7 +7,7 @@ def dialogue(texte, personnage) :
     # Melios = protag / # Guildart / # Roi / #Enfant / #Partenaire
     print(f"{personnage} : {texte}")
 
-def script(Zone, Timing, jeu : Jeu) :
+def script(Zone : str, Timing : str, jeu : Jeu) :
     if(Zone == "Introduction") :
         print("Vous êtes Melios, un alchimiste atteint de Glaucoma, un type de malvoyance, chargé de protéger le roi.")
         print("Très tôt ce matin, l'alarme d'invasion avait retentie dans l'enceinte de la paisible ville d'Alcadia.")

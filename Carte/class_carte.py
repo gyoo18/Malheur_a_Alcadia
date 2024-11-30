@@ -14,10 +14,10 @@ class Carte:
     entités : list[Entité]
     
     def __init__(self,ligne : int ,colonne :int):
-        self.ligne = ligne
-        self.colonne = colonne
-        self.matrice = []
-        self.entités = []
+        self.ligne : int = ligne
+        self.colonne : int = colonne
+        self.matrice : list[list[Tuiles]] = []
+        self.entités : list[Entité] = []
 
     
 

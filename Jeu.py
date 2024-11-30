@@ -11,19 +11,15 @@ class ÉtatJeu:
     ZONE3 = "zone3"
     TERMINÉ = "terminé"
 
-    v : str
-
     def __init__(self, valeur = INTRODUCTION):
-        self.v = valeur
+        self.v : str = valeur
 
 class Jeu:
-    état : ÉtatJeu
 
     def __init__(self):
-        self.état = ÉtatJeu(ÉtatJeu.ZONE1)
+        self.état : ÉtatJeu = ÉtatJeu(ÉtatJeu.ZONE1)
 
     def miseÀJour(self):
         res = Ressources.avoirRessources()
         menu.displayUI(res.cartes[0])
         # interface.miseÀJour(self)
-        
