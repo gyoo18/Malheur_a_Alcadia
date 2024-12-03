@@ -1,5 +1,4 @@
 from typing_extensions import Self
-import interface
 from Ressources import Ressources
 import os
 

@@ -1,4 +1,3 @@
-import interface
 from Ressources import Ressources
 from Carte.class_carte import Carte
 from Entités.Paysan import *

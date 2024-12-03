@@ -11,15 +11,15 @@ class Vec3:
             self.x = x
             self.y = y
             self.z = z
-        elif (type(x) == int or type(x) ==float) and type(y) == None and type(z) == None:
+        elif (type(x) == int or type(x) ==float) and y == None and z == None:
             self.x = x
             self.y = x
             self.z = x
-        elif type(x) == Vec3 and type(y) == None and type(z) == None:
+        elif type(x) == Vec3 and y == None and z == None:
             self.x = x.x
             self.y = x.y
             self.z = x.z
-        elif type(x) == None and type(y) == None and type(z) == None:
+        elif type(x) == None and y == None and z == None:
             self.x = 0
             self.y = 0
             self.z = 0
