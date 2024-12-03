@@ -231,3 +231,12 @@ class GolemFeu(Golem):
         attaque.élément = Élément.FEU
         self.cible.Attaquer(attaque)
         self.chargement = 0
+
+class GolemDoré(Golem):
+
+    def __init__(self):
+        super().__init__()
+        vieMax=150
+        attaque_normale_dégats=Entité.Random_Stats(25,31)
+        dégats_libre=Entité.Random_Stats(36,42)
+        nom=Entité.nom_aléatoire(["Goldy","Flash","Shiny","Conqi","King"])
