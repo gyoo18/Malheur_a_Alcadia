@@ -10,6 +10,7 @@ from Maths.Matrice import Matrice
 from Maths.Vec2 import Vec2
 import glm
 from Dessin.Image import Image
+import imageio.v3 as ImageIO
 
 class Peintre:
     hauteure : int
@@ -26,13 +27,15 @@ class Peintre:
         # self.maillage = Ressources.avoirRessources().chargerObj("Dessin/Ressources/Maillages/cube.obj")
         # self.trans = Matrice().positionner(Vec3(0,0,3.0))
         # self.rot = Matrice()
-        self.image = Image()
+        self.image = Image("Ressources/Textures/Sans nom2.png")
         self.initialisé = False
     
     def initialiser(self,largeure : int, hauteure : int):
         print("Couleur arrière-plan : ", self.couleur_arrière_plan)
         glClearColor(self.couleur_arrière_plan[0],self.couleur_arrière_plan[1],self.couleur_arrière_plan[2],1.0)
         glEnable(GL_DEPTH_TEST)
+        glEnable(GL_BLEND)
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
         # self.nuanceur.construire()
         # self.maillage.construire()
@@ -41,7 +44,6 @@ class Peintre:
         self.hauteure = hauteure
 
         # glPointSize(4)
-
         glViewport(0,0,largeure, hauteure)
         self.initialisé = True
         print("Peintre Initialisé")
@@ -80,6 +82,9 @@ class Peintre:
             glEnableVertexAttribArray(i)
 
         self.image.nuanceur.chargerUniformes(self.image.pos, self.image.rot, self.image.taille*self.image.échelle, Vec2(self.largeure,self.hauteure))
+
+        glActiveTexture(GL_TEXTURE0)
+        glBindTexture(GL_TEXTURE_2D,self.image.image.ID)
         
         match self.image.maillage.mode_dessin:
             case Maillage.MODE_DESSIN_INDEXES:

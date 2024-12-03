@@ -29,6 +29,8 @@ class NuaImage(Nuanceur):
         self.TAILLE = glGetUniformLocation(self.programme,"taille_fenetre")
         self.ÉCHELLE = glGetUniformLocation(self.programme,"ech")
 
+        glUniform1i(glGetUniformLocation(self.programme,"tex"),0)
+
     def chargerUniformes(self, position : Vec2, rot : float, échelle : Vec2, taille_fenetre : Vec2):
         glUniform2f(self.POSITION,float32(position.x),float32(position.y))
         glUniform1f(self.ROTATION,float32(rot))
