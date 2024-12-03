@@ -19,17 +19,13 @@ class NuaBase(Nuanceur):
         glBindAttribLocation(self.programme,1,"NORM")
         glBindAttribLocation(self.programme,2,"UV")
 
-        self.trouverUniformes()
-
-        glUseProgram(0)
-    
-    def trouverUniformes(self):
         self.MATRICE = glGetUniformLocation(self.programme,"matrice")
         self.COLOR = glGetUniformLocation(self.programme,"color")
 
+        glUseProgram(0)
 
     def chargerMatrice(self, matrice : Matrice):
         glUniformMatrix4fv(self.MATRICE,1,GL_FALSE,matrice.mat)
 
     def chargerColor(self, color):
-        glUniform1f(self.COLOR,1,GL_FALSE,glm.float32(color))
+        glUniform1f(self.COLOR,glm.float32(color))

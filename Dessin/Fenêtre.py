@@ -57,6 +57,6 @@ class Fenetre:
         glutSwapBuffers()
 
         if self.fpsPostier >= 5000:
-            print("FPS :", int((self.fpsPostier)/(time.time()-self.fpsChrono)),"Time :",int((time.time()-self.fpsChrono)*100000)/100,"ms")
+            print("FPS :", int((self.fpsPostier)/(time.time()-self.fpsChrono)),"Time :",int((time.time()-self.fpsChrono)*100000/5000)/100,"ms")
             self.fpsPostier = 0
             self.fpsChrono = time.time()

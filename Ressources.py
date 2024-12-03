@@ -87,5 +87,7 @@ class Ressources:
         if len(uv_float) > 0:
             attributs.append(uv_float)
             attibuts_types.append(2)
-
-        return Maillage(attributs, attibuts_types, indexes)
+        
+        m = Maillage()
+        m.créer_indexes(attributs,attibuts_types,indexes)
+        return m

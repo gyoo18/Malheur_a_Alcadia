@@ -1,4 +1,4 @@
-#version 330 core
+#version 460 core
 precision mediump float;
 
 in vec4 col;
