@@ -1,18 +1,13 @@
 from OpenGL.GL import *
 from OpenGL.GLU import *
-import time
 
-from Dessin.Nuanceurs.NuaBase import NuaBase
-from Ressources import Ressources
-from Dessin.Maillage import Maillage
-import math
-from Maths.Matrice import Matrice
-from Maths.Vec2 import Vec2
-import glm
 from Dessin.Image import Image
-import imageio.v3 as ImageIO
+from Dessin.Maillage import Maillage
+from Maths.Vec2 import Vec2
 
-class Peintre:
+from tkinter_gl import GLCanvas
+
+class Peintre(GLCanvas):
     hauteure : int
     largeure : int
     couleur_arrière_plan : tuple[float]
@@ -20,7 +15,8 @@ class Peintre:
     image :Image
     
     initialisé : bool
-    def __init__(self):
+    def __init__(self, parent):
+        super().__init__(parent)
         print("Peintre créé.")
         self.couleur_arrière_plan = (0.2,0.5,0.8)
         # self.nuanceur = NuaBase("Dessin/Ressources/Nuanceurs/NuaBase")
@@ -57,7 +53,14 @@ class Peintre:
         self.largeure = largeure
         self.hauteure = hauteure
 
-    def dessiner(self):
+    def draw(self):
+        if not self.initialisé:
+            self.initialiser(self.winfo_width(),self.winfo_height())
+        if self.winfo_width != self.largeure or self.winfo_height != self.hauteure:
+            self.surModificationFenetre(self.winfo_width(), self.winfo_height())
+
+        self.make_current()
+
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
         
         # self.nuanceur.démarrer()
@@ -99,3 +102,5 @@ class Peintre:
         error = glGetError()
         if error != GL_NO_ERROR:
             print("[GLError] :",gluErrorString(error))
+
+        self.swap_buffers()
