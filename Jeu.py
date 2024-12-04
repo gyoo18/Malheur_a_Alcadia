@@ -1,12 +1,15 @@
 from typing_extensions import Self
-import interface
 from Ressources import Ressources
+from Carte.class_carte import Carte
 import os
+from Entités.Entité import Entité
+from Entités.Golem import Golem
 
 class ÉtatJeu:
     MENU = "menu"
     MENU_CONTEXTUEL = "menu contextuel"
     JEU = "jeu"
+    FIN_TOUR = "fin de tour"
     DÉBUT = "début"
     CHOIX = "choix"
     SUCCÈS = "succès"
@@ -26,30 +29,51 @@ class Chapitre:
     def __init__(self, valeur = INTRODUCTION):
         self.v : str = valeur
 
+class MenuContextuel:
+    AIDE = "aide"   # Menu d'aide aux commandes
+    COMBAT = "combat"   # Menu d'état du combat
+    INFO = "info"   # Menu d'état des entités
+    SELECT = "select"   # Menu de commande des golems
+
+    def __init__(self, valeur = AIDE):
+        from Entités.Entité import Entité
+        self.v = valeur
+        self.menu_entité_entité : Entité = None
+        self.menu_historique : list[str] = []
+        self.menu_select_entité : Golem = None
+
 class Jeu:
+    jeu : Self = None
 
     def __init__(self):
         self.état : ÉtatJeu = ÉtatJeu()    # Indique l'état du jeu
         self.chapitre : Chapitre = Chapitre()   # Indique le chapitre scénaristique actuel et la zone.
         self.choix : str = ""       # Décrit le choix que le joueur a fait à la fin du niveau s'il y a lieu
+        self.menu : MenuContextuel = MenuContextuel() # Décrit le menu contextuel ouvert ou précédemment ouvert.
+        self.carte : Carte = None
+    
+    def avoirJeu():
+        if Jeu.jeu == None:
+            Jeu.jeu = Jeu()
+        return Jeu.jeu
 
     def miseÀJour(self):
         import menu
         res = Ressources.avoirRessources()
         os.system("cls" if os.name == 'nt' else "clear")
-        if self.état.v == ÉtatJeu.JEU:
-            res = Ressources.avoirRessources()
+        if self.état.v == ÉtatJeu.FIN_TOUR:
             print("Mise à jour des entitées.")
-            for i in range(len(res.cartes[0].entités)):
-                res.cartes[0].entités[i]._MiseÀJourIA()
+            for i in range(len(self.carte.entités)):
+                self.carte.entités[i]._MiseÀJourIA()
             print("Entitées mises à jours.")
+            self.état.v = ÉtatJeu.JEU
 
         if self.état.v == ÉtatJeu.MENU:
-            menu.displayUI(res.cartes[0],self)
+            menu.displayUI()
         elif self.état.v == ÉtatJeu.MENU_CONTEXTUEL:
-            pass # TODO #11 Implémenter les menus contextuels
+            menu.menu_contextuel()
         else :
-            menu.ingameUI(res.cartes[0],self)
+            menu.ingameUI()
 
         if self.état.v == ÉtatJeu.JEU:
             paysans = False

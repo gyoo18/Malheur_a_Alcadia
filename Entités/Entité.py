@@ -67,6 +67,13 @@ class Entité:
         self.chemin : list[Vec2] = []  # Liste des tuiles sur le chemin précalculé
         self.carte : Carte = None  # Référence à la carte jouée en ce moment
 
+    def avoirInfoStr(self):
+        # TODO implémenter avoirInfoStr() dur toutes les entitées
+        return (gras(soul(self.nom.capitalize())) + '\n' +
+                gras("PV")+"      : " + str(int(self.vie)) + '\n' +
+                gras("PVMax")+"   : " + str(int(self.vieMax)) + '\n' +
+                gras("Attaque")+" : " + str(int(self.attaque_normale_dégats)) + '\n' +
+                gras("Défense")+" : " + str(int(self.dégats_libre)) + '\n')
 
     def Random_Stats(x,y):
         Stats=int(random.choice(range(x,y)))

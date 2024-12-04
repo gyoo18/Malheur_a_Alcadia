@@ -1,4 +1,3 @@
-import interface
 from Ressources import Ressources
 from Carte.class_carte import Carte
 from Entités.Paysan import *
@@ -25,8 +24,9 @@ def Constructeur():
     res.entités.append(golem)
 
     global jeu
-    jeu = Jeu()
+    jeu = Jeu.avoirJeu()
     jeu.état.v = ÉtatJeu.MENU
+    jeu.carte = carte
     pass
 
 def Boucle():

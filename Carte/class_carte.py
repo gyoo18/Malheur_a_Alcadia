@@ -7,15 +7,15 @@ from TFX import *
 from InclusionsCirculaires.Entité_Carte import *
 
 class Carte:
-    ligne : int
-    colonne : int
+    lignes : int
+    colonnes : int
     matrice : list[list[Tuiles]]
 
     entités : list[Entité]
     
     def __init__(self,ligne : int ,colonne :int):
-        self.ligne : int = ligne
-        self.colonne : int = colonne
+        self.lignes : int = ligne
+        self.colonnes : int = colonne
         self.matrice : list[list[Tuiles]] = []
         self.entités : list[Entité] = []
 
@@ -23,9 +23,9 @@ class Carte:
 
     def creation(self):
         self.matrice = []
-        for ligne in range(self.ligne):
+        for ligne in range(self.lignes):
             ligne_donnee = []
-            for colonne in range(self.colonne):
+            for colonne in range(self.colonnes):
                 ligne_donnee.append(Tuiles(Tuiles.TYPE_TERRE))
             self.matrice.append(ligne_donnee)    
             
@@ -42,16 +42,16 @@ class Carte:
 
     def position(self):
         dict_position = {}
-        for ligne in range(self.ligne):
-            for colonne in range(self.colonne):
+        for ligne in range(self.lignes):
+            for colonne in range(self.colonnes):
                 dict_position[ligne,colonne] = "0"
         return dict_position
     
     def dessiner(self):
         dessin = ""
-        for y in range(self.ligne):
+        for y in range(self.lignes):
             ligne = ""
-            for x in range(self.colonne):
+            for x in range(self.colonnes):
                 
                 en = "  "
                 for e in self.entités:
