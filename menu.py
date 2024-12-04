@@ -34,7 +34,7 @@ def ingameUI():
     header2 = ""
     match jeu.chapitre.v:
         case Chapitre.INTRODUCTION:
-            header2 = "Titre du jeu"
+            header2 = gras("Malheur à Alcadia!")
         case Chapitre.CHAPITRE1:
             header2 = dialogue.titre(1)
         case Chapitre.CHAPITRE2:
