@@ -68,7 +68,7 @@ class Entité:
         self.carte : Carte = None  # Référence à la carte jouée en ce moment
 
     def avoirInfoStr(self):
-        # TODO implémenter avoirInfoStr() dur toutes les entitées
+        # TODO #16 implémenter avoirInfoStr() dur toutes les entitées
         return (gras(soul(self.nom.capitalize())) + '\n' +
                 gras("PV")+"      : " + str(int(self.vie)) + '\n' +
                 gras("PVMax")+"   : " + str(int(self.vieMax)) + '\n' +

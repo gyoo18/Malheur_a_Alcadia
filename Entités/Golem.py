@@ -221,7 +221,7 @@ class Golem(Entité):
         """_commandeAttaquerCharge Exécute la commande ATTAQUER_CHARGE
         """
         self.état.v = ÉtatIA.COMBAT
-        self.étatCombat.v = ÉtatCombat.LIBRE # TODO implémenter la commande d'attaque chargée des golems
+        self.étatCombat.v = ÉtatCombat.LIBRE # TODO #17 implémenter la commande d'attaque chargée des golems
     
     def _modeCombat(self):
         """_modeCombat Exécute le combat du Golem
