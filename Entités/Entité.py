@@ -80,7 +80,11 @@ class Entité:
     def nom_aléatoire(liste):
         nom=random.choice(liste)
         return nom
-        
+    
+    noms = ["Jean", "Salom", "Guy", "Pascal", "Eva"]
+
+    # Appel de la fonction avec la liste de noms
+    nom_choisi = nom_aléatoire(noms)
 
     def MiseÀJour(self):
         self._MiseÀJourIA()
