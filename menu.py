@@ -181,8 +181,22 @@ def menu_aide():
     print("="*50)
     print(
         "\n"+
-        "Tapez « P » ou « Précédent » pour revenir au menu précédent.\n"
-        "Tapez « Q » ou « Quitter » pour quitter.\n"+
+        "Tapez « "+gras("C")+" » ou « "+gras("Combat")+" » pour voir les informations relatives au unitées et au combat\n" +
+        "Tapez « "+gras("S")+" » ou « "+gras("Select")+" » suivit de "+gras("<NomGolem>")+" pour donner un ordre à un Golem\n"+
+        "\n"+
+        gras(soul("En mode combat :\n"))+
+        "\n"+
+        "  Tapez « "+gras("DP")+" » ou « "+gras("Déplacement")+" » suivit de "+gras("<X>")+" et "+gras("<Y>")+" pour déplacer le golem vers une destination\n"+
+        "  Tapez « "+gras("A")+" »  ou « "+gras("Attaque")+" » suivit de "+gras("<NomCible>")+" pour déplacer le golem vers une cible et l'attaquer\n"+
+        "  Tapez « "+gras("AS")+" » ou « "+gras("Attaque-Spéciale")+" » pour activer l'attaque spéciale du golem\n"+
+        "  Tapez « "+gras("DF")+" » ou « "+gras("Défense")+" » pour activer le mode défense du golem\n"+
+        "  Tapez « "+gras("L")+" »  ou « "+gras("Libérer")+" » pour libérer le golem des ordres qui lui ont été donnés\n"+
+        "  Tapez « "+gras("CA")+" » ou « "+gras("Charger-Attaque")+" » pour commencer à charger pour une attaque plus puissante\n"+
+        "  Tapez « "+gras("AC")+" » ou « "+gras("Attaquer-Charge")+" », suivit de "+gras("<NomCible>")+" pour frapper un ennemi avec une attaque plus puissante\n"+
+        "\n" +
+        "Tapez « "+gras("?")+" » ou « "+gras("Aide")+" » pour afficher cette liste à tout moment\n"+
+        "Tapez « "+gras("P")+" » ou « "+gras("Précédent")+" » pour revenir au menu précédent.\n"
+        "Tapez « "+gras("Q")+" » ou « "+gras("Quitter")+" » pour quitter.\n"+
         "\n"
         )
     print("="*50)
