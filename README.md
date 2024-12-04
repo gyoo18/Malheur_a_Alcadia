@@ -45,3 +45,16 @@ Contient :
 Contient : 
  - `class_carte.py` Classe décrivant une carte. Une carte décrit l'entièreté du niveau, incluant les entitées et les moments scriptés.
  - `Tuile.py` Classe décrivant une tuile sur une carte. Peut être de différents types et fait apparaître des golems.
+
+## Contributeurs :
+Merci à :
+ - gyoo18 https://github.com/gyoo18
+ - Camicey https://github.com/Camicey
+ - Dreamod4 https://github.com/Dreamod4
+ - Frankydud3 https://github.com/Frankydud3
+ - mario0393 https://github.com/mario0393
+ - MoCa55 https://github.com/MoCa55
+ - MrCarnaval https://github.com/MrCarnaval
+ - ris1294 https://github.com/ris1294
+ - Stang-Boy https://github.com/Stang-Boy
+ - Stephanemba --- https://github.com/Stephanemba
