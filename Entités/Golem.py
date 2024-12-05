@@ -277,9 +277,9 @@ class GolemTerre(Golem):
         super().__init__()
         self.PVMax=150
         self.PV = self.PVMax
-        self.attaque_normale_dégats= Entité.Random_Stats(10,16)
-        self.dégats_libre= Entité.Random_Stats(39,46)
-        self.nom=Golem.nom_aléatoire(["Gorb","Bob","Pierre","Fero","Crys"])
+        self.attaque_normale_dégats= self.Random_Stats(10,16)
+        self.dégats_libre= self.Random_Stats(39,46)
+        self.nom=self.nom_aléatoire(["Gorb","Bob","Pierre","Fero","Crys"])
         self.attaque_sol_dégats : float = 1.0
         self.attaque_sol_rayon : float = 2.0
         
@@ -319,9 +319,9 @@ class GolemEau(Golem):
         super().__init__()
         self.PVMax=90
         self.PV = self.PVMax
-        self.attaque_normale_dégats=Entité.Random_Stats(20,26)
-        self.dégats_libre=Entité.Random_Stats(25,31)
-        self.nom=Golem.nom_aléatoire(["Blob","Plouf","Sploch","Casca","Rive"])
+        self.attaque_normale_dégats=self.Random_Stats(20,26)
+        self.dégats_libre=self.Random_Stats(25,31)
+        self.nom=self.nom_aléatoire(["Blob","Plouf","Sploch","Casca","Rive"])
         self.tornade_pousser_distance : int = 3
 
         self.max_distance_attaque : float = 4
@@ -396,9 +396,9 @@ class GolemFeu(Golem):
         super().__init__()
         self.PVMax=120
         self.PV = self.PVMax
-        self.attaque_normale_dégats=Entité.Random_Stats(26,29)
-        self.dégats_libre=Entité.Random_Stats(35,39)
-        self.nom=Golem.nom_aléatoire(["Magme","Fusio","Larva","Manta","Ardenne"])
+        self.attaque_normale_dégats=self.Random_Stats(26,29)
+        self.dégats_libre=self.Random_Stats(35,39)
+        self.nom=self.nom_aléatoire(["Magme","Fusio","Larva","Manta","Ardenne"])
         self.attaque_max_distance : float = 4.0
         self.boule_feu_dégats : int = 3
 
@@ -425,9 +425,9 @@ class GolemDoré(Golem):
         super().__init__()
         self.PVMax=150
         self.PV = self.PVMax
-        self.attaque_normale_dégats=Entité.Random_Stats(25,31)
-        self.dégats_libre=Entité.Random_Stats(36,42)
-        self.nom=Entité.nom_aléatoire(["Goldy","Flash","Shiny","Conqi","King"])
+        self.attaque_normale_dégats=self.Random_Stats(25,31)
+        self.dégats_libre=self.Random_Stats(36,42)
+        self.nom=self.nom_aléatoire(["Goldy","Flash","Shiny","Conqi","King"])
 
         self.TEMP_GUÉRISON = 4
         self.guérisonCompteur = 0

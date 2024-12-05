@@ -67,6 +67,11 @@ class Entité:
         self.chemin : list[Vec2] = []  # Liste des tuiles sur le chemin précalculé
         self.carte : Carte = None  # Référence à la carte jouée en ce moment
 
+        noms = ["Jean", "Salom", "Guy", "Pascal", "Eva"]
+
+        # Appel de la fonction avec la liste de noms
+        self.nom = self.nom_aléatoire(noms)
+
     def avoirInfoStr(self):
         # TODO #16 implémenter avoirInfoStr() dur toutes les entitées
         return (gras(soul(self.nom.capitalize())) + '\n' +
@@ -75,18 +80,15 @@ class Entité:
                 gras("Attaque")+" : " + str(int(self.attaque_normale_dégats)) + '\n' +
                 gras("Défense")+" : " + str(int(self.dégats_libre)) + '\n')
 
-    def Random_Stats(x,y):
+    def Random_Stats(self,x,y):
         Stats=int(random.choice(range(x,y)))
         return Stats
     
-    def nom_aléatoire(liste):
+    def nom_aléatoire(self,liste):
+        if len(liste) == 0:
+            return "Nom_Inconnu"
         nom=random.choice(liste)
         return nom
-    
-    noms = ["Jean", "Salom", "Guy", "Pascal", "Eva"]
-
-    # Appel de la fonction avec la liste de noms
-    nom_choisi = nom_aléatoire(noms)
 
     def MiseÀJour(self):
         self._MiseÀJourIA()

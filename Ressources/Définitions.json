@@ -4,6 +4,10 @@
     },
     "Entités" : {
         "Test_Golem" : "Test_Golem.json",
-        "Test_Gosse" : "Test_Gosse.json"
+        "Test_Gosse" : "Test_Gosse.json",
+        "Test_Prêtre" : "Test_Prêtre.json",
+        "Test_Arbalettier" : "Test_Arbalettier.json",
+        "Test_Chevalier" : "Test_Chevalier.json",
+        "Test_Mineur" : "Test_Mineur.json"
     }
 }

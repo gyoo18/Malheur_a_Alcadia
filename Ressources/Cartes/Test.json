@@ -26,8 +26,24 @@
         {
             "ID" : "Test_Gosse",
             "Position" : [5,4]
+        },
+        {
+            "ID" : "Test_Prêtre",
+            "Position" : [5,5]
+        },
+        {
+            "ID" : "Test_Chevalier",
+            "Position" : [15,7]
+        },
+        {
+            "ID" : "Test_Arbalettier",
+            "Position" : [10,5]
+        },
+        {
+            "ID" : "Test_Mineur",
+            "Position" : [0,7]
         }
     ],
-    "Joueur_pos" : [5,5],
+    "Joueur_pos" : [4,9],
     "Prochaine" : "Test"
 }

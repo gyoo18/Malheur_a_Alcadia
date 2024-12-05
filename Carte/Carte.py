@@ -21,6 +21,9 @@ class Carte:
     def peutAller(self, entite: Entité, pos: Vec2):
         if pos.x<0 or pos.x>len(self.matrice)-1 or pos.y<0 or pos.y>len(self.matrice[0])-1:
             return False
+        for e in self.entités:
+            if e.pos == pos:
+                return False
         tuiles = self.matrice[int(pos.x)][int(pos.y)]
         if tuiles.type == Tuile.TYPE_MUR:
             return False
@@ -50,7 +53,7 @@ class Carte:
                         if e.camp == "Paysans":
                             match e:
                                 case Gosse():
-                                    en = gras(coul("çç",ROUGE))
+                                    en = gras(coul(" ç",ROUGE))
                                     break
                                 case Mineur():
                                     en = gras(coul("/>",ROUGE))
@@ -59,7 +62,10 @@ class Carte:
                                     en = gras(coul("Ot",ROUGE))
                                     break
                                 case Arbaletier():
-                                    en = coul("G>",ROUGE)
+                                    en = gras(coul("G>",ROUGE))
+                                    break
+                                case Chevalier():
+                                    en = gras(coul("M←",ROUGE))
                                     break
                                 case Paysan():
                                     en = gras(coul("P¬",ROUGE))
@@ -78,6 +84,9 @@ class Carte:
                                 case GolemFeu():
                                     en = gras(coul("MM",ORANGE))
                                     break
+                                case GolemDoré():
+                                    en = gras(coul("$$",JAUNE))
+                                    break
                                 case Golem():
                                     en = gras(coul("GG",GRIS))
                                     break
@@ -95,6 +104,8 @@ class Carte:
                                     en = gras(coul("++",ROUGE))
                                 if e.camp == "Golems":
                                     en = gras(coul("••",NOIR))
+                                if e.camp == "Personnages":
+                                    en = gras(coul("--",BLEU))
                                 break
                 
                 match self.matrice[x][y].type:

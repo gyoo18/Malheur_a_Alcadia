@@ -65,6 +65,8 @@ class Ressources:
                             colonne.append(Tuile(Tuile.TYPE_EAU))
                         case Tuile.TYPE_FEUX:
                             colonne.append(Tuile(Tuile.TYPE_FEUX))
+                        case Tuile.TYPE_OR:
+                            colonne.append(Tuile(Tuile.TYPE_OR))
                         case Tuile.TYPE_MUR:
                             colonne.append(Tuile(Tuile.TYPE_MUR))
                         case _:
@@ -120,6 +122,8 @@ class Ressources:
                     unitée = Chevalier()
                 case "Arbalettier":
                     unitée = Arbaletier()
+                case "Prêtre":
+                    unitée = Prêtre()
                 case _:
                     raise ValueError("L'entité " + str(unitée_dict["Type"]) + " n'est pas une entité reconnue.")
                 

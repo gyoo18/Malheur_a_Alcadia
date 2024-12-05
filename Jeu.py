@@ -4,6 +4,7 @@ from Carte.Carte import Carte
 import os
 from Entités.Entité import Entité
 from Entités.Golem import Golem
+from Entités.Personnages import *
 import copy
 
 class ÉtatJeu:
@@ -73,16 +74,20 @@ class Jeu:
         if self.état.v == ÉtatJeu.FIN_TOUR:
             paysans = False
             golems = False
+            joueur = False
             for e in self.carte.entités:
                 if e.camp == "Golems":
                     golems = True
+                
+                if type(e) == Joueur and e.estVivant:
+                    joueur = True
                 
                 if e.camp == "Paysans":
                     paysans = True
             
             if not paysans:
                 self.état.v = ÉtatJeu.SUCCÈS
-            elif not golems:
+            elif not golems or not joueur:
                 self.état.v = ÉtatJeu.ÉCHEC
             else :
                 print("Mise à jour des entitées.")

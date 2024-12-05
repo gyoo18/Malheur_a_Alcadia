@@ -45,6 +45,8 @@ class Joueur(Golem):
                     golem = GolemEau()
                 case Tuile.TYPE_FEUX:
                     golem = GolemFeu()
+                case Tuile.TYPE_OR:
+                    golem = GolemDoré()
                 case _:
                     raise TypeError("[Joueur._commandeCréerGolem] Impossible de créer un golem sur une tuile de type " + str(carte[int(cp.x)][int(cp.y)].type) + '.')
             golem.pos = commande.position_création_golem

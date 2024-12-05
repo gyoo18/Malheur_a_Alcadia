@@ -49,9 +49,9 @@ class Gosse(Paysan):
         super().__init__()
         self.PVMax=75
         self.PV = self.PVMax
-        self.attaque_normale_dégats=Entité.Random_Stats(8,11)
-        self.dégats_libre=Entité.Random_Stats(5,11)
-        nom=Entité.nom_aléatoire(["Lhucra","Karck","Gryui","Vhynch"])
+        self.attaque_normale_dégats=self.Random_Stats(8,11)
+        self.dégats_libre=self.Random_Stats(5,11)
+        nom=self.nom_aléatoire(["Lhucra","Karck","Gryui","Vhynch"])
 
     def _exécuterAttaque(self):
         attaque = Attaque(self)
@@ -65,9 +65,9 @@ class Mineur(Paysan):
         super().__init__()
         self.PVMax=75
         self.PV = self.PVMax
-        self.attaque_normale_dégats=Entité.Random_Stats(14,21)
-        self.dégats_libre=Entité.Random_Stats(10,16)
-        self.nom=Entité.nom_aléatoire([])
+        self.attaque_normale_dégats=self.Random_Stats(14,21)
+        self.dégats_libre=self.Random_Stats(10,16)
+        self.nom=self.nom_aléatoire([])
         self.bonus_terre : int = 2 # Bonus contre les golems de terre
 
     def _exécuterAttaque(self):
@@ -85,10 +85,10 @@ class Prêtre(Paysan):
         super().__init__()
         self.PVMax=75
         self.PV = self.PVMax
-        self.attaque_normale_dégats=Entité.Random_Stats(12,17)
-        self.dégats_libre=Entité.Random_Stats(12,15)
-        self.nom=Entité.nom_aléatoire([])        
-        self.vieAddition : int = 2
+        self.attaque_normale_dégats=self.Random_Stats(12,17)
+        self.dégats_libre=self.Random_Stats(12,15)
+        self.nom=self.nom_aléatoire([])        
+        self.PVAddition : int = 2
 
     def _modeRecherche(self):
         ennemiPlusPrès = None
@@ -109,7 +109,7 @@ class Prêtre(Paysan):
             self.état.v = ÉtatIA.DÉPLACEMENT
             self.destination = alliéPlusPrès.pos
         elif ennemiPlusPrès != None and alliéPlusPrès != None:
-            if ennemiPlusPrès.vie/ennemiPlusPrès.vieMax < alliéPlusPrès.vie/alliéPlusPrès.vieMax:
+            if ennemiPlusPrès.PV/ennemiPlusPrès.PVMax < alliéPlusPrès.PV/alliéPlusPrès.PVMax:
                 self.destination = ennemiPlusPrès.pos
             else :
                 self.destination = alliéPlusPrès.pos
@@ -147,8 +147,8 @@ class Prêtre(Paysan):
         self.cible.Attaquer(attaque)
     
     def _modeGuérison(self):
-        if self.cible.vie < self.cible.PVMax and Vec2.distance(self.cible.pos, self.pos) <= 1:
-            self.cible.vie += self.vie
+        if self.cible.PV < self.cible.PVMax and Vec2.distance(self.cible.pos, self.pos) <= 1:
+            self.cible.PV += self.PVAddition
         else:
             self.état.v = ÉtatIA.RECHERCHE
             self.cible = None
@@ -158,9 +158,9 @@ class Chevalier(Paysan):
         super().__init__()
         self.PVMax=125
         self.PV = self.PVMax
-        self.attaque_normale_dégats=Entité.Random_Stats(19,26)
-        self.dégats_libre=Entité.Random_Stats(30,36)
-        self.nom=Entité.nom_aléatoire(["Sir Raudryguish","Sir Harchurt","Sir Morline","Sir Lrimqu"])
+        self.attaque_normale_dégats=self.Random_Stats(19,26)
+        self.dégats_libre=self.Random_Stats(30,36)
+        self.nom=self.nom_aléatoire(["Sir Raudryguish","Sir Harchurt","Sir Morline","Sir Lrimqu"])
 
     def _exécuterAttaque(self):
         attaque = Attaque(self)
@@ -199,9 +199,9 @@ class Arbaletier(Paysan):
         super().__init__()
         self.PVMax=int(50)
         self.PV = self.PVMax
-        self.attaque_normale_dégats=Entité.Random_Stats(30,33)
-        self.dégats_libre=Entité.Random_Stats(5,11)
-        self.nom=Entité.nom_aléatoire(["Rambo",])        
+        self.attaque_normale_dégats=self.Random_Stats(30,33)
+        self.dégats_libre=self.Random_Stats(5,11)
+        self.nom=self.nom_aléatoire(["Rambo",])        
         self.max_distance_attaque : float = 3.0
         self.min_distance_ennemi : float = 1.5
 
@@ -224,7 +224,7 @@ class Arbaletier(Paysan):
             self.état.v = ÉtatIA.DÉPLACEMENT
             self.destination = alliéPlusPrès.pos
         elif ennemiPlusPrès != None and alliéPlusPrès != None:
-            if ennemiPlusPrès.vie/ennemiPlusPrès.vieMax < alliéPlusPrès.vie/alliéPlusPrès.vieMax:
+            if ennemiPlusPrès.PV/ennemiPlusPrès.PVMax < alliéPlusPrès.PV/alliéPlusPrès.PVMax:
                 self.destination = ennemiPlusPrès.pos
             else :
                 self.destination = alliéPlusPrès.pos
