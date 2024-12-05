@@ -42,6 +42,8 @@ class Commande:
     LIBÉRER = "libre"
     CHARGER_ATTAQUE = "charger attaque"
     ATTAQUER_CHARGE = "attaquer charge"
+
+    CRÉER_GOLEM = "créer golem"
     
     def __init__(self):
         self.catégorie : str = ""
@@ -49,6 +51,7 @@ class Commande:
         self.destination : Vec2 = None
         self.ennemi_cible : Entité = None
         self.attaque_spéciale : str = None
+        self.position_création_golem : Vec2 = None
 
     def faireCommandeDéplacement(self,destination : Vec2):
         """ Créé une commande qui déplace un golem vers `destination`
@@ -116,6 +119,19 @@ class Commande:
         """
         self.catégorie = self.ATTAQUER_CHARGE
         self.ennemi_cible = ennemi
+    
+    def faireCommandeCréerGolem(self, position : Vec2):
+        """crééra une commande qui demandera au joueur de créer un golem à la position relative précisée
+
+        **Notez que la commande ne serat acceptée que par le joueur**
+
+        Raises:
+            AttributeError: Si `position` n'est pas un `Vec2`
+        """
+        if type(position) != Vec2:
+            raise AttributeError("L'argument 'position' doit être de type Vec2.")
+        self.catégorie = self.CRÉER_GOLEM
+        self.position_création_golem = position
 
 class Golem(Entité):
 
@@ -151,7 +167,7 @@ class Golem(Entité):
             case Commande.ATTAQUER_CHARGE:
                 self._commandeAttaquerCharge(commande)
             case _:
-                raise AttributeError(coul("[Golem.commande] Commande mal construite : catégorie invalide.",ROUGE))
+                raise AttributeError(coul("[Golem.commande] Commande mal construite : catégorie" + str(commande.catégorie) + " invalide.",ROUGE))
 
     def _commandeDéplacement(self, commande : Commande):
         """ Exécute une commande déplacement

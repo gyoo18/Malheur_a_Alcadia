@@ -8,7 +8,7 @@ class Paysan(Entité):
     def __init__(self):
         super().__init__()
         self.camp = "Paysans"
-        self.campsEnnemis = ["Golems"]
+        self.campsEnnemis = ["Golems","Personnages"]
         self.nom = "Paysan"
 
     def _AttaquerEnnemi(self):

@@ -2,19 +2,21 @@ from __future__ import annotations
 from Maths.Vec2 import Vec2
 from Entités.Paysan import *
 from Entités.Golem import *
+from Entités.Personnages import *
 from Carte.Tuile import Tuile
 from TFX import *
 from InclusionsCirculaires.Entité_Carte import *
 
 class Carte:
     
-    def __init__(self,lignes : int ,colonnes :int, matrice : list[list[Tuile]], entités : list[Entité], positions_entitées_initiales : list[Vec2], prochaine : str):
+    def __init__(self,lignes : int ,colonnes :int, matrice : list[list[Tuile]], entités : list[Entité], positions_entitées_initiales : list[Vec2], joueur_pos_init : Vec2, prochaine : str):
         self.lignes : int = lignes
         self.colonnes : int = colonnes
         self.matrice : list[list[Tuile]] = matrice
         self.entités : list[Entité] = entités
         self.prochaine : str = prochaine
         self.positions_entitées_initiales : list[Vec2] = positions_entitées_initiales
+        self.joueur_pos_init : Vec2 = joueur_pos_init
             
     def peutAller(self, entite: Entité, pos: Vec2):
         if pos.x<0 or pos.x>len(self.matrice)-1 or pos.y<0 or pos.y>len(self.matrice[0])-1:
@@ -81,6 +83,11 @@ class Carte:
                                     break
                                 case _:
                                     raise TypeError("Entité " + str(e) + " n'est pas un golem valide.")
+                        
+                        if e.camp == "Personnages":
+                            match e:
+                                case Joueur():
+                                    en = gras(coul("/\\",BLEU))
                     if en == "  " and len(e.chemin) > 0:
                         for pos in e.chemin:
                             if pos.x == x and pos.y == y:

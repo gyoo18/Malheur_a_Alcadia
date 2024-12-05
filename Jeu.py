@@ -109,11 +109,16 @@ class Jeu:
             self.changerCarte(res.chargerCarte(self.carte.prochaine))
 
     def changerCarte(self,carte : Carte):
+        res = Ressources.avoirRessources()
         if self.carte != None:
             del self.carte
         self.carte = copy.deepcopy(carte)
         for i in range(len(self.carte.entités)):
             self.carte.entités[i].carte = self.carte
             self.carte.entités[i].pos = carte.positions_entitées_initiales[i]
+        joueur = copy.deepcopy(res.joueur)
+        joueur.pos = self.carte.joueur_pos_init
+        joueur.carte = self.carte
+        self.carte.entités.append(joueur)
         
         

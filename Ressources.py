@@ -3,6 +3,7 @@ from Carte.Tuile import Tuile
 from Entités.Entité import Entité
 from Entités.Golem import *
 from Entités.Paysan import *
+from Entités.Personnages import *
 from typing_extensions import Self
 import traceback
 import json
@@ -24,6 +25,7 @@ class Ressources:
             traceback.print_exc()
             traceback.print_exception(e)
             exit(-1)
+        self.joueur = Joueur()
 
     def avoirRessources():
         if Ressources.ressources == None:
@@ -83,7 +85,8 @@ class Ressources:
                     positions_entités_initiales.append(Vec2(random.randrange(0,colonnes),random.randrange(0,lignes)))
 
             prochaine = carte_dict["Prochaine"]
-            carte = Carte(colonnes,lignes,matrice,entités,positions_entités_initiales,prochaine)
+            joueur_pos_init = Vec2(carte_dict["Joueur_pos"][0],carte_dict["Joueur_pos"][1])
+            carte = Carte(colonnes,lignes,matrice,entités,positions_entités_initiales,joueur_pos_init,prochaine)
             self.cartes.append(carte)
             self.cartes_chargées.append(nom)
 
