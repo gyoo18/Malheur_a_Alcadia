@@ -1,0 +1,9 @@
+{
+    "Cartes" : {
+        "Test" : "Test.json"
+    },
+    "Entités" : {
+        "Test_Golem" : "Test_Golem.json",
+        "Test_Gosse" : "Test_Gosse.json"
+    }
+}

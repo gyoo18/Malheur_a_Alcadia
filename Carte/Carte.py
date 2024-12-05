@@ -2,40 +2,29 @@ from __future__ import annotations
 from Maths.Vec2 import Vec2
 from Entités.Paysan import *
 from Entités.Golem import *
-from Carte.Tuile import Tuiles
+from Carte.Tuile import Tuile
 from TFX import *
 from InclusionsCirculaires.Entité_Carte import *
 
 class Carte:
-    lignes : int
-    colonnes : int
-    matrice : list[list[Tuiles]]
-
-    entités : list[Entité]
     
-    def __init__(self,ligne : int ,colonne :int):
-        self.lignes : int = ligne
-        self.colonnes : int = colonne
-        self.matrice : list[list[Tuiles]] = []
-        self.entités : list[Entité] = []
-
-    
-
-    def creation(self):
-        self.matrice = []
-        for ligne in range(self.lignes):
-            ligne_donnee = []
-            for colonne in range(self.colonnes):
-                ligne_donnee.append(Tuiles(Tuiles.TYPE_TERRE))
-            self.matrice.append(ligne_donnee)    
+    def __init__(self,lignes : int ,colonnes :int, matrice : list[list[Tuile]], entités : list[Entité], positions_entitées_initiales : list[Vec2], prochaine : str):
+        self.lignes : int = lignes
+        self.colonnes : int = colonnes
+        self.matrice : list[list[Tuile]] = matrice
+        self.entités : list[Entité] = entités
+        self.prochaine : str = prochaine
+        self.positions_entitées_initiales : list[Vec2] = positions_entitées_initiales
             
     def peutAller(self, entite: Entité, pos: Vec2):
         if pos.x<0 or pos.x>len(self.matrice)-1 or pos.y<0 or pos.y>len(self.matrice[0])-1:
             return False
         tuiles = self.matrice[int(pos.x)][int(pos.y)]
-        if tuiles.type == Tuiles.TYPE_MUR:
+        if tuiles.type == Tuile.TYPE_MUR:
             return False
-        elif tuiles.type == Tuiles.TYPE_EAU and type(entite) != GolemEau:
+        elif tuiles.type == Tuile.TYPE_EAU and type(entite) != GolemEau:
+            return False
+        elif tuiles.type == Tuile.TYPE_FEUX and type(entite) != GolemFeu:
             return False
         else:
             return True
@@ -71,7 +60,7 @@ class Carte:
                                     en = coul("G>",ROUGE)
                                     break
                                 case Paysan():
-                                    en = gras(coul("PP",ROUGE))
+                                    en = gras(coul("P¬",ROUGE))
                                     break
                                 case _:
                                     raise TypeError("Entité " + str(e) + " n'est pas un paysan valide.")
@@ -102,100 +91,15 @@ class Carte:
                                 break
                 
                 match self.matrice[x][y].type:
-                    case Tuiles.TYPE_EAU:
+                    case Tuile.TYPE_EAU:
                         ligne += surl(en,CYAN_FONCÉ)
-                    case Tuiles.TYPE_TERRE:
+                    case Tuile.TYPE_TERRE:
                         ligne += surl(en,VERT)
-                    case Tuiles.TYPE_FEUX:
+                    case Tuile.TYPE_FEUX:
                         ligne += surl(en,ORANGE_FONCÉ)
-                    case Tuiles.TYPE_MUR:
+                    case Tuile.TYPE_MUR:
                         ligne += surl(en,GRIS_FONCÉ)
                     case _:
                         raise TypeError("Tuile " + str(self.matrice[x][y]) + " de type " + str(self.matrice[x][y].type) + " n'a pas de type valide.")
             dessin += ligne + '\n'
         return dessin
-    
-carte_1 = Carte(5,5) 
-
-mape = carte_1.creation()
-print(mape)
-positions =carte_1.position()
-
-
-# def creation_unite(i,j,x):
-#     try:
-#         if (i or j) <0:
-#             return (f"Le jeux accepte uniquement les nombres positifs")
-#         elif type(i or j)!= int:
-#             return (f"Le jeux accepte uniquement les entiers")
-#         elif mape[i][j] == "0":
-#             positions[(i,j)]= x
-#             mape[i][j] = x
-#             return mape
-#         else:
-#             return(f"Case non disponible")
-#     except IndexError:
-#         return("Coordonnés en dehors de la carte")
-#     
-# 
-# def effacer_unite(i,j,x):
-#     try:
-#         if (i or j) <0:
-#             return (f"Le jeux accepte uniquement les nombres positifs")
-#         elif type(i or j)!= int:
-#             return (f"Le jeux accepte uniquement les entiers")
-#         elif mape[i][j] == x:
-#             positions[(i,j)]= "0"
-#             mape[i][j] = "0"
-#             return mape
-#         else:
-#             return(f"Case non disponible")
-#     except IndexError:
-#         return("Coordonnés en dehors de la carte")
-# 
-# mape=creation_unite(1,1,"unite_2")
-# mape=creation_unite(2,2,"unite_1")
-# 
-# print(mape)
-# #print(positions)
-# 
-# def mouvement(i,j,w,a,s,d):
-#     if w==1:
-#         creation_unite(i-1,j)
-#         effacer_unite(i,j)
-#     elif a==1:
-#         creation_unite (i,j-1)
-#         effacer_unite(i,j)
-# 
-#     elif s==1:
-#         creation_unite(i+1,j)
-#         effacer_unite(i,j)
-# 
-#     elif d==1:
-#         creation_unite(i,j+1)
-#         effacer_unite(i,j)
-#     
-# '''''
-# print (mape)
-# mouvement(1,1,1,0,0,0)
-# print (mape)
-# mouvement(0,1,0,1,0,0)
-# print (mape)
-# mouvement(0,0,0,0,1,0)
-# print (mape)
-# mouvement(1,0,0,0,0,1)
-# print (mape)
-# '''''
-# def distance(unite_1,unite_2):
-#     for key1,value1 in positions.items():
-#         if "unite_1" == value1:
-#              x1,y1 = key1
-#     
-#     for key2,value2 in positions.items():
-#         if "unite_2" == value2:
-#             x2,y2= key2
-# 
-#     dist = (((x2-x1)**2+(y2-y1)**2))**0.5
-#     return dist
-# 
-# print(distance("unite_1","unite_2"))

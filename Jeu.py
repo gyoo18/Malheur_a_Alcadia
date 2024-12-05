@@ -1,9 +1,10 @@
 from typing_extensions import Self
 from Ressources import Ressources
-from Carte.class_carte import Carte
+from Carte.Carte import Carte
 import os
 from Entités.Entité import Entité
 from Entités.Golem import Golem
+import copy
 
 class ÉtatJeu:
     MENU = "menu"
@@ -60,13 +61,6 @@ class Jeu:
     def miseÀJour(self):
         import menu
         res = Ressources.avoirRessources()
-        os.system("cls" if os.name == 'nt' else "clear")
-        if self.état.v == ÉtatJeu.FIN_TOUR:
-            print("Mise à jour des entitées.")
-            for i in range(len(self.carte.entités)):
-                self.carte.entités[i]._MiseÀJourIA()
-            print("Entitées mises à jours.")
-            self.état.v = ÉtatJeu.JEU
 
         if self.état.v == ÉtatJeu.MENU:
             menu.displayUI()
@@ -75,10 +69,11 @@ class Jeu:
         else :
             menu.ingameUI()
 
-        if self.état.v == ÉtatJeu.JEU:
+        os.system("cls" if os.name == 'nt' else "clear")
+        if self.état.v == ÉtatJeu.FIN_TOUR:
             paysans = False
             golems = False
-            for e in res.cartes[0].entités:
+            for e in self.carte.entités:
                 if e.camp == "Golems":
                     golems = True
                 
@@ -89,8 +84,18 @@ class Jeu:
                 self.état.v = ÉtatJeu.SUCCÈS
             elif not golems:
                 self.état.v = ÉtatJeu.ÉCHEC
+            else :
+                print("Mise à jour des entitées.")
+                for i in range(len(self.carte.entités)):
+                    self.carte.entités[i]._MiseÀJourIA()
+                lo = len(self.carte.entités) -1
+                for i in range(len(self.carte.entités)):
+                    if not self.carte.entités[lo-i].estVivant:
+                        self.carte.entités.pop(lo-i)
+                print("Entitées mises à jours.")
+                self.état.v = ÉtatJeu.JEU
         
-        if self.état.v == ÉtatJeu.TRANSITION:
+        elif self.état.v == ÉtatJeu.TRANSITION:
             self.état.v = ÉtatJeu.DÉBUT
             match self.chapitre.v:
                 case Chapitre.INTRODUCTION:
@@ -101,5 +106,14 @@ class Jeu:
                     self.chapitre.v = Chapitre.CHAPITRE3
                 case Chapitre.CHAPITRE3:
                     self.chapitre.v = Chapitre.INTRODUCTION
+            self.changerCarte(res.chargerCarte(self.carte.prochaine))
+
+    def changerCarte(self,carte : Carte):
+        if self.carte != None:
+            del self.carte
+        self.carte = copy.deepcopy(carte)
+        for i in range(len(self.carte.entités)):
+            self.carte.entités[i].carte = self.carte
+            self.carte.entités[i].pos = carte.positions_entitées_initiales[i]
         
         

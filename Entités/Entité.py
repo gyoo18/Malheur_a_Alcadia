@@ -34,8 +34,8 @@ class Entité:
 
     def __init__(self):
         # Charactérisitques décrivant l'entité
-        self.vieMax : int = 100         # Points de vies maximum
-        self.vie : float = self.vieMax  # Points de vies restants
+        self.PVMax : int = 100         # Points de vies maximum
+        self.PV : float = self.PVMax  # Points de vies restants
 
         self.TEMP_CHARGEMENT : int = 3      # Temps nécessaire pour charger une attaque puissante
         self.attaque_chargée : float = 30.0 # Dégats associés à l'attaque chargée
@@ -70,8 +70,8 @@ class Entité:
     def avoirInfoStr(self):
         # TODO #16 implémenter avoirInfoStr() dur toutes les entitées
         return (gras(soul(self.nom.capitalize())) + '\n' +
-                gras("PV")+"      : " + str(int(self.vie)) + '\n' +
-                gras("PVMax")+"   : " + str(int(self.vieMax)) + '\n' +
+                gras("PV")+"      : " + str(int(self.PV)) + '\n' +
+                gras("PVMax")+"   : " + str(int(self.PVMax)) + '\n' +
                 gras("Attaque")+" : " + str(int(self.attaque_normale_dégats)) + '\n' +
                 gras("Défense")+" : " + str(int(self.dégats_libre)) + '\n')
 
@@ -285,7 +285,7 @@ class Entité:
             attaque (Attaque): Un objet Attaque qui contient les informations nécessaires pour subir une attaque.
         """
         print(self.nom + " reçoit une attaque de " + attaque.provenance.nom)
-        print(self.nom + " a " + str(self.vie) + " PV, l'attaque fait " + str(attaque.dégats) + " PD")
+        print(self.nom + " a " + str(self.PV) + " PV, l'attaque fait " + str(attaque.dégats) + " PD")
         # Virer au mode combat, si on n'y est pas déjà
         if not self.estAttaqué:
             print(self.nom + " passe en mode combat.")
@@ -293,13 +293,12 @@ class Entité:
             self.cible = attaque.provenance
     
         attaque = self._Défense(attaque)    # Évaluer la défense
-        self.vie -= attaque.dégats          # Retirer les points de vies
+        self.PV -= attaque.dégats          # Retirer les points de vies
         # Évaluer si on est morts
-        if self.vie <= 0.0:
+        if self.PV <= 0.0:
             print(self.nom + " est mort.")
-            self.vie = 0.0
+            self.PV = 0.0
             self.estVivant = False
-            self.carte.entités.remove(self)
 
     def _Défense(self, attaque : Attaque):
         """ Réduit les points d'attaques en fonction des points de défenses.

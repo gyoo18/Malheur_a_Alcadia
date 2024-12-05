@@ -47,8 +47,8 @@ class Gosse(Paysan):
 
     def __init__(self):
         super().__init__()
-        self.vieMax=75
-        self.vie = self.vieMax
+        self.PVMax=75
+        self.PV = self.PVMax
         self.attaque_normale_dégats=Entité.Random_Stats(8,11)
         self.dégats_libre=Entité.Random_Stats(5,11)
         nom=Entité.nom_aléatoire(["Lhucra","Karck","Gryui","Vhynch"])
@@ -63,8 +63,8 @@ class Mineur(Paysan):
 
     def __init__(self):
         super().__init__()
-        self.vieMax=75
-        self.vie = self.vieMax
+        self.PVMax=75
+        self.PV = self.PVMax
         self.attaque_normale_dégats=Entité.Random_Stats(14,21)
         self.dégats_libre=Entité.Random_Stats(10,16)
         self.nom=Entité.nom_aléatoire([])
@@ -83,10 +83,10 @@ class Prêtre(Paysan):
 
     def __init__(self):
         super().__init__()
-        slef.vieMax=75
-        self.vie = self.vieMax
-        slef.attaque_normale_dégats=Entité.Random_Stats(12,17)
-        slef.dégats_libre=Entité.Random_Stats(12,15)
+        self.PVMax=75
+        self.PV = self.PVMax
+        self.attaque_normale_dégats=Entité.Random_Stats(12,17)
+        self.dégats_libre=Entité.Random_Stats(12,15)
         self.nom=Entité.nom_aléatoire([])        
         self.vieAddition : int = 2
 
@@ -147,7 +147,7 @@ class Prêtre(Paysan):
         self.cible.Attaquer(attaque)
     
     def _modeGuérison(self):
-        if self.cible.vie < self.cible.vieMax and Vec2.distance(self.cible.pos, self.pos) <= 1:
+        if self.cible.vie < self.cible.PVMax and Vec2.distance(self.cible.pos, self.pos) <= 1:
             self.cible.vie += self.vie
         else:
             self.état.v = ÉtatIA.RECHERCHE
@@ -156,8 +156,8 @@ class Prêtre(Paysan):
 class Chevalier(Paysan):
     def __init__(self):
         super().__init__()
-        self.vieMax=125
-        self.vie = self.vieMax
+        self.PVMax=125
+        self.PV = self.PVMax
         self.attaque_normale_dégats=Entité.Random_Stats(19,26)
         self.dégats_libre=Entité.Random_Stats(30,36)
         self.nom=Entité.nom_aléatoire(["Sir Raudryguish","Sir Harchurt","Sir Morline","Sir Lrimqu"])
@@ -197,8 +197,8 @@ class Arbaletier(Paysan):
 
     def __init__(self):
         super().__init__()
-        self.vieMax=int(50)
-        self.vie = self.vieMax
+        self.PVMax=int(50)
+        self.PV = self.PVMax
         self.attaque_normale_dégats=Entité.Random_Stats(30,33)
         self.dégats_libre=Entité.Random_Stats(5,11)
         self.nom=Entité.nom_aléatoire(["Rambo",])        
