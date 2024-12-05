@@ -104,7 +104,7 @@ class Joueur(Golem):
 
         if faire_pathfinding:
             print("Recherche d'un chemin.")
-            self.chemin = self._A_étoile()
+            self.chemin = self._A_étoile(False)
 
 
     def _modeImmobile(self):

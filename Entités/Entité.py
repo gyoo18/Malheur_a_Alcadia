@@ -196,7 +196,6 @@ class Entité:
                 self.cible = ennemi
                 return
 
-        faire_pathfinding = True
         # Si on n'a pas atteint le bout du chemin
         if len(self.chemin) > 0:
             print("Un chemin existe")
@@ -205,7 +204,6 @@ class Entité:
                 print("Le chemin est praticable, avançons.")
                 self.direction = self.chemin[0] - self.pos
                 self.pos = self.chemin.pop(0)
-                faire_pathfinding = False
 
                 # Si un ennemi se trouve sur une case adjascente, virer en mode combat
                 for ennemi in self.carte.entités:
@@ -229,11 +227,11 @@ class Entité:
                 print("Le chemin n'est pas praticable.")
                 # Si on ne peut pas se déplacer sur le chemin, en trouver un nouveau
                 self.chemin = []
-                faire_pathfinding = True
 
-        if faire_pathfinding:
+        if self.cible.estVivant :
+            self.destination = self.cible.pos
             print("Recherche d'un chemin.")
-            self.chemin = self._A_étoile()
+            self.chemin = self._A_étoile(True)
 
     def _modeCombat(self):
         """_modeCombat Exécute le combat
@@ -349,10 +347,10 @@ class Entité:
         print("Navigue vers : (" + str(destination.x) + ';' + str(destination.y) + ')')
         self.état.v = ÉtatIA.DÉPLACEMENT
         self.destination = destination
-        self.chemin = self._A_étoile()
+        self.chemin = self._A_étoile(False)
 
     # Trouve le chemin le plus court entre le point A et B en utilisant A* et renvoie une liste des cases à prendre pour suivre le chemin
-    def _A_étoile(self):
+    def _A_étoile(self, destination_adjascente : bool):
         """ Algorithme A* pour trouver le chemin le plus court sur la carte
 
         Utilise `self.carte` et `self.destination` **modifier avant d'appeler**
@@ -443,6 +441,8 @@ class Entité:
         chemins = [[self.pos]] # Liste des chemins pour se rendre à chaque case active
         poids = [Vec2.distance(self.pos, self.destination)] # Liste des poids
         n_pas = [0] # Distance à parcourir pour se rendre à chaque case active
+        meilleur_chemin = []    # Meilleur chemin trouvé jusqu'à présent. Utilisé lorsqu'aucun chemin n'existe.
+        meilleur_poid = int(2**32) # Meilleur poid trouvé jusqu'à présent. Utilisé lorsqu'aucun chemin n'existe.
 
         while True:
 
@@ -459,17 +459,36 @@ class Entité:
                 curseur = i_case_min
             else :
                 # Si on n'a rien trouvé
-                print(coul("Aucun chemin n'existe vers la destination.",ROUGE))
-                return []
+                print(coul("Aucun chemin n'existe vers la destination. Renvoie du chemin qui mène le plus près.",ROUGE))
+                meilleur_chemin.pop(0)
+                return meilleur_chemin
             
-            #Vérifier si le poid le plus petit est la destination
-            if cases_actives[curseur] == self.destination:
-                print("Chemin trouvé")
-                ligne = "Chemin : "
-                for i in range(len(chemins[curseur])):
-                    ligne += '(' + str(chemins[curseur][i].x) + ';' + str(chemins[curseur][i].y) + ')'
-                print(ligne)
-                return chemins[curseur]
+            # Dans le cas où la destination est un ennemi, on ne pourra jamais se rendre sur la destination, il faut donc se rendre sur la case adjascente.
+            if not destination_adjascente:
+                #Vérifier si le poid le plus petit est la destination
+                if cases_actives[curseur] == self.destination:
+                    print("Chemin trouvé")
+                    ligne = "Chemin : "
+                    for i in range(len(chemins[curseur])):
+                        ligne += '(' + str(chemins[curseur][i].x) + ';' + str(chemins[curseur][i].y) + ')'
+                    print(ligne)
+                    solution = chemins[curseur]
+                    solution.pop(0)
+                    return solution
+            else:
+                #Vérifier si la case adjascente est la destination
+                if ( cases_actives[curseur]+Vec2( 1,0) == self.destination or
+                     cases_actives[curseur]+Vec2(-1,0) == self.destination or
+                     cases_actives[curseur]+Vec2(0, 1) == self.destination or
+                     cases_actives[curseur]+Vec2(0,-1) == self.destination):
+                    print("Chemin trouvé")
+                    ligne = "Chemin : "
+                    for i in range(len(chemins[curseur])):
+                        ligne += '(' + str(chemins[curseur][i].x) + ';' + str(chemins[curseur][i].y) + ')'
+                    print(ligne)
+                    solution = chemins[curseur]
+                    solution.pop(0)
+                    return solution
             
             #Ajouter les connexions du curseur à aux cases actives
             pos_curseur = cases_actives[curseur]
@@ -533,6 +552,10 @@ class Entité:
                 chemins.append(c)
                 # Ajouter le poid
                 poids.append(n_pas[-1] + Vec2.distance(ny,self.destination))
+
+            if Vec2.distance(pos_curseur,self.destination) < meilleur_poid:
+                meilleur_poid = Vec2.distance(pos_curseur,self.destination)
+                meilleur_chemin = chemins[curseur]
 
             #Passer le curseur aux cases passives
             n_pas.pop(curseur)
