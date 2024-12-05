@@ -1,4 +1,7 @@
 from Maths.Vec3 import Vec3
+from Maths.Vec2 import Vec2
+
+EFL = "\033[2K" # Efface la ligne
 
 ROUGE = Vec3(0.90,0.12,0.12)
 ORANGE = Vec3(0.90,0.52,0.12)
@@ -279,3 +282,20 @@ def TFX(s : str, Pcoul : Vec3 = None, Scoul : Vec3 = None, gras = False, pâle =
     if soul2:
         ret = "\033[21m" + ret
     return ret + "\033[0m"
+
+def bgcr(translation : Vec2):
+    """
+    Bouge le curseur sur l'écran de « translation » caractères
+
+    Args:
+        translation (Vec2): translation à effectuer
+    """
+    if translation.x > 0:
+        print("\033[" + str(int(translation.x)) + "C",end='')
+    else:
+        print("\033[" + str(int(-translation.x)) + "D",end='')
+    
+    if translation.y > 0:
+        print("\033[" + str(int(translation.y)) + "A",end='')
+    else:
+        print("\033[" + str(int(-translation.y)) + "B",end='')

@@ -7,25 +7,25 @@ from TFX import *
 from InclusionsCirculaires.Entité_Carte import *
 
 class Carte:
-    ligne : int
-    colonne : int
+    lignes : int
+    colonnes : int
     matrice : list[list[Tuiles]]
 
     entités : list[Entité]
     
     def __init__(self,ligne : int ,colonne :int):
-        self.ligne = ligne
-        self.colonne = colonne
-        self.matrice = []
-        self.entités = []
+        self.lignes : int = ligne
+        self.colonnes : int = colonne
+        self.matrice : list[list[Tuiles]] = []
+        self.entités : list[Entité] = []
 
     
 
     def creation(self):
         self.matrice = []
-        for ligne in range(self.ligne):
+        for ligne in range(self.lignes):
             ligne_donnee = []
-            for colonne in range(self.colonne):
+            for colonne in range(self.colonnes):
                 ligne_donnee.append(Tuiles(Tuiles.TYPE_TERRE))
             self.matrice.append(ligne_donnee)    
             
@@ -42,16 +42,16 @@ class Carte:
 
     def position(self):
         dict_position = {}
-        for ligne in range(self.ligne):
-            for colonne in range(self.colonne):
+        for ligne in range(self.lignes):
+            for colonne in range(self.colonnes):
                 dict_position[ligne,colonne] = "0"
         return dict_position
     
     def dessiner(self):
         dessin = ""
-        for y in range(self.ligne):
+        for y in range(self.lignes):
             ligne = ""
-            for x in range(self.colonne):
+            for x in range(self.colonnes):
                 
                 en = "  "
                 for e in self.entités:
@@ -92,6 +92,14 @@ class Carte:
                                     break
                                 case _:
                                     raise TypeError("Entité " + str(e) + " n'est pas un golem valide.")
+                    if en == "  " and len(e.chemin) > 0:
+                        for pos in e.chemin:
+                            if pos.x == x and pos.y == y:
+                                if e.camp == "Paysans":
+                                    en = gras(coul("++",ROUGE))
+                                if e.camp == "Golems":
+                                    en = gras(coul("••",NOIR))
+                                break
                 
                 match self.matrice[x][y].type:
                     case Tuiles.TYPE_EAU:

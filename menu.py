@@ -4,17 +4,46 @@ import time
 from Carte.class_carte import Carte
 from Ressources import Ressources
 from Jeu import *
-import message
+import dialogue
+from TFX import *
+from Entités.Golem import *
 
 def clearScreen():
-    os.system("cls" if os.name == 'nt' else "clear")
-def ingameUI(game_map : Carte, jeu : Jeu):
+    # os.system("cls" if os.name == 'nt' else "clear")
+    pass
+
+def effaceCommande():
+    """Efface la commande invalide et son message d'erreur précédent.
+
+    Bouge le curseur d'une ligne vers le haut, efface, bouge le curseur d'une ligne vers le haut, efface de nouveau.
+    """
+    bgcr(Vec2(0,1)) # Efface bouge le curseur vers la ligne précédente
+    print(EFL+'\r',end='')      # Efface la ligne et place le curseur au début
+    bgcr(Vec2(0,1)) # Efface bouge le curseur vers la ligne précédente
+    print(EFL+'\r',end='')      # Efface la ligne et place le curseur au début
+
+def ingameUI():
     """Display the in-game UI."""
+    jeu = Jeu.avoirJeu()
+    game_map = jeu.carte
+
     clearScreen()
 
     # Header
     header = "=" * 50
-    header2 = "Insérez Titre".center(50)
+    header2 = ""
+    match jeu.chapitre.v:
+        case Chapitre.INTRODUCTION:
+            header2 = gras("Malheur à Alcadia!")
+        case Chapitre.CHAPITRE1:
+            header2 = dialogue.titre(1)
+        case Chapitre.CHAPITRE2:
+            header2 = dialogue.titre(2)
+        case Chapitre.CHAPITRE3:
+            header2 = dialogue.titre(3)
+        case _:
+            raise ValueError("Le chapitre " + str(jeu.chapitre.v) + " n'est pas un chapitre valide.")
+    header2 = header2.center(50)
     header3 = "=" * 50
 
     print(header)
@@ -26,55 +55,68 @@ def ingameUI(game_map : Carte, jeu : Jeu):
     
     # Footer
     footer = "=" * 50
-    controls = "Y va avoir le dialogue ici".center(50)
+    controls = ""
+    #print(controls)
+    if jeu.état.v == ÉtatJeu.JEU:
+        controls = "Tapez « ? » ou « aide » pour obtenir les contrôles"
+    else :
+        controls = dialogue.script(jeu.chapitre.v,jeu.état.v,jeu.choix,jeu)
+    controls = controls.center(50)
     footer_end = "=" * 50
 
     print(footer)
-    #print(controls)
-    match jeu.état.v:
-        case ÉtatJeu.INTRODUCTION:
-            message.script("Introduction",None,None)
-        case ÉtatJeu.ZONE1:
-            message.script("Prairie","Debut",jeu)
-        case ÉtatJeu.ZONE2:
-            message.script("Cite","Debut",jeu)
-        case ÉtatJeu.ZONE3:
-            message.script("Chateau","Debut",jeu)
+    print(controls)
     print(footer_end)
-    g = input("Tapez G : ").capitalize() == "G"
-    match jeu.état.v:
-        case ÉtatJeu.INTRODUCTION:
-            jeu.état.v = ÉtatJeu.ZONE1
-        case ÉtatJeu.ZONE1:
-            if g:
-                message.script("Prairie","Success",jeu)
+    if jeu.état.v == ÉtatJeu.CHOIX:
+        jeu.choix = input("Melios > ")
+    elif jeu.état.v == ÉtatJeu.DÉBUT:
+        jeu.état.v = ÉtatJeu.JEU
+        input("")
+    elif jeu.état.v == ÉtatJeu.JEU:
+        continuer = True
+        while continuer:
+            continuer = False
+            commande = input("> ").upper().split(" ")
+            
+            if commande[0] == '':
+                jeu.état.v = ÉtatJeu.FIN_TOUR
+            elif commande[0] == 'S' or commande[0] == "SELECT":
+                trouvé = False
+                if len(commande) > 1:
+                    nom = commande[1]
+                    for e in jeu.carte.entités:
+                        if e.nom.upper() == nom:
+                            jeu.menu.menu_historique.append(jeu.état.v)
+                            jeu.état.v = ÉtatJeu.MENU_CONTEXTUEL
+                            jeu.menu.v = MenuContextuel.SELECT
+                            jeu.menu.menu_select_entité = e
+                            trouvé = True
+                            break
+                if not trouvé:
+                    print("Veuillez entrer un nom qui se trouve dans la liste.")
+                    time.sleep(1.5)
+                    effaceCommande()
+                else:
+                    break
+            elif commande[0] == 'C' or commande[0] == "COMBAT":
+                jeu.menu.menu_historique.append(jeu.état.v)
+                jeu.état.v = ÉtatJeu.MENU_CONTEXTUEL
+                jeu.menu.v = MenuContextuel.COMBAT
+            elif commande[0] == '?' or commande[0] == "AIDE":
+                jeu.menu.menu_historique.append(jeu.état.v)
+                jeu.état.v = ÉtatJeu.MENU_CONTEXTUEL
+                jeu.menu.v = MenuContextuel.AIDE
             else:
-                message.script("Prairie","Failure",jeu)
-            if jeu.état.v != ÉtatJeu.TERMINÉ:
-                jeu.état.v = ÉtatJeu.ZONE2
-        case ÉtatJeu.ZONE2:
-            if g:
-                message.script("Cite","Success",jeu)
-            else:
-                message.script("Cite","Failure",jeu)
-            if jeu.état.v != ÉtatJeu.TERMINÉ:
-                jeu.état.v = ÉtatJeu.ZONE3
-        case ÉtatJeu.ZONE3:
-            if g:
-                message.script("Chateau","Success",jeu)
-            else:
-                message.script("Chateau","Failure",jeu)
-            if jeu.état.v != ÉtatJeu.TERMINÉ:
-                jeu.état.v = ÉtatJeu.TERMINÉ
+                print("Veuillez entrer une commande valide ou taper entré pour finir le tour.")
+                time.sleep(1.5)
+                effaceCommande()
+                continuer = True
+    else:
+        input("")
 
-    res = Ressources.avoirRessources()
-    print("Mise à jour des entitées.")
-    for i in range(len(res.entités)):
-        res.entités[i]._MiseÀJourIA()
-    print("Entitées mises à jours.")
-    res.cartes[0].dessiner()
+def displayUI():
+    jeu = Jeu.avoirJeu()
 
-def displayUI(game_map, jeu : Jeu):
     clearScreen()
 
     header = "=" * 50
@@ -99,7 +141,7 @@ def displayUI(game_map, jeu : Jeu):
     key = input("Que voulez-vous faire? ").strip().lower()
     if key == "s":
         # ingameUI(game_map)  # Pass the game map to the in-game UI
-        jeu.état.v = ÉtatJeu.INTRODUCTION
+        jeu.état.v = ÉtatJeu.DÉBUT
     elif key == "t":
         print("W (haut), S (bas), A (gauche), D (droite)")
         time.sleep(2)
@@ -112,6 +154,329 @@ def displayUI(game_map, jeu : Jeu):
         print("Choix invalide, veuillez choisir une option : S, T ou Q")
         time.sleep(1)
 
+def menu_contextuel():
+
+    menu = Jeu.avoirJeu().menu
+
+    match menu.v:
+        case MenuContextuel.AIDE:
+            menu_aide()
+        case MenuContextuel.COMBAT:
+            menu_combat()
+        case MenuContextuel.INFO:
+            menu_info()
+        case MenuContextuel.SELECT:
+            menu_select()
+        case _:
+            raise ValueError("Le menu : " + str(menu.v) + " n'est pas un menu reconnus.")
+
+
+def menu_aide():
+    res = Ressources.avoirRessources()
+    jeu = Jeu.avoirJeu()
+
+    clearScreen()
+    print("="*50)
+    print("Menu d'aide".center(50))
+    print("="*50)
+    print(
+        "\n"+
+        "Tapez « "+gras("C")+" » ou « "+gras("Combat")+" » pour voir les informations relatives au unitées et au combat\n" +
+        "Tapez « "+gras("S")+" » ou « "+gras("Select")+" » suivit de "+gras("<NomGolem>")+" pour donner un ordre à un Golem\n"+
+        "\n"+
+        gras(soul("En mode combat :\n"))+
+        "\n"+
+        "  Tapez « "+gras("DP")+" » ou « "+gras("Déplacement")+" » suivit de "+gras("<X>")+" et "+gras("<Y>")+" pour déplacer le golem vers une destination\n"+
+        "  Tapez « "+gras("A")+" »  ou « "+gras("Attaque")+" » suivit de "+gras("<NomCible>")+" pour déplacer le golem vers une cible et l'attaquer\n"+
+        "  Tapez « "+gras("AS")+" » ou « "+gras("Attaque-Spéciale")+" » pour activer l'attaque spéciale du golem\n"+
+        "  Tapez « "+gras("DF")+" » ou « "+gras("Défense")+" » pour activer le mode défense du golem\n"+
+        "  Tapez « "+gras("L")+" »  ou « "+gras("Libérer")+" » pour libérer le golem des ordres qui lui ont été donnés\n"+
+        "  Tapez « "+gras("CA")+" » ou « "+gras("Charger-Attaque")+" » pour commencer à charger pour une attaque plus puissante\n"+
+        "  Tapez « "+gras("AC")+" » ou « "+gras("Attaquer-Charge")+" », suivit de "+gras("<NomCible>")+" pour frapper un ennemi avec une attaque plus puissante\n"+
+        "\n" +
+        "Tapez « "+gras("?")+" » ou « "+gras("Aide")+" » pour afficher cette liste à tout moment\n"+
+        "Tapez « "+gras("P")+" » ou « "+gras("Précédent")+" » pour revenir au menu précédent.\n"
+        "Tapez « "+gras("Q")+" » ou « "+gras("Quitter")+" » pour quitter.\n"+
+        "\n"
+        )
+    print("="*50)
+    
+    while True:
+        commande = input("> ").upper().split(' ')
+        if commande[0] == 'Q' or commande[0] == "QUITTER":
+            jeu.état.v = jeu.menu.menu_historique[0]
+            jeu.menu.menu_historique.clear()
+            break
+        if commande[0] == 'P' or commande[0] == "PRÉCÉDENT":
+            if len(jeu.menu.menu_historique) > 1:
+                jeu.menu.v = jeu.menu.menu_historique.pop(-1)
+                break
+            elif len(jeu.menu.menu_historique) > 0:
+                jeu.état.v = jeu.menu.menu_historique.pop(-1)
+                break
+        else:
+            print("Veuillez entrer une commande valide.")
+            time.sleep(1.5)
+            effaceCommande()
+
+def menu_combat():
+    jeu = Jeu.avoirJeu()
+
+    print("="*50)
+    print("Menu de statistiques du combat".center(50))
+    print("="*50)
+
+    camps = []
+
+    for e in jeu.carte.entités:
+        if not e.camp in camps:
+            camps.append(e.camp)
+    
+    for c in camps:
+        print("\n" + soul(c) + " : \n")
+        for e in jeu.carte.entités:
+            if e.camp == c:
+                print(gras(e.nom) + " > PV : " + str(int(e.vie)))
+    
+    print("="*50)
+    
+    while True:
+        commande = input("> ").upper().split(' ')
+        if commande[0] == 'I' or commande[0] == "INFO":
+            trouvé = False
+            if len(commande) > 1:
+                nom = commande[1]
+                for e in jeu.carte.entités:
+                    if e.nom.upper() == nom:
+                        jeu.menu.menu_historique.append(MenuContextuel.COMBAT)
+                        jeu.menu.v = MenuContextuel.INFO
+                        jeu.menu.menu_entité_entité = e
+                        trouvé = True
+                        break
+            if not trouvé:
+                print("Veuillez entrer un nom qui se trouve dans la liste.")
+                time.sleep(1.5)
+                effaceCommande()
+            else:
+                break
+        elif commande[0] == 'S' or commande[0] == "SELECT":
+            trouvé = False
+            if len(commande) > 1:
+                nom = commande[1]
+                for e in jeu.carte.entités:
+                    if e.nom.upper() == nom:
+                        jeu.menu.menu_historique.append(MenuContextuel.COMBAT)
+                        jeu.menu.v = MenuContextuel.SELECT
+                        jeu.menu.menu_select_entité = e
+                        trouvé = True
+                        break
+            if not trouvé:
+                print("Veuillez entrer un nom qui se trouve dans la liste.")
+                time.sleep(1.5)
+                effaceCommande()
+            else:
+                break
+        elif commande[0] == '?' or commande[0] == "AIDE":
+            jeu.menu.menu_historique.append(MenuContextuel.COMBAT)
+            jeu.menu.v = MenuContextuel.AIDE
+            break
+        elif commande[0] == 'Q' or commande[0] == "QUITTER":
+            jeu.état.v = jeu.menu.menu_historique[0]
+            jeu.menu.menu_historique.clear()
+            break
+        elif commande[0] == 'P' or commande[0] == "PRÉCÉDENT":
+            if len(jeu.menu.menu_historique) > 1:
+                jeu.menu.v = jeu.menu.menu_historique.pop(-1)
+                break
+            elif len(jeu.menu.menu_historique) > 0:
+                jeu.état.v = jeu.menu.menu_historique.pop(-1)
+                break
+        else:
+            print("Veuillez entrer une commande valide.")
+            time.sleep(1.5)
+            effaceCommande()
+
+def menu_info():
+    jeu = Jeu.avoirJeu()
+
+    print("="*50)
+    print("Menu de statistiques du combat".center(50))
+    print("="*50)
+
+    print(jeu.menu.menu_entité_entité.avoirInfoStr())
+    
+    print("="*50)
+
+    while True:
+        commande = input("> ").upper().split(' ')
+        if commande[0] == 'S' or commande[0] == "SELECT":
+            trouvé = False
+            if len(commande) > 1:
+                nom = commande[1]
+                for e in jeu.carte.entités:
+                    if e.nom.upper() == nom:
+                        jeu.menu.menu_historique.append(MenuContextuel.INFO)
+                        jeu.menu.v = MenuContextuel.SELECT
+                        jeu.menu.menu_select_entité = e
+                        trouvé = True
+                        break
+            if not trouvé:
+                print("Veuillez entrer un nom qui se trouve dans la liste.")
+                time.sleep(1.5)
+                effaceCommande()
+            else:
+                break
+        elif commande[0] == '?' or commande[0] == "AIDE":
+            jeu.menu.menu_historique.append(MenuContextuel.INFO)
+            jeu.menu.v = MenuContextuel.AIDE
+        elif commande[0] == 'Q' or commande[0] == "QUITTER":
+            jeu.état.v = jeu.menu.menu_historique[0]
+            jeu.menu.menu_historique.clear()
+            break
+        elif commande[0] == 'P' or commande[0] == "PRÉCÉDENT":
+            if len(jeu.menu.menu_historique) > 1:
+                jeu.menu.v = jeu.menu.menu_historique.pop(-1)
+                break
+            elif len(jeu.menu.menu_historique) > 0:
+                jeu.état.v = jeu.menu.menu_historique.pop(-1)
+                break
+        else:
+            print("Veuillez entrer une commande valide.")
+            time.sleep(1.5)
+            effaceCommande()
+
+def menu_select():
+    jeu = Jeu.avoirJeu()
+
+    print("="*50)
+    print(("Donnez un ordre à " + jeu.menu.menu_select_entité.nom).center(50))
+    print("="*50)
+
+    print(jeu.carte.dessiner())
+
+    print("="*50)
+    print("Tapez « ? » ou « Aide » pour obtenir la liste des commandes.".center(50))
+    print("="*50)
+
+    while True:
+        commande = input("> ").upper().split(' ')
+        if commande[0] == "DP" or commande[0] == "DÉPLACEMENT":
+            if len(commande) < 3:
+                print("La commande Déplacement nécessite les arguements X et Y.")
+                time.sleep(1.5)
+                effaceCommande()
+                continue
+            try:
+                x = int(commande[1])
+                y = int(commande[2])
+            except:
+                print("Veuillez préciser deux entiers positifs décrivant la destination de " + jeu.menu.menu_select_entité.nom)
+                time.sleep(1.5)
+                effaceCommande()
+                continue
+            
+            if x < 0 or x > jeu.carte.colonnes or y < 0 or y > jeu.carte.lignes:
+                print("Veuillez entrer des nombres entre 0 et " + str(int(jeu.carte.colonnes)) + " pour les X et entre 0 et " + str(int(jeu.carte.lignes)) + " pour les Y.")
+                time.sleep(1.5)
+                effaceCommande()
+                continue
+
+            objetCommande = Commande()
+            objetCommande.faireCommandeDéplacement(Vec2(x,y))
+            jeu.menu.menu_select_entité.commande(objetCommande)
+                
+        elif commande[0] == "A" or commande[0] == "ATTAQUE":
+            if len(commande) < 2:
+                print("Veuillez préciser le nom de la cible à attaquer.")
+                time.sleep(1.5)
+                effaceCommande()
+                continue
+
+            nom = commande[1]
+            entité = None
+            for e in jeu.carte.entités:
+                if e.nom.upper() == nom:
+                    entité = e
+            
+            if entité == None:
+                print("Veuillez utiliser le nom d'une entité sur le champ de bataille.")
+                time.sleep(1.5)
+                effaceCommande()
+                continue
+
+            objetCommande = Commande()
+            objetCommande.faireCommandeAttaque(entité)
+            jeu.menu.menu_select_entité.commande(objetCommande)
+
+        elif commande[0] == "AS" or commande[0] == "ATTAQUE-SPÉCIALE":
+            try:
+                attaque = jeu.menu.menu_select_entité.ATTAQUE_SPÉCIALE
+            except:
+                print(jeu.menu.menu_select_entité.nom + " n'a pas d'attaque spéciale.")
+                time.sleep(1.5)
+                effaceCommande()
+                continue
+            
+            objetCommande = Commande()
+            objetCommande.faireCommandeAttaqueSpéciale(attaque)
+            jeu.menu.menu_select_entité.commande(objetCommande)
+
+        elif commande[0] == "DF" or commande[0] == "DÉFENSE":
+            objetCommande = Commande()
+            objetCommande.faireCommandeDéfense()
+            jeu.menu.menu_select_entité.commande(objetCommande)
+            
+        elif commande[0] == "L" or commande[0] == "LIBÉRER":
+            objetCommande = Commande()
+            objetCommande.faireCommandeLibérer()
+            jeu.menu.menu_select_entité.commande(objetCommande)
+
+        elif commande[0] == "CA" or commande[0] == "CHARGER-ATTAQUE":
+            objetCommande = Commande()
+            objetCommande.faireCommandeCharger()
+            jeu.menu.menu_select_entité.commande(objetCommande)
+
+        elif commande[0] == "AC" or commande[0] == "ATTAQUER-CHARGE":
+            if len(commande) < 2:
+                print("Veuillez préciser le nom de la cible à attaquer.")
+                time.sleep(1.5)
+                effaceCommande()
+                continue
+
+            nom = commande[1]
+            entité = None
+            for e in jeu.carte.entités:
+                if e.nom.upper() == nom:
+                    entité = e
+            
+            if entité == None:
+                print("Veuillez utiliser le nom d'une entité sur le champ de bataille.")
+                time.sleep(1.5)
+                effaceCommande()
+                continue
+
+            objetCommande = Commande()
+            objetCommande.faireCommandeAttaquerCharge(entité)
+            jeu.menu.menu_select_entité.commande(objetCommande)
+
+        elif commande[0] == '?' or commande[0] == "AIDE":
+            jeu.menu.menu_historique.append(MenuContextuel.SELECT)
+            jeu.menu.v = MenuContextuel.AIDE
+        elif commande[0] == 'Q' or commande[0] == "QUITTER":
+            jeu.état.v = jeu.menu.menu_historique[0]
+            jeu.menu.menu_historique.clear()
+            break
+        elif commande[0] == 'P' or commande[0] == "PRÉCÉDENT":
+            if len(jeu.menu.menu_historique) > 1:
+                jeu.menu.v = jeu.menu.menu_historique.pop(-1)
+                break
+            elif len(jeu.menu.menu_historique) > 0:
+                jeu.état.v = jeu.menu.menu_historique.pop(-1)
+                break
+        else:
+            print("Veuillez taper une commande valide.")
+            time.sleep(1.5)
+            effaceCommande()
 
 def main():
     width, eight = 20, 10

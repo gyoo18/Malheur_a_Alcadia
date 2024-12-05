@@ -3,15 +3,13 @@ from Entités.Entité import Entité
 from typing_extensions import Self
 
 class Ressources:
-    cartes : list[Carte] = []
-    entités : list[Entité] = []
 
     ressources : Self = None
 
-    resultat_zone_2 : str = ""
-
     def __init__(self):
-        pass
+        self.cartes : list[Carte] = []
+        self.entités : list[Entité] = []
+        self.resultat_zone_2 : str = ""
 
     def avoirRessources():
         if Ressources.ressources == None:

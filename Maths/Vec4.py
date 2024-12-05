@@ -2,12 +2,12 @@ from typing_extensions import Self
 from math import sqrt
 
 class Vec4:
-    x : float
-    y : float
-    z : float
-    w : float
 
     def __init__(self, x = None, y = None, z = None, w = None):
+        self.x : float = 0
+        self.y : float = 0
+        self.z : float = 0
+        self.w : float = 0
         if (type(x) == float or type(x) == int) and (type(y) == float or type(y) == int) and (type(z) == float or type(z) == int) and (type(w) == float or type(w) == int):
             self.x = x
             self.y = y

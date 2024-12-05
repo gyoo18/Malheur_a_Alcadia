@@ -1,31 +1,105 @@
 from typing_extensions import Self
-import interface
 from Ressources import Ressources
+from Carte.class_carte import Carte
+import os
+from Entités.Entité import Entité
+from Entités.Golem import Golem
 
 class ÉtatJeu:
     MENU = "menu"
-    INTRODUCTION = "introduction"
-    ZONE1 = "zone1"
-    ZONE2 = "zone2"
-    ZONE3 = "zone3"
+    MENU_CONTEXTUEL = "menu contextuel"
+    JEU = "jeu"
+    FIN_TOUR = "fin de tour"
+    DÉBUT = "début"
+    CHOIX = "choix"
+    SUCCÈS = "succès"
+    ÉCHEC = "échec"
+    TRANSITION = "transition"
     TERMINÉ = "terminé"
 
-    v : str
+    def __init__(self, valeur = MENU):
+        self.v : str = valeur
 
-    def __init__(self, valeur = ZONE1):
+class Chapitre:
+    INTRODUCTION = "Introduction"
+    CHAPITRE1 = "Prairie"
+    CHAPITRE2 = "Cité"
+    CHAPITRE3 = "Château"
+
+    def __init__(self, valeur = INTRODUCTION):
+        self.v : str = valeur
+
+class MenuContextuel:
+    AIDE = "aide"   # Menu d'aide aux commandes
+    COMBAT = "combat"   # Menu d'état du combat
+    INFO = "info"   # Menu d'état des entités
+    SELECT = "select"   # Menu de commande des golems
+
+    def __init__(self, valeur = AIDE):
+        from Entités.Entité import Entité
         self.v = valeur
+        self.menu_entité_entité : Entité = None
+        self.menu_historique : list[str] = []
+        self.menu_select_entité : Golem = None
 
 class Jeu:
-    état : ÉtatJeu
+    jeu : Self = None
 
     def __init__(self):
-        self.état = ÉtatJeu(ÉtatJeu.ZONE1)
+        self.état : ÉtatJeu = ÉtatJeu()    # Indique l'état du jeu
+        self.chapitre : Chapitre = Chapitre()   # Indique le chapitre scénaristique actuel et la zone.
+        self.choix : str = ""       # Décrit le choix que le joueur a fait à la fin du niveau s'il y a lieu
+        self.menu : MenuContextuel = MenuContextuel() # Décrit le menu contextuel ouvert ou précédemment ouvert.
+        self.carte : Carte = None
+    
+    def avoirJeu():
+        if Jeu.jeu == None:
+            Jeu.jeu = Jeu()
+        return Jeu.jeu
 
     def miseÀJour(self):
         import menu
         res = Ressources.avoirRessources()
+        os.system("cls" if os.name == 'nt' else "clear")
+        if self.état.v == ÉtatJeu.FIN_TOUR:
+            print("Mise à jour des entitées.")
+            for i in range(len(self.carte.entités)):
+                self.carte.entités[i]._MiseÀJourIA()
+            print("Entitées mises à jours.")
+            self.état.v = ÉtatJeu.JEU
+
         if self.état.v == ÉtatJeu.MENU:
-            menu.displayUI(res.cartes[0],self)
+            menu.displayUI()
+        elif self.état.v == ÉtatJeu.MENU_CONTEXTUEL:
+            menu.menu_contextuel()
         else :
-            menu.ingameUI(res.cartes[0],self)
+            menu.ingameUI()
+
+        if self.état.v == ÉtatJeu.JEU:
+            paysans = False
+            golems = False
+            for e in res.cartes[0].entités:
+                if e.camp == "Golems":
+                    golems = True
+                
+                if e.camp == "Paysans":
+                    paysans = True
+            
+            if not paysans:
+                self.état.v = ÉtatJeu.SUCCÈS
+            elif not golems:
+                self.état.v = ÉtatJeu.ÉCHEC
+        
+        if self.état.v == ÉtatJeu.TRANSITION:
+            self.état.v = ÉtatJeu.DÉBUT
+            match self.chapitre.v:
+                case Chapitre.INTRODUCTION:
+                    self.chapitre.v = Chapitre.CHAPITRE1
+                case Chapitre.CHAPITRE1:
+                    self.chapitre.v = Chapitre.CHAPITRE2
+                case Chapitre.CHAPITRE2:
+                    self.chapitre.v = Chapitre.CHAPITRE3
+                case Chapitre.CHAPITRE3:
+                    self.chapitre.v = Chapitre.INTRODUCTION
+        
         

@@ -2,8 +2,6 @@ from typing_extensions import Self
 from math import sqrt
 
 class Vec2:
-    x : float
-    y : float
 
     def __init__(self, x : float | int | Self, y : float = None):
         """__init__ _summary_
@@ -22,6 +20,8 @@ class Vec2:
              - Vec2(x : float | int)
              - Vec2(x : Vec2)
         """
+        self.x : float = 0
+        self.y : float = 0
         if (type(x) == float or type(x) == int) and (type(y) == float or type(y) == int):
             self.x = x
             self.y = y

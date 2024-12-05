@@ -2,11 +2,11 @@ from typing_extensions import Self
 from math import sqrt
 
 class Vec3:
-    x : float
-    y : float
-    z : float
 
     def __init__(self, x = None, y = None, z = None):
+        self.x : float = 0
+        self.y : float = 0
+        self.z : float = 0
         if (type(x) == float or type(x) == int) and (type(y) == float or type(y) == int) and (type(z) == float or type(z) == int):
             self.x = x
             self.y = y
