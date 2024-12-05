@@ -282,6 +282,7 @@ class GolemTerre(Golem):
         self.nom=Golem.nom_aléatoire(["Gorb","Bob","Pierre","Fero","Crys"])
         self.attaque_sol_dégats : float = 1.0
         self.attaque_sol_rayon : float = 2.0
+        
     def _commandeAttaqueSpéciale(self, commande : Commande):
         if commande.attaque_spéciale == self.ATTAQUE_SPÉCIALE:
             attaque = Attaque(self)
@@ -422,7 +423,26 @@ class GolemDoré(Golem):
 
     def __init__(self):
         super().__init__()
-        vieMax=150
-        attaque_normale_dégats=Entité.Random_Stats(25,31)
-        dégats_libre=Entité.Random_Stats(36,42)
-        nom=Entité.nom_aléatoire(["Goldy","Flash","Shiny","Conqi","King"])
+        self.PVMax=150
+        self.PV = self.PVMax
+        self.attaque_normale_dégats=Entité.Random_Stats(25,31)
+        self.dégats_libre=Entité.Random_Stats(36,42)
+        self.nom=Entité.nom_aléatoire(["Goldy","Flash","Shiny","Conqi","King"])
+
+        self.TEMP_GUÉRISON = 4
+        self.guérisonCompteur = 0
+        self.guérisonRayon = 4
+        self.guérisonPuissance = 4
+
+    def MiseÀJour(self):
+        super().MiseÀJour()
+
+        if self.guérisonCompteur > 0:
+            self.guérisonCompteur -= 1
+
+            for i in range(len(self.carte.entités)):
+                if self.carte.entités[i].camp == self.camp and self.carte.entités != self and Vec2.distance(self, self.carte.entités[i]) <= self.guérisonRayon:
+                    self.carte.entités[i].PV += self.guérisonPuissance
+                    self.carte.entités[i].PV = min(self.carte.entités[i].PV,self.carte.entités[i].PVMax)
+
+    
