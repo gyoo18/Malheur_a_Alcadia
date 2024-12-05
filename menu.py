@@ -2,6 +2,7 @@
 import os
 import time
 from Carte.Carte import Carte
+from Carte.Tuile import Tuile
 from Ressources import Ressources
 from Jeu import *
 import dialogue
@@ -184,15 +185,20 @@ def menu_aide():
         "Tapez « "+gras("C")+" » ou « "+gras("Combat")+" » pour voir les informations relatives au unitées et au combat\n" +
         "Tapez « "+gras("S")+" » ou « "+gras("Select")+" » suivit de "+gras("<NomGolem>")+" pour donner un ordre à un Golem\n"+
         "\n"+
-        gras(soul("En mode combat :\n"))+
+        gras(soul("En mode Select :\n"))+
         "\n"+
         "  Tapez « "+gras("DP")+" » ou « "+gras("Déplacement")+" » suivit de "+gras("<X>")+" et "+gras("<Y>")+" pour déplacer le golem vers une destination\n"+
+        "\n"+
+        "  "+soul("Golems :\n")+
         "  Tapez « "+gras("A")+" »  ou « "+gras("Attaque")+" » suivit de "+gras("<NomCible>")+" pour déplacer le golem vers une cible et l'attaquer\n"+
         "  Tapez « "+gras("AS")+" » ou « "+gras("Attaque-Spéciale")+" » pour activer l'attaque spéciale du golem\n"+
         "  Tapez « "+gras("DF")+" » ou « "+gras("Défense")+" » pour activer le mode défense du golem\n"+
         "  Tapez « "+gras("L")+" »  ou « "+gras("Libérer")+" » pour libérer le golem des ordres qui lui ont été donnés\n"+
         "  Tapez « "+gras("CA")+" » ou « "+gras("Charger-Attaque")+" » pour commencer à charger pour une attaque plus puissante\n"+
         "  Tapez « "+gras("AC")+" » ou « "+gras("Attaquer-Charge")+" », suivit de "+gras("<NomCible>")+" pour frapper un ennemi avec une attaque plus puissante\n"+
+        "\n"+
+        "  "+soul("Mélios :\n")+
+        "  Tapez « "+gras("CG")+" » ou « "+gras("Créer-Golem")+" », suivit de "+gras("<X>")+" et "+gras("<Y>")+" pour créer un golem à l'endroit spécifié."
         "\n" +
         "Tapez « "+gras("?")+" » ou « "+gras("Aide")+" » pour afficher cette liste à tout moment\n"+
         "Tapez « "+gras("P")+" » ou « "+gras("Précédent")+" » pour revenir au menu précédent.\n"
@@ -473,6 +479,37 @@ def menu_select():
             elif len(jeu.menu.menu_historique) > 0:
                 jeu.état.v = jeu.menu.menu_historique.pop(-1)
                 break
+        elif commande[0] == 'CG' or commande[0] == "CRÉER-GOLEM":
+            if len(commande) < 3:
+                print("La commande Créer-Golem nécessite les arguements X et Y.")
+                time.sleep(1.5)
+                effaceCommande()
+                continue
+            try:
+                x = int(commande[1])
+                y = int(commande[2])
+            except:
+                print("Veuillez préciser deux entiers positifs décrivant la l'emplacement de la création du Golem.")
+                time.sleep(1.5)
+                effaceCommande()
+                continue
+            
+            if x < 0 or x > jeu.carte.colonnes or y < 0 or y > jeu.carte.lignes:
+                print("Veuillez entrer des nombres entre 0 et " + str(int(jeu.carte.colonnes)) + " pour les X et entre 0 et " + str(int(jeu.carte.lignes)) + " pour les Y.")
+                time.sleep(1.5)
+                effaceCommande()
+                continue
+
+            if jeu.carte.matrice[x][y].type == Tuile.TYPE_MUR:
+                print(coul("Impossible de placer un golem à " + str(x) + ',' + str(y) + ", il y a un mur dans le chemin!",ROUGE))
+                time.sleep(1.5)
+                effaceCommande()
+                continue
+
+
+            objetCommande = Commande()
+            objetCommande.faireCommandeCréerGolem(Vec2(x,y))
+            jeu.menu.menu_select_entité.commande(objetCommande)
         else:
             print("Veuillez taper une commande valide.")
             time.sleep(1.5)

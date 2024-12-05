@@ -8,7 +8,7 @@ class Paysan(Entité):
     def __init__(self):
         super().__init__()
         self.camp = "Paysans"
-        self.campsEnnemis = ["Golems"]
+        self.campsEnnemis = ["Golems","Personnages"]
         self.nom = "Paysan"
 
     def _AttaquerEnnemi(self):
@@ -51,6 +51,7 @@ class Gosse(Paysan):
         self.PV = self.PVMax
         self.attaque_normale_dégats=Entité.Random_Stats(8,11)
         self.dégats_libre=Entité.Random_Stats(5,11)
+        nom=Entité.nom_aléatoire(["Lhucra","Karck","Gryui","Vhynch"])
 
     def _exécuterAttaque(self):
         attaque = Attaque(self)
@@ -66,6 +67,7 @@ class Mineur(Paysan):
         self.PV = self.PVMax
         self.attaque_normale_dégats=Entité.Random_Stats(14,21)
         self.dégats_libre=Entité.Random_Stats(10,16)
+        self.nom=Entité.nom_aléatoire([])
         self.bonus_terre : int = 2 # Bonus contre les golems de terre
 
     def _exécuterAttaque(self):
@@ -85,6 +87,7 @@ class Prêtre(Paysan):
         self.PV = self.PVMax
         self.attaque_normale_dégats=Entité.Random_Stats(12,17)
         self.dégats_libre=Entité.Random_Stats(12,15)
+        self.nom=Entité.nom_aléatoire([])        
         self.vieAddition : int = 2
 
     def _modeRecherche(self):
@@ -157,6 +160,7 @@ class Chevalier(Paysan):
         self.PV = self.PVMax
         self.attaque_normale_dégats=Entité.Random_Stats(19,26)
         self.dégats_libre=Entité.Random_Stats(30,36)
+        self.nom=Entité.nom_aléatoire(["Sir Raudryguish","Sir Harchurt","Sir Morline","Sir Lrimqu"])
 
     def _exécuterAttaque(self):
         attaque = Attaque(self)
@@ -197,6 +201,7 @@ class Arbaletier(Paysan):
         self.PV = self.PVMax
         self.attaque_normale_dégats=Entité.Random_Stats(30,33)
         self.dégats_libre=Entité.Random_Stats(5,11)
+        self.nom=Entité.nom_aléatoire(["Rambo",])        
         self.max_distance_attaque : float = 3.0
         self.min_distance_ennemi : float = 1.5
 

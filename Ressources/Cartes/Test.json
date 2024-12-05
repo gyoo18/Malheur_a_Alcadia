@@ -28,5 +28,6 @@
             "Position" : [5,4]
         }
     ],
+    "Joueur_pos" : [5,5],
     "Prochaine" : "Test"
 }

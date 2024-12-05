@@ -42,6 +42,8 @@ class Commande:
     LIBÉRER = "libre"
     CHARGER_ATTAQUE = "charger attaque"
     ATTAQUER_CHARGE = "attaquer charge"
+
+    CRÉER_GOLEM = "créer golem"
     
     def __init__(self):
         self.catégorie : str = ""
@@ -49,6 +51,7 @@ class Commande:
         self.destination : Vec2 = None
         self.ennemi_cible : Entité = None
         self.attaque_spéciale : str = None
+        self.position_création_golem : Vec2 = None
 
     def faireCommandeDéplacement(self,destination : Vec2):
         """ Créé une commande qui déplace un golem vers `destination`
@@ -116,6 +119,19 @@ class Commande:
         """
         self.catégorie = self.ATTAQUER_CHARGE
         self.ennemi_cible = ennemi
+    
+    def faireCommandeCréerGolem(self, position : Vec2):
+        """crééra une commande qui demandera au joueur de créer un golem à la position relative précisée
+
+        **Notez que la commande ne serat acceptée que par le joueur**
+
+        Raises:
+            AttributeError: Si `position` n'est pas un `Vec2`
+        """
+        if type(position) != Vec2:
+            raise AttributeError("L'argument 'position' doit être de type Vec2.")
+        self.catégorie = self.CRÉER_GOLEM
+        self.position_création_golem = position
 
 class Golem(Entité):
 
@@ -125,9 +141,6 @@ class Golem(Entité):
         self.campsEnnemis = ["Paysans"]
         self.nom = "Golem"
 
-    def nom_aléatoire(liste):
-        nom=random.choice(liste)
-        return nom
     
     def commande(self, commande : Commande):
         """commande Reçoit et interpète une commande donnée par le joueur
@@ -154,7 +167,7 @@ class Golem(Entité):
             case Commande.ATTAQUER_CHARGE:
                 self._commandeAttaquerCharge(commande)
             case _:
-                raise AttributeError(coul("[Golem.commande] Commande mal construite : catégorie invalide.",ROUGE))
+                raise AttributeError(coul("[Golem.commande] Commande mal construite : catégorie" + str(commande.catégorie) + " invalide.",ROUGE))
 
     def _commandeDéplacement(self, commande : Commande):
         """ Exécute une commande déplacement
@@ -269,6 +282,7 @@ class GolemTerre(Golem):
         self.nom=Golem.nom_aléatoire(["Gorb","Bob","Pierre","Fero","Crys"])
         self.attaque_sol_dégats : float = 1.0
         self.attaque_sol_rayon : float = 2.0
+        
     def _commandeAttaqueSpéciale(self, commande : Commande):
         if commande.attaque_spéciale == self.ATTAQUE_SPÉCIALE:
             attaque = Attaque(self)
@@ -338,7 +352,23 @@ class GolemEau(Golem):
                 distanceMinimale = Vec2.distance(ennemi.pos,self.pos)
         if ennemiPlusPrès != None:
             self.état.v = ÉtatIA.COMBAT
-            self.destination = ennemi.pos
+            self.cible = ennemiPlusPrès
+    
+    def _modeCombat(self):
+        """_modeCombat Exécute le combat du Golem
+
+        Supplante Entité._modeCombat
+
+        Incrémente le compteur de chargement et appelle self._AttaquerCible()
+        """
+        if self.étatCombat.v == ÉtatCombat.CHARGER:
+            self.chargement += 1
+        elif self.cible.estVivant and Vec2.distance(self.cible.pos, self.pos) <= self.max_distance_attaque:
+            self._AttaquerCible()
+        else:
+            self.état.v = ÉtatIA.RECHERCHE
+            self.estAttaqué = False
+            self.cible = None
     
     def _AttaquerCible(self):
         attaque = Attaque(self)
@@ -388,3 +418,31 @@ class GolemFeu(Golem):
         attaque.élément = Élément.FEU
         self.cible.Attaquer(attaque)
         self.chargement = 0
+
+class GolemDoré(Golem):
+
+    def __init__(self):
+        super().__init__()
+        self.PVMax=150
+        self.PV = self.PVMax
+        self.attaque_normale_dégats=Entité.Random_Stats(25,31)
+        self.dégats_libre=Entité.Random_Stats(36,42)
+        self.nom=Entité.nom_aléatoire(["Goldy","Flash","Shiny","Conqi","King"])
+
+        self.TEMP_GUÉRISON = 4
+        self.guérisonCompteur = 0
+        self.guérisonRayon = 4
+        self.guérisonPuissance = 4
+
+    def MiseÀJour(self):
+        super().MiseÀJour()
+
+        if self.guérisonCompteur > 0:
+            self.guérisonCompteur -= 1
+
+            for i in range(len(self.carte.entités)):
+                if self.carte.entités[i].camp == self.camp and self.carte.entités != self and Vec2.distance(self, self.carte.entités[i]) <= self.guérisonRayon:
+                    self.carte.entités[i].PV += self.guérisonPuissance
+                    self.carte.entités[i].PV = min(self.carte.entités[i].PV,self.carte.entités[i].PVMax)
+
+    
