@@ -48,6 +48,7 @@ class Joueur(Golem):
                 case _:
                     raise TypeError("[Joueur._commandeCréerGolem] Impossible de créer un golem sur une tuile de type " + str(carte[int(cp.x)][int(cp.y)].type) + '.')
             golem.pos = commande.position_création_golem
+            golem.carte = self.carte
             self.carte.entités.append(golem)
 
     def Attaquer(self, attaque : Attaque):

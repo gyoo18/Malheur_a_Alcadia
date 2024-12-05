@@ -351,7 +351,23 @@ class GolemEau(Golem):
                 distanceMinimale = Vec2.distance(ennemi.pos,self.pos)
         if ennemiPlusPrès != None:
             self.état.v = ÉtatIA.COMBAT
-            self.destination = ennemi.pos
+            self.cible = ennemiPlusPrès
+    
+    def _modeCombat(self):
+        """_modeCombat Exécute le combat du Golem
+
+        Supplante Entité._modeCombat
+
+        Incrémente le compteur de chargement et appelle self._AttaquerCible()
+        """
+        if self.étatCombat.v == ÉtatCombat.CHARGER:
+            self.chargement += 1
+        elif self.cible.estVivant and Vec2.distance(self.cible.pos, self.pos) <= self.max_distance_attaque:
+            self._AttaquerCible()
+        else:
+            self.état.v = ÉtatIA.RECHERCHE
+            self.estAttaqué = False
+            self.cible = None
     
     def _AttaquerCible(self):
         attaque = Attaque(self)

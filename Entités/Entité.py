@@ -457,8 +457,8 @@ class Entité:
                 curseur = i_case_min
             else :
                 # Si on n'a rien trouvé
-                # TODO #8 A* évaluer le cas où il n'y a pas de chemin possible
-                raise RuntimeError(coul("[A*] i_min_case = -1. A* n'a pus trouver de poids minimal.",ROUGE))
+                print(coul("Aucun chemin n'existe vers la destination.",ROUGE))
+                return []
             
             #Vérifier si le poid le plus petit est la destination
             if cases_actives[curseur] == self.destination:
