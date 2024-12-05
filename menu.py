@@ -1,7 +1,7 @@
 #premier test de UI
 import os
 import time
-from Carte.class_carte import Carte
+from Carte.Carte import Carte
 from Ressources import Ressources
 from Jeu import *
 import dialogue
@@ -51,7 +51,7 @@ def ingameUI():
     print(header3)
 
     # Display game map
-    print(game_map.dessiner())
+    print(game_map.dessiner().center(50))
     
     # Footer
     footer = "=" * 50
@@ -236,7 +236,7 @@ def menu_combat():
         print("\n" + soul(c) + " : \n")
         for e in jeu.carte.entités:
             if e.camp == c:
-                print(gras(e.nom) + " > PV : " + str(int(e.vie)))
+                print(gras(e.nom) + " > PV : " + str(int(e.PV)))
     
     print("="*50)
     
@@ -352,7 +352,7 @@ def menu_select():
     print(("Donnez un ordre à " + jeu.menu.menu_select_entité.nom).center(50))
     print("="*50)
 
-    print(jeu.carte.dessiner())
+    print(jeu.carte.dessiner().center(50))
 
     print("="*50)
     print("Tapez « ? » ou « Aide » pour obtenir la liste des commandes.".center(50))
