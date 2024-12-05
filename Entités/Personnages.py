@@ -34,7 +34,7 @@ class Joueur(Golem):
                 raise AttributeError(coul("[Golem.commande] Commande mal construite : catégorie" + str(commande.catégorie) + " invalide.",ROUGE))
     
     def _commandeCréerGolem(self, commande : Commande):
-        if self.carte.peutAller(commande.position_création_golem) and Vec2.distance(self.pos, commande.position_création_golem) <= self.distance_création_golem:
+        if self.carte.matrice[int(commande.position_création_golem.x)][int(commande.position_création_golem.y)] != Tuile.TYPE_MUR and Vec2.distance(self.pos, commande.position_création_golem) <= self.distance_création_golem:
             golem : Golem = None
             carte = self.carte.matrice
             cp = commande.position_création_golem
@@ -47,6 +47,7 @@ class Joueur(Golem):
                     golem = GolemFeu()
                 case _:
                     raise TypeError("[Joueur._commandeCréerGolem] Impossible de créer un golem sur une tuile de type " + str(carte[int(cp.x)][int(cp.y)].type) + '.')
+            golem.pos = commande.position_création_golem
             self.carte.entités.append(golem)
 
     def Attaquer(self, attaque : Attaque):
