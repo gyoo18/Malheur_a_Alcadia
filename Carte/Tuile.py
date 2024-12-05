@@ -3,6 +3,7 @@ class Tuile:
     TYPE_TERRE ="0"
     TYPE_EAU ="~"
     TYPE_FEUX ="*"
+    TYPE_OR = "$"
     TYPE_MUR ="#"
 
     def __init__(self,type):

@@ -99,6 +99,8 @@ class Carte:
                         ligne += surl(en,ORANGE_FONCÉ)
                     case Tuile.TYPE_MUR:
                         ligne += surl(en,GRIS_FONCÉ)
+                    case Tuile.TYPE_OR:
+                        ligne += surl(en,OR)
                     case _:
                         raise TypeError("Tuile " + str(self.matrice[x][y]) + " de type " + str(self.matrice[x][y].type) + " n'a pas de type valide.")
             dessin += ligne + '\n'
