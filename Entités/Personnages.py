@@ -34,24 +34,43 @@ class Joueur(Golem):
                 raise AttributeError(coul("[Golem.commande] Commande mal construite : catégorie" + str(commande.catégorie) + " invalide.",ROUGE))
     
     def _commandeCréerGolem(self, commande : Commande):
-        if self.carte.matrice[int(commande.position_création_golem.x)][int(commande.position_création_golem.y)] != Tuile.TYPE_MUR and Vec2.distance(self.pos, commande.position_création_golem) <= self.distance_création_golem:
-            golem : Golem = None
-            carte = self.carte.matrice
-            cp = commande.position_création_golem
-            match carte[int(cp.x)][int(cp.y)].type:
-                case Tuile.TYPE_TERRE:
-                    golem = GolemTerre()
-                case Tuile.TYPE_EAU:
-                    golem = GolemEau()
-                case Tuile.TYPE_FEUX:
-                    golem = GolemFeu()
-                case Tuile.TYPE_OR:
-                    golem = GolemDoré()
-                case _:
-                    raise TypeError("[Joueur._commandeCréerGolem] Impossible de créer un golem sur une tuile de type " + str(carte[int(cp.x)][int(cp.y)].type) + '.')
-            golem.pos = commande.position_création_golem
-            golem.carte = self.carte
-            self.carte.entités.append(golem)
+        if Vec2.distance(self.pos, commande.position_création_golem) > self.distance_création_golem:
+            print(coul("L'emplacement spécifié est trop loin. Vous ne pouvez pas créer de golem à plus de " + str(self.distance_création_golem) + " mètres de distance.", ROUGE))
+            return
+        
+        if self.carte.matrice[int(commande.position_création_golem.x)][int(commande.position_création_golem.y)] == Tuile.TYPE_MUR:
+            print(coul("Impossible de créer un golem à cet endroit : un mur s'y trouve.",ROUGE))
+            return
+        
+        for e in self.carte.entités:
+            if e.pos == commande.position_création_golem:
+                print(coul("Impossible de créer un golem à cet endroit : ",ROUGE) + gras(coul(e.nom,ROUGE)) + coul(" s'y trouve déjà.",ROUGE))
+                return
+            
+        élément = ""
+
+        golem : Golem = None
+        carte = self.carte.matrice
+        cp = commande.position_création_golem
+        match carte[int(cp.x)][int(cp.y)].type:
+            case Tuile.TYPE_TERRE:
+                golem = GolemTerre()
+                élément = "Terre"
+            case Tuile.TYPE_EAU:
+                golem = GolemEau()
+                élément = "Eau"
+            case Tuile.TYPE_FEUX:
+                golem = GolemFeu()
+                élément = "Feu"
+            case Tuile.TYPE_OR:
+                golem = GolemDoré()
+                élément = "Or"
+            case _:
+                raise TypeError("[Joueur._commandeCréerGolem] Impossible de créer un golem sur une tuile de type " + str(carte[int(cp.x)][int(cp.y)].type) + '.')
+        golem.pos = commande.position_création_golem
+        golem.carte = self.carte
+        self.carte.entités.append(golem)
+        print(coul("Golem de type " + élément + " créé. Son nom : ",VERT) + gras(coul(golem.nom,VERT)))
 
     def Attaquer(self, attaque : Attaque):
         """Attaquer Fonction pour recevoir une attaque
