@@ -19,11 +19,7 @@
     "Entités":[
         {
             "ID" : "Test_Chevalier",
-            "Position" : [10,13]
-        },
-        {
-            "ID" : "Test_Chevalier",
-            "Position" : [10,12]
+            "Position" : [9,13]
         },
         {
             "ID" : "Test_Chevalier",
@@ -43,15 +39,11 @@
         },
         {
             "ID" : "Test_Chevalier",
-            "Position" : [6,13]
+            "Position" : [5,12]
         },
         {
-            "ID" : "Test_Arbalettier",
-            "Position" : [9,14]
-        },
-        {
-            "ID" : "Test_Arbalettier",
-            "Position" : [9,13]
+            "ID" : "Test_Chevalier",
+            "Position" : [5,13]
         },
         {
             "ID" : "Test_Arbalettier",
@@ -68,8 +60,16 @@
         {
             "ID" : "Test_Arbalettier",
             "Position" : [7,13]
+        },
+        {
+            "ID" : "Test_Arbalettier",
+            "Position" : [6,14]
+        },
+        {
+            "ID" : "Test_Arbalettier",
+            "Position" : [6,13]
         }
     ],
     "Joueur_pos" : [7,7],
-    "Prochaine" : "Chapitre1"
+    "Prochaine" : "Intro"
 }
