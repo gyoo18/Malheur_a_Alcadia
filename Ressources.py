@@ -5,6 +5,7 @@ from Entités.Golem import *
 from Entités.Paysan import *
 from Entités.Personnages import *
 from typing_extensions import Self
+import codecs
 import traceback
 import json
 
@@ -20,7 +21,7 @@ class Ressources:
         self.resultat_zone_2 : str = ""
         self.indexe_ressources : dict = None
         try:
-            self.indexe_ressources = json.load(open("Ressources/Définitions.json"))
+            self.indexe_ressources = json.load(codecs.open("Ressources/Définitions.json","utf-8"))
         except Exception as e:
             traceback.print_exc()
             traceback.print_exception(e)
@@ -48,7 +49,7 @@ class Ressources:
 
             carte_dict : dict = None
             try:
-                carte_dict = json.load(open(source,"r"))
+                carte_dict = json.load(codecs.open(source,"r","utf-8"))
             except Exception as e:
                 traceback.print_exc()
                 traceback.print_exception(e)
@@ -101,7 +102,7 @@ class Ressources:
             source = "Ressources/Entités/" + self.indexe_ressources["Entités"][nom]
             unitée_dict : dict = None
             try:
-                unitée_dict = json.load(open(source,"r"))
+                unitée_dict = json.load(codecs.open(source,"r","utf-8"))
             except Exception as e:
                 traceback.print_exc()
                 traceback.print_exception(e)
