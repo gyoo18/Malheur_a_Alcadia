@@ -244,10 +244,13 @@ class Golem(Entité):
         Incrémente le compteur de chargement et appelle self._AttaquerCible()
         """
         if self.étatCombat.v == ÉtatCombat.CHARGER:
+            print("Chargement de l'attaque à : " + str(self.chargement))
             self.chargement += 1
         elif self.cible.estVivant and Vec2.distance(self.cible.pos, self.pos) <= 1:
+            print("Attaque de l'ennemi")
             self._AttaquerCible()
         else:
+            print("L'ennemi est soit mort, soit partis. À la recherche d'un nouvel ennemi.")
             self.état.v = ÉtatIA.RECHERCHE
             self.estAttaqué = False
             self.cible = None
