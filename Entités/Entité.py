@@ -196,12 +196,16 @@ class Entité:
                 self.cible = ennemi
                 return
             
-        if self.cible.estVivant :
-            print("Recherche d'un chemin vers " + self.cible.nom)
-            self.naviguerVers(self.cible.pos,True)
-        else:
-            print("La cible est morte. À la recherche d'un nouvel ennemi")
-            self.état.v = ÉtatIA.RECHERCHE
+        if self.état.v == ÉtatIA.DÉPLACEMENT:
+            if self.cible.estVivant :
+                print("Recherche d'un chemin vers " + self.cible.nom)
+                self.naviguerVers(self.cible.pos,True)
+            else:
+                print("La cible est morte. À la recherche d'un nouvel ennemi")
+                self.état.v = ÉtatIA.RECHERCHE
+        elif self.état.v == ÉtatIA.DÉPLACEMENT_IMMOBILE:
+            print("Recherche d'un chemin vers " + str(self.destination.x) + ';' + str(self.destination.y))
+            self.naviguerVers(self.destination,False)
 
         # Si on n'a pas atteint le bout du chemin
         if len(self.chemin) > 0:
@@ -341,7 +345,8 @@ class Entité:
             destination (Vec2): Position de la destination voulue
         """
         print("Navigue vers : (" + str(destination.x) + ';' + str(destination.y) + ')')
-        self.état.v = ÉtatIA.DÉPLACEMENT    # TODO Vérifier si cette ligne conflicte avec DÉPLACEMENT_IMMOBILE
+        if self.état.v != ÉtatIA.DÉPLACEMENT and self.état.v != ÉtatIA.DÉPLACEMENT_IMMOBILE:
+            self.état.v = ÉtatIA.DÉPLACEMENT
         self.destination = destination
         self.chemin = self._A_étoile(self.destination,destination_adjascente)
 

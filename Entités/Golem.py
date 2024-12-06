@@ -230,11 +230,19 @@ class Golem(Entité):
         """
         self.état.v = ÉtatIA.COMBAT
         self.étatCombat.v = ÉtatCombat.CHARGER
+
     def _commandeAttaquerCharge(self, commande : Commande):
         """_commandeAttaquerCharge Exécute la commande ATTAQUER_CHARGE
         """
+        if Vec2.distance(self.pos,commande.ennemi_cible.pos) > 1.0:
+            print(coul("La cible est trop loin.",ROUGE))  
+            return
+
+        self.cible = commande.ennemi_cible
         self.état.v = ÉtatIA.COMBAT
-        self.étatCombat.v = ÉtatCombat.LIBRE # TODO #17 implémenter la commande d'attaque chargée des golems
+        self._AttaquerCible()
+        self.étatCombat.v = ÉtatCombat.LIBRE
+        self.chargement = 0
     
     def _modeCombat(self):
         """_modeCombat Exécute le combat du Golem
@@ -345,6 +353,23 @@ class GolemEau(Golem):
     
     def _commandeDéplacement(self, commande):
         print(coul("Le golem d'eau ne peut pas se déplacer!",JAUNE))
+
+    def _commandeAttaquerCharge(self, commande : Commande):
+        """_commandeAttaquerCharge Exécute la commande ATTAQUER_CHARGE
+        """
+        for e in self.carte.entités:
+            if commande.ennemi_cible == e.nom:
+                if Vec2.distance(self.pos,e.pos) <= self.max_distance_attaque:
+                    self.cible = e
+                    break
+                else:
+                    print(coul("La cible est trop loin.",ROUGE))
+                    return
+        
+        self.état.v = ÉtatIA.COMBAT
+        self._AttaquerCible()
+        self.étatCombat.v = ÉtatCombat.LIBRE
+        self.chargement = 0
 
     def _modeRecherche(self):
         ennemiPlusPrès = None
