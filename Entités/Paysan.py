@@ -114,7 +114,7 @@ class Prêtre(Paysan):
             else :
                 self.destination = alliéPlusPrès.pos
         
-    def _modeDéplacement(self):
+    def _modeDéplacement(self): # TODO #23 L'arbalettier ne se déplace pas
         faire_pathfinding = True
         if len(self.chemin) > 0:
             if self.carte.peutAller(self.chemin[0].pos):
@@ -149,6 +149,7 @@ class Prêtre(Paysan):
     def _modeGuérison(self):
         if self.cible.PV < self.cible.PVMax and Vec2.distance(self.cible.pos, self.pos) <= 1:
             self.cible.PV += self.PVAddition
+            self.cible.PV = min(self.cible.PV,self.cible.PVMax)
         else:
             self.état.v = ÉtatIA.RECHERCHE
             self.cible = None

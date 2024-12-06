@@ -73,12 +73,8 @@ class Jeu:
         # os.system("cls" if os.name == 'nt' else "clear")
         if self.état.v == ÉtatJeu.FIN_TOUR:
             paysans = False
-            golems = False
             joueur = False
             for e in self.carte.entités:
-                if e.camp == "Golems":
-                    golems = True
-                
                 if type(e) == Joueur and e.estVivant:
                     joueur = True
                 
@@ -87,7 +83,7 @@ class Jeu:
             
             if not paysans:
                 self.état.v = ÉtatJeu.SUCCÈS
-            elif not golems or not joueur:
+            elif not joueur:
                 self.état.v = ÉtatJeu.ÉCHEC
             else :
                 print("Mise à jour des entitées.")
@@ -119,11 +115,15 @@ class Jeu:
             del self.carte
         self.carte = copy.deepcopy(carte)
         for i in range(len(self.carte.entités)):
+            for j in range(len(self.carte.entités)-i-1):
+                if self.carte.entités[i] == self.carte.entités[len(self.carte.entités)-1-j]:
+                    self.carte.entités[i] = copy.deepcopy(self.carte.entités[i])
+                    break
+        for i in range(len(self.carte.entités)):
             self.carte.entités[i].carte = self.carte
             self.carte.entités[i].pos = carte.positions_entitées_initiales[i]
+        
         joueur = copy.deepcopy(res.joueur)
         joueur.pos = self.carte.joueur_pos_init
         joueur.carte = self.carte
         self.carte.entités.append(joueur)
-        
-        

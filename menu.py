@@ -35,7 +35,7 @@ def ingameUI():
     header2 = ""
     match jeu.chapitre.v:
         case Chapitre.INTRODUCTION:
-            header2 = gras("Malheur à Alcadia!")
+            header2 = gras("Malheur à Alcadia!") # TODO #21 Envoyer les titres dans dialogue
         case Chapitre.CHAPITRE1:
             header2 = dialogue.titre(1)
         case Chapitre.CHAPITRE2:
@@ -121,7 +121,7 @@ def displayUI():
     clearScreen()
 
     header = "=" * 50
-    header2 = "inserez titre".center(50)
+    header2 = gras("Malheur à Alcadia!").center(50)
     header3 = "=" * 50
 
     print(header)
@@ -351,7 +351,7 @@ def menu_info():
             time.sleep(1.5)
             effaceCommande()
 
-def menu_select():
+def menu_select():  # TODO #22 S'assurer que l'entité sélectionnée peut recevoir des commandes
     jeu = Jeu.avoirJeu()
 
     print("="*50)
