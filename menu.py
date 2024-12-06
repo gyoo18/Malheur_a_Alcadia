@@ -465,13 +465,6 @@ def menu_select():  # TODO #22 S'assurer que l'entité sélectionnée peut recev
             objetCommande.faireCommandeAttaquerCharge(entité)
             jeu.menu.menu_select_entité.commande(objetCommande)
 
-        elif commande[0] == '?' or commande[0] == "AIDE":
-            jeu.menu.menu_historique.append(MenuContextuel.SELECT)
-            jeu.menu.v = MenuContextuel.AIDE
-        elif commande[0] == 'Q' or commande[0] == "QUITTER":
-            jeu.état.v = jeu.menu.menu_historique[0]
-            jeu.menu.menu_historique.clear()
-            break
         elif commande[0] == 'P' or commande[0] == "PRÉCÉDENT":
             if len(jeu.menu.menu_historique) > 1:
                 jeu.menu.v = jeu.menu.menu_historique.pop(-1)
@@ -479,6 +472,7 @@ def menu_select():  # TODO #22 S'assurer que l'entité sélectionnée peut recev
             elif len(jeu.menu.menu_historique) > 0:
                 jeu.état.v = jeu.menu.menu_historique.pop(-1)
                 break
+        
         elif commande[0] == 'CG' or commande[0] == "CRÉER-GOLEM":
             if len(commande) < 3:
                 print("La commande Créer-Golem nécessite les arguements X et Y.")
@@ -510,6 +504,17 @@ def menu_select():  # TODO #22 S'assurer que l'entité sélectionnée peut recev
             objetCommande = Commande()
             objetCommande.faireCommandeCréerGolem(Vec2(x,y))
             jeu.menu.menu_select_entité.commande(objetCommande)
+
+        elif commande[0] == '?' or commande[0] == "AIDE":
+            jeu.menu.menu_historique.append(MenuContextuel.SELECT)
+            jeu.menu.v = MenuContextuel.AIDE
+            break
+        
+        elif commande[0] == 'Q' or commande[0] == "QUITTER":
+            jeu.état.v = jeu.menu.menu_historique[0]
+            jeu.menu.menu_historique.clear()
+            break
+        
         else:
             print("Veuillez taper une commande valide.")
             time.sleep(1.5)
