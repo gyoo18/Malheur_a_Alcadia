@@ -2,6 +2,7 @@ from Entités.Entité import *
 from InclusionsCirculaires.Entité_Attaque import *
 from Maths.Vec2 import *
 from math import acos, sqrt
+import copy
 
 class Paysan(Entité):
 
@@ -45,13 +46,16 @@ class Paysan(Entité):
 
 class Gosse(Paysan):
 
+    noms_originaux : list[str] = ["Lhucra","Karck","Gryui","Vhynch"]
+    noms : list[str] = copy.deepcopy(noms_originaux)
+
     def __init__(self):
         super().__init__()
         self.PVMax=75
         self.PV = self.PVMax
         self.attaque_normale_dégats=self.Random_Stats(8,11)
         self.dégats_libre=self.Random_Stats(5,11)
-        nom=self.nom_aléatoire(["Lhucra","Karck","Gryui","Vhynch"])
+        self.nom=Entité.nom_aléatoire(Gosse.noms)
 
     def _exécuterAttaque(self):
         attaque = Attaque(self)
@@ -61,13 +65,16 @@ class Gosse(Paysan):
 
 class Mineur(Paysan):
 
+    noms_originaux : list[str] = ["Kol","Patt","Mork","Bury","Jack"]
+    noms : list[str] = copy.deepcopy(noms_originaux)
+
     def __init__(self):
         super().__init__()
         self.PVMax=75
         self.PV = self.PVMax
         self.attaque_normale_dégats=self.Random_Stats(14,21)
         self.dégats_libre=self.Random_Stats(10,16)
-        self.nom=self.nom_aléatoire([])
+        self.nom=Entité.nom_aléatoire(Mineur.noms)
         self.bonus_terre : int = 2 # Bonus contre les golems de terre
 
     def _exécuterAttaque(self):
@@ -79,7 +86,9 @@ class Mineur(Paysan):
         self.chargement = 0
     
 class Prêtre(Paysan):
-    vieAddition : int   # Nombre de points de vie à ajouter à un allié par tour de guérison
+
+    noms_originaux : list[str] = ["StFray","StClark","StTurc","StJoph","StLam"]
+    noms : list[str] = copy.deepcopy(noms_originaux)
 
     def __init__(self):
         super().__init__()
@@ -87,7 +96,7 @@ class Prêtre(Paysan):
         self.PV = self.PVMax
         self.attaque_normale_dégats=self.Random_Stats(12,17)
         self.dégats_libre=self.Random_Stats(12,15)
-        self.nom=self.nom_aléatoire([])        
+        self.nom=Entité.nom_aléatoire(Prêtre.noms)        
         self.PVAddition : int = 2
 
     def _modeRecherche(self):
@@ -155,13 +164,17 @@ class Prêtre(Paysan):
             self.cible = None
     
 class Chevalier(Paysan):
+
+    noms_originaux : list[str] = ["SirRaudryguish","SirHarchurt","SirMorline","SirLrimqu"]
+    noms : list[str] = copy.deepcopy(noms_originaux)
+
     def __init__(self):
         super().__init__()
         self.PVMax=125
         self.PV = self.PVMax
         self.attaque_normale_dégats=self.Random_Stats(19,26)
-        self.dégats_libre=self.Random_Stats(30,36)
-        self.nom=self.nom_aléatoire(["Sir Raudryguish","Sir Harchurt","Sir Morline","Sir Lrimqu"])
+        self.dégats_libre=Entité.Random_Stats(30,36)
+        self.nom=self.nom_aléatoire(Chevalier.noms)
 
     def _exécuterAttaque(self):
         attaque = Attaque(self)
@@ -194,7 +207,10 @@ class Chevalier(Paysan):
         else:
             self.cible.Attaquer(attaque)
     
-class Arbaletier(Paysan):
+class Arbalettier(Paysan):
+    
+    noms_originaux : list[str] = ["Rambo","Rocky","Laçette","Fréch","Chaubin","Soly"]
+    noms : list[str] = copy.deepcopy(noms_originaux)
 
     def __init__(self):
         super().__init__()
@@ -202,7 +218,7 @@ class Arbaletier(Paysan):
         self.PV = self.PVMax
         self.attaque_normale_dégats=self.Random_Stats(30,33)
         self.dégats_libre=self.Random_Stats(5,11)
-        self.nom=self.nom_aléatoire(["Rambo",])        
+        self.nom=Entité.nom_aléatoire(Arbalettier.noms)        
         self.max_distance_attaque : float = 3.0
         self.min_distance_ennemi : float = 1.5
 

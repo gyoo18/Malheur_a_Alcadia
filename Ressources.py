@@ -122,7 +122,7 @@ class Ressources:
                 case "Chevalier":
                     unitée = Chevalier()
                 case "Arbalettier":
-                    unitée = Arbaletier()
+                    unitée = Arbalettier()
                 case "Prêtre":
                     unitée = Prêtre()
                 case _:

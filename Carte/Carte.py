@@ -61,7 +61,7 @@ class Carte:
                                 case Prêtre():
                                     en = gras(coul("Ot",ROUGE))
                                     break
-                                case Arbaletier():
+                                case Arbalettier():
                                     en = gras(coul("G>",ROUGE))
                                     break
                                 case Chevalier():

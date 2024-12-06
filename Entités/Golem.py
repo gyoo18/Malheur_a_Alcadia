@@ -4,6 +4,7 @@ from Entités.Paysan import *
 from Entités.Attaque import Attaque, Élément
 from Maths.Vec2 import *
 from TFX import *
+import copy
 
 class Commande:
     """ Classe décrivant une commande à un Golem
@@ -273,13 +274,16 @@ class GolemTerre(Golem):
     """
     ATTAQUE_SPÉCIALE = "frapper sol"
 
+    noms_originaux : list[str] = ["Gorb","Bob","Pierre","Fero","Crys","Gol","Morb","Pol"]
+    noms : list[str] = copy.deepcopy(noms_originaux)
+
     def __init__(self):
         super().__init__()
         self.PVMax=150
         self.PV = self.PVMax
         self.attaque_normale_dégats= self.Random_Stats(10,16)
         self.dégats_libre= self.Random_Stats(39,46)
-        self.nom=self.nom_aléatoire(["Gorb","Bob","Pierre","Fero","Crys"])
+        self.nom=Entité.nom_aléatoire(GolemTerre.noms)
         self.attaque_sol_dégats : float = 1.0
         self.attaque_sol_rayon : float = 2.0
         
@@ -315,13 +319,16 @@ class GolemEau(Golem):
     """
     ATTAQUE_SPÉCIALE = "attaque tornade"
 
+    noms_originaux : list[str] = ["Blob","Plouf","Sploch","Casca","Rive"]
+    noms : list[str] = copy.deepcopy(noms_originaux)
+
     def __init__(self):
         super().__init__()
         self.PVMax=90
         self.PV = self.PVMax
         self.attaque_normale_dégats=self.Random_Stats(20,26)
         self.dégats_libre=self.Random_Stats(25,31)
-        self.nom=self.nom_aléatoire(["Blob","Plouf","Sploch","Casca","Rive"])
+        self.nom=Entité.nom_aléatoire(GolemEau.noms)
         self.tornade_pousser_distance : int = 3
 
         self.max_distance_attaque : float = 4
@@ -391,6 +398,8 @@ class GolemFeu(Golem):
     """
     ATTAQUE_SPÉCIALE = "attaque boule de feu"
     
+    noms_originaux : list[str]= ["Magme","Fusio","Larva","Manta","Ardenne"]
+    noms : list[str]= copy.deepcopy(noms_originaux)
 
     def __init__(self):
         super().__init__()
@@ -398,7 +407,7 @@ class GolemFeu(Golem):
         self.PV = self.PVMax
         self.attaque_normale_dégats=self.Random_Stats(26,29)
         self.dégats_libre=self.Random_Stats(35,39)
-        self.nom=self.nom_aléatoire(["Magme","Fusio","Larva","Manta","Ardenne"])
+        self.nom=Entité.nom_aléatoire(GolemFeu.noms)
         self.attaque_max_distance : float = 4.0
         self.boule_feu_dégats : int = 3
 
@@ -421,13 +430,16 @@ class GolemFeu(Golem):
 
 class GolemDoré(Golem):
 
+    noms_originaux : list[str] = ["Goldy","Flash","Shiny","Conqi","King"]
+    noms : list[str] = copy.deepcopy(noms_originaux)
+
     def __init__(self):
         super().__init__()
         self.PVMax=150
         self.PV = self.PVMax
         self.attaque_normale_dégats=self.Random_Stats(25,31)
         self.dégats_libre=self.Random_Stats(36,42)
-        self.nom=self.nom_aléatoire(["Goldy","Flash","Shiny","Conqi","King"])
+        self.nom=Entité.nom_aléatoire(GolemDoré.noms)
 
         self.TEMP_GUÉRISON = 4
         self.guérisonCompteur = 0

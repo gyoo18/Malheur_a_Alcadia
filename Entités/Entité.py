@@ -70,7 +70,7 @@ class Entité:
         noms = ["Jean", "Salom", "Guy", "Pascal", "Eva"]
 
         # Appel de la fonction avec la liste de noms
-        self.nom = self.nom_aléatoire(noms)
+        self.nom = Entité.nom_aléatoire(noms)
 
     def avoirInfoStr(self):
         # TODO #16 implémenter avoirInfoStr() dur toutes les entitées
@@ -84,10 +84,14 @@ class Entité:
         Stats=int(random.choice(range(x,y)))
         return Stats
     
-    def nom_aléatoire(self,liste):
+    def nom_aléatoire(liste):
         if len(liste) == 0:
-            return "Nom_Inconnu"
-        nom=random.choice(liste)
+            print(coul("Aucun nom n'est disponible. Génération aléatoire de nom.",ROUGE))
+            cons = ['b','c','d','f','g','h','j','k','l','m','n','p','q','r','s','t','v','w','x','z']
+            voy = ['a','e','i','o','u','y']
+            nom = random.choice(cons).upper() + random.choice(voy) + random.choice(cons)
+            return nom
+        nom=liste.pop(random.randrange(0,len(liste)))
         return nom
 
     def MiseÀJour(self):
@@ -96,7 +100,7 @@ class Entité:
     # Mise à jour de l'IA de base
     def _MiseÀJourIA(self):
         # L'IA est basée sur une machine d'états
-        # Diagramme de la machine :
+        # Diagramme de la machine : TODO #31 Refaire le diagramme de la machine d'état des entités
         #                           |                               |                           |
         #       Mode Recherche      |       Mode Déplacement        |       Mode Combat         |
         #                           |                               |                           |

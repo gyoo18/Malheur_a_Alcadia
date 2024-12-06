@@ -3,7 +3,8 @@ from Ressources import Ressources
 from Carte.Carte import Carte
 import os
 from Entités.Entité import Entité
-from Entités.Golem import Golem
+from Entités.Golem import *
+from Entités.Paysan import *
 from Entités.Personnages import *
 import copy
 
@@ -107,6 +108,15 @@ class Jeu:
                     self.chapitre.v = Chapitre.CHAPITRE3
                 case Chapitre.CHAPITRE3:
                     self.chapitre.v = Chapitre.INTRODUCTION
+            GolemTerre.noms = copy.deepcopy(GolemTerre.noms_originaux)
+            GolemEau.noms = copy.deepcopy(GolemEau.noms_originaux)
+            GolemFeu.noms = copy.deepcopy(GolemFeu.noms_originaux)
+            GolemDoré.noms = copy.deepcopy(GolemDoré.noms_originaux)
+            Gosse.noms = copy.deepcopy(Gosse.noms_originaux)
+            Mineur.noms = copy.deepcopy(Mineur.noms_originaux)
+            Prêtre.noms = copy.deepcopy(Prêtre.noms_originaux)
+            Arbalettier.noms = copy.deepcopy(Arbalettier.noms_originaux)
+            Chevalier.noms = copy.deepcopy(Chevalier.noms_originaux)
             self.changerCarte(res.chargerCarte(self.carte.prochaine))
 
     def changerCarte(self,carte : Carte):
@@ -118,7 +128,9 @@ class Jeu:
             for j in range(len(self.carte.entités)-i-1):
                 if self.carte.entités[i] == self.carte.entités[len(self.carte.entités)-1-j]:
                     self.carte.entités[i] = copy.deepcopy(self.carte.entités[i])
+                    self.carte.entités[i].nom = Entité.nom_aléatoire(self.carte.entités[i].noms)
                     break
+
         for i in range(len(self.carte.entités)):
             self.carte.entités[i].carte = self.carte
             self.carte.entités[i].pos = carte.positions_entitées_initiales[i]
