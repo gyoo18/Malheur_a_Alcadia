@@ -292,7 +292,7 @@ class GolemTerre(Golem):
             attaque.dégats = self.attaque_sol_dégats + self.attaque_chargée*self.chargement
             attaque.élément = Élément.TERRE
             for ennemi in self.carte.entités:
-                if Vec2.distance(self.pos, ennemi.pos) < self.attaque_sol_rayon:
+                if Vec2.distance(self.pos, ennemi.pos) < self.attaque_sol_rayon and ennemi != self:
                     attaque.distance = Vec2.distance(self.pos,ennemi.pos)
                     attaque.direction = ennemi.pos-self.pos
                     ennemi.Attaquer(attaque)
