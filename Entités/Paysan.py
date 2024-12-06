@@ -168,7 +168,7 @@ class Chevalier(Paysan):
         attaque.dégats = self.attaque_normale_dégats + self.chargement*self.attaque_chargée
         if self.chargement > 0:
             for entité in self.carte.entités:
-                angle = acos(self.direction.norm() @ norm(entité.pos - self.pos))   # Le @ est un produit scalaire (a•b)
+                angle = acos(self.direction.norm() @ Vec2.norm(entité.pos - self.pos))   # Le @ est un produit scalaire (a•b)
                 """
                 #   Les trois cases en face du chevaliere se trouvent à un angle d'au plus 45° de la direction vers laquelle il fait face
                 #   et à une distance d'au plus √2. Pour s'assurer que les entitées prises dans l'attaque soient détectée, on augmente
