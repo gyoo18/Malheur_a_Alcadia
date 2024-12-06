@@ -21,7 +21,7 @@ class Ressources:
         self.resultat_zone_2 : str = ""
         self.indexe_ressources : dict = None
         try:
-            self.indexe_ressources = json.load(codecs.open("Ressources/Définitions.json","utf-8"))
+            self.indexe_ressources = json.load(codecs.open("Ressources/Définitions.json","r","utf-8"))
         except Exception as e:
             traceback.print_exc()
             traceback.print_exception(e)
