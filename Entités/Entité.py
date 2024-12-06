@@ -118,7 +118,7 @@ class Entité:
         #                           |                               |                           |
         #
         # L'algorithme fonctionne sur une base de fonctions, pour faciliter la spécialisation dans les classes enfants
-        print("Mise à jour de l'IA de " + self.nom + ", état : " + self.état.v)
+        print("\nMise à jour de l'IA de " + gras(self.nom) + ", état : " + gras(self.état.v))
         match self.état.v:
             case ÉtatIA.RECHERCHE:
                 print("Mode recherche activé.")
@@ -195,43 +195,36 @@ class Entité:
                 self.état.v = ÉtatIA.COMBAT
                 self.cible = ennemi
                 return
+            
+        if self.cible.estVivant :
+            print("Recherche d'un chemin vers " + self.cible.nom)
+            self.chemin = self.naviguerVers(self.cible.pos,True)
 
         # Si on n'a pas atteint le bout du chemin
         if len(self.chemin) > 0:
-            print("Un chemin existe")
+            print("Un chemin existe, avançons")
             # Avancer sur le chemin
-            if self.carte.peutAller(self,self.chemin[0]):
-                print("Le chemin est praticable, avançons.")
-                self.direction = self.chemin[0] - self.pos
-                self.pos = self.chemin.pop(0)
+            self.direction = self.chemin[0] - self.pos
+            self.pos = self.chemin.pop(0)
 
-                # Si un ennemi se trouve sur une case adjascente, virer en mode combat
-                for ennemi in self.carte.entités:
-                    # Chercher un ennemi à une distance de 1 ou moins de nous (sur une case adjascente)
-                    if Vec2.distance(ennemi.pos, self.pos) <= 1 and ennemi.camp in self.campsEnnemis:
-                        print("Un ennemi est à proximité! Mode combat activé.")
-                        self.chemin = []
-                        self.état.v = ÉtatIA.COMBAT
-                        self.cible = ennemi
-                        return
-                # Si on n'a pas trouvé d'ennemi, mais qu'on est arrivé au bout du chemin,
-                if self.pos == self.destination:
-                    print("Arrivé à destination. Aucun ennemi à l'horison, Mode recherche activé.")
-                    # Chercher un autre ennemi si on est dans la boucle normale,
-                    # Rester immobile si on se déplace à cause d'une commande
-                    if self.état.v == ÉtatIA.DÉPLACEMENT:
-                        self.état.v = ÉtatIA.RECHERCHE
-                    elif self.état.v == ÉtatIA.DÉPLACEMENT_IMMOBILE:
-                        self.état.v = ÉtatIA.IMMOBILE
-            else:
-                print("Le chemin n'est pas praticable.")
-                # Si on ne peut pas se déplacer sur le chemin, en trouver un nouveau
-                self.chemin = []
-
-        if self.cible.estVivant :
-            self.destination = self.cible.pos
-            print("Recherche d'un chemin.")
-            self.chemin = self._A_étoile(True)
+            # Si un ennemi se trouve sur une case adjascente, virer en mode combat
+            for ennemi in self.carte.entités:
+                # Chercher un ennemi à une distance de 1 ou moins de nous (sur une case adjascente)
+                if Vec2.distance(ennemi.pos, self.pos) <= 1 and ennemi.camp in self.campsEnnemis:
+                    print("Un ennemi est à proximité! Mode combat activé.")
+                    self.chemin = []
+                    self.état.v = ÉtatIA.COMBAT
+                    self.cible = ennemi
+                    return
+            # Si on n'a pas trouvé d'ennemi, mais qu'on est arrivé au bout du chemin,
+            if self.pos == self.destination:
+                print("Arrivé à destination. Aucun ennemi à l'horison, Mode recherche activé.")
+                # Chercher un autre ennemi si on est dans la boucle normale,
+                # Rester immobile si on se déplace à cause d'une commande
+                if self.état.v == ÉtatIA.DÉPLACEMENT:
+                    self.état.v = ÉtatIA.RECHERCHE
+                elif self.état.v == ÉtatIA.DÉPLACEMENT_IMMOBILE:
+                    self.état.v = ÉtatIA.IMMOBILE
 
     def _modeCombat(self):
         """_modeCombat Exécute le combat
@@ -284,11 +277,11 @@ class Entité:
         Args:
             attaque (Attaque): Un objet Attaque qui contient les informations nécessaires pour subir une attaque.
         """
-        print(self.nom + " reçoit une attaque de " + attaque.provenance.nom)
-        print(self.nom + " a " + str(self.PV) + " PV, l'attaque fait " + str(attaque.dégats) + " PD")
+        print(coul(gras(self.nom) + " reçoit une attaque de " + gras(attaque.provenance.nom),ORANGE))
+        print(gras(self.nom) + " a " + str(self.PV) + " PV, l'attaque fait " + str(attaque.dégats) + " PD")
         # Virer au mode combat, si on n'y est pas déjà
         if not self.estAttaqué:
-            print(self.nom + " passe en mode combat.")
+            print(gras(self.nom) + " passe en mode combat.")
             self.estAttaqué = True
             self.cible = attaque.provenance
     
@@ -296,7 +289,7 @@ class Entité:
         self.PV -= attaque.dégats          # Retirer les points de vies
         # Évaluer si on est morts
         if self.PV <= 0.0:
-            print(self.nom + " est mort.")
+            print(coul(gras(self.nom) + " est mort.",ROUGE))
             self.PV = 0.0
             self.estVivant = False
 
@@ -319,13 +312,13 @@ class Entité:
         """
         match self.étatCombat.v:
             case ÉtatCombat.DÉFENSE:
-                print(self.nom + " bloque " + str(self.dégats_défense) + f"% des dégats.")
+                print(gras(self.nom) + " bloque " + str(self.dégats_défense) + f"% des dégats.")
                 attaque.dégats -= attaque.dégats*(self.dégats_défense/100)
             case ÉtatCombat.LIBRE:
-                print(self.nom + " bloque " + str(self.dégats_libre) + f"% des dégats.")
+                print(gras(self.nom) + " bloque " + str(self.dégats_libre) + f"% des dégats.")
                 attaque.dégats -= attaque.dégats*(self.dégats_libre/100)
             case ÉtatCombat.CHARGER:
-                print(self.nom + " bloque " + str(self.dégats_charger) + f"% des dégats.")
+                print(gras(self.nom) + " bloque " + str(self.dégats_charger) + f"% des dégats.")
                 attaque.dégats -= attaque.dégats*(self.dégats_charger/100)
             case _:
                 raise ValueError("Éntité.Défense() L'état de combat " + self.étatCombat.v + " n'est pas un état valide.")
@@ -467,11 +460,7 @@ class Entité:
             if not destination_adjascente:
                 #Vérifier si le poid le plus petit est la destination
                 if cases_actives[curseur] == self.destination:
-                    print("Chemin trouvé")
-                    ligne = "Chemin : "
-                    for i in range(len(chemins[curseur])):
-                        ligne += '(' + str(chemins[curseur][i].x) + ';' + str(chemins[curseur][i].y) + ')'
-                    print(ligne)
+                    print(coul("Chemin trouvé",VERT))
                     solution = chemins[curseur]
                     solution.pop(0)
                     return solution
