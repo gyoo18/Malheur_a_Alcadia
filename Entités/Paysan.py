@@ -246,7 +246,7 @@ class Arbalettier(Paysan):
             else :
                 self.destination = alliéPlusPrès.pos
     
-    def _modeDéplacement(self):
+    def _modeDéplacement(self): # TODO #23 L'arbalettier ne se déplace pas
         faire_pathfinding = True
         if len(self.chemin) > 0:
             if self.carte.peutAller(self.chemin[0].pos):
