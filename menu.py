@@ -175,7 +175,7 @@ def commande_menu_select(historique, commande : list[str]):
         for e in jeu.carte.entités:
             if e.nom.upper() == nom:
 
-                if e.camp == "Paysan":
+                if e.camp == "Paysans":
                     print(coul("Vous ne pouvez pas donner d'ordres aux paysans.",ROUGE))
                     time.sleep(1.5)
                     effaceCommande()

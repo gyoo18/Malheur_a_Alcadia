@@ -168,7 +168,8 @@ class Golem(Entité):
             case Commande.ATTAQUER_CHARGE:
                 self._commandeAttaquerCharge(commande)
             case _:
-                raise AttributeError(coul("[Golem.commande] Commande mal construite : catégorie" + str(commande.catégorie) + " invalide.",ROUGE))
+                print(coul("La commande " + str(commande.catégorie) + " n'est pas accepté par un golem.",ROUGE))
+                # raise AttributeError(coul("[Golem.commande] Commande mal construite : catégorie" + str(commande.catégorie) + " invalide.",ROUGE))
 
     def _commandeDéplacement(self, commande : Commande):
         """ Exécute une commande déplacement

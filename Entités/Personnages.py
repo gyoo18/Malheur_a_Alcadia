@@ -31,7 +31,8 @@ class Joueur(Golem):
             case Commande.CRÉER_GOLEM:
                 self._commandeCréerGolem(commande)
             case _:
-                raise AttributeError(coul("[Golem.commande] Commande mal construite : catégorie" + str(commande.catégorie) + " invalide.",ROUGE))
+                print(coul("La commande : " + str(commande.catégorie) + " n'est pas acceptée par Mélios.",ROUGE))
+                # raise AttributeError(coul("[Golem.commande] Commande mal construite : catégorie" + str(commande.catégorie) + " invalide.",ROUGE))
     
     def _commandeCréerGolem(self, commande : Commande):
         if Vec2.distance(self.pos, commande.position_création_golem) > self.distance_création_golem:

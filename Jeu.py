@@ -71,7 +71,7 @@ class Jeu:
         else :
             menu.ingameUI()
 
-        # os.system("cls" if os.name == 'nt' else "clear")
+        os.system("cls" if os.name == 'nt' else "clear")
         if self.état.v == ÉtatJeu.FIN_TOUR:
             paysans = False
             joueur = False
