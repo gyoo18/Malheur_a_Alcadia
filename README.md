@@ -5,19 +5,10 @@ Le mal envahis votre cité! Saurez-vous diriger vos golems et l'écraser? Ou ser
 Malheur à Alcadia est un petit jeu console de combat stratégique en tour-par-tour, à la *Fire Emblem* ou *X-COM*, dans lequel vous pouvez invoquer des golems composés des matériaux du sol sur lesquels vous les faîtes apparaîtres. Il compose le projet final du cours de programmation 1 au baccalauréat en informatique de l'Université du Québec en Outaouais.
 
 ## Comment Jouer?
-1. Cliquez sur le lien suivant : https://github.com/gyoo18/Prog1_jeu/releases
-2. Téléchargez la version la plus récente
-3. Vous trouverez un fichier .zip, dézippez-le.
-4. Avant de commencer à jouer, assurez-vous d'avoir python d'installé
-5. Ouvrez une invite de commande et tapez:
- - **Windows**
-  * `cd C:/Dossier/où/réside/le/jeu`
-  * `python -m pip install -r requirements.txt`
- - **Linux**
-  * `cd /home/<user>/Dossier/où/réside/le/jeu`
-  * `python3 -m venv .venv        # Optionel, mais recommandé si`
-  * `source .venv/bin/activate    # vous utilisez python à autre chose`
-  * `python3 -m pip install -r requirements.txt`
+1. Assurez-vous d'avoir python d'installé. Si vous êtes sur linux, vous devriez déjà l'avoir. Pour vérifier si vous l'avez, ouvrez une invite de commande et tapez `python --version`,`py --version` ou `python3 --version`. Si l'une d'entre elles fonctionns, python est installé. Si vous n'avez pas python, vous pouvez l'installer ici : https://www.python.org/downloads/
+3. Cliquez sur le lien suivant : https://github.com/gyoo18/Prog1_jeu/releases
+4. Téléchargez la version la plus récente
+5. Vous trouverez un fichier .zip, dézippez-le
 6. Cliquez sur `Jouer-Windows.bat` ou `Jouer-Linux.sh`, tout dépedant du système que vous possédez. *Il se peut que vous ayez à changer les permissions du fichier*.
 
 ## Structure générale
