@@ -19,9 +19,11 @@ class ÉtatJeu:
     ÉCHEC = "échec"
     TRANSITION = "transition"
     TERMINÉ = "terminé"
+    SCÈNE = "scène"
 
     def __init__(self, valeur = MENU):
         self.v : str = valeur
+        self.scène_étape = 0
 
 class Chapitre:
     INTRODUCTION = "Introduction"
@@ -79,7 +81,7 @@ class Jeu:
                 if type(e) == Joueur and e.estVivant:
                     joueur = True
                 
-                if e.camp == "Paysans":
+                if e.camp == Entité.CAMP_PAYSANS:
                     paysans = True
             
             if not paysans:
@@ -99,15 +101,6 @@ class Jeu:
         
         elif self.état.v == ÉtatJeu.TRANSITION:
             self.état.v = ÉtatJeu.DÉBUT
-            match self.chapitre.v:
-                case Chapitre.INTRODUCTION:
-                    self.chapitre.v = Chapitre.CHAPITRE1
-                case Chapitre.CHAPITRE1:
-                    self.chapitre.v = Chapitre.CHAPITRE2
-                case Chapitre.CHAPITRE2:
-                    self.chapitre.v = Chapitre.CHAPITRE3
-                case Chapitre.CHAPITRE3:
-                    self.chapitre.v = Chapitre.INTRODUCTION
             GolemTerre.noms = copy.deepcopy(GolemTerre.noms_originaux)
             GolemEau.noms = copy.deepcopy(GolemEau.noms_originaux)
             GolemFeu.noms = copy.deepcopy(GolemFeu.noms_originaux)
@@ -118,6 +111,15 @@ class Jeu:
             Arbalettier.noms = copy.deepcopy(Arbalettier.noms_originaux)
             Chevalier.noms = copy.deepcopy(Chevalier.noms_originaux)
             self.changerCarte(res.chargerCarte(self.carte.prochaine))
+            match self.chapitre.v:
+                case Chapitre.INTRODUCTION:
+                    self.chapitre.v = Chapitre.CHAPITRE1
+                case Chapitre.CHAPITRE1:
+                    self.chapitre.v = Chapitre.CHAPITRE2
+                case Chapitre.CHAPITRE2:
+                    self.chapitre.v = Chapitre.CHAPITRE3
+                case Chapitre.CHAPITRE3:
+                    self.chapitre.v = Chapitre.INTRODUCTION
 
     def changerCarte(self,carte : Carte):
         res = Ressources.avoirRessources()

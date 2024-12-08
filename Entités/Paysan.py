@@ -8,8 +8,8 @@ class Paysan(Entité):
 
     def __init__(self):
         super().__init__()
-        self.camp = "Paysans"
-        self.campsEnnemis = ["Golems","Personnages"]
+        self.camp = Entité.CAMP_PAYSANS
+        self.campsEnnemis = [Entité.CAMP_GOLEMS,Entité.CAMP_JOUEUR,Entité.CAMP_PERSONNAGES]
         self.nom = "Paysan"
 
     def _AttaquerEnnemi(self):
@@ -173,8 +173,8 @@ class Chevalier(Paysan):
         self.PVMax=125
         self.PV = self.PVMax
         self.attaque_normale_dégats=self.Random_Stats(19,26)
-        self.dégats_libre=Entité.Random_Stats(30,36)
-        self.nom=self.nom_aléatoire(Chevalier.noms)
+        self.dégats_libre=self.Random_Stats(30,36)
+        self.nom=Entité.nom_aléatoire(Chevalier.noms)
 
     def _exécuterAttaque(self):
         attaque = Attaque(self)

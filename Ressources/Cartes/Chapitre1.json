@@ -1,4 +1,5 @@
 {
+    "Scène" : false,
     "Carte" : [
         ["#","#","#","#","#","#","0","0","0","#","#","#","#","#","#"],
         ["0","0","0","0","0","0","0","0","0","0","0","0","0","0","0"],
@@ -18,34 +19,38 @@
     ],
     "Entités" : [
         {
-            "ID" : "Test_Gosse",
+            "ID" : "Gosse",
             "Position" : [5,13]
         },
         {
-            "ID" : "Test_Gosse",
+            "ID" : "Gosse",
             "Position" : [8,13]
         },
         {
-            "ID" : "Test_Gosse",
+            "ID" : "Gosse",
             "Position" : [11,13]
         },
         {
-            "ID" : "Test_Mineur",
+            "ID" : "Mineur",
             "Position" : [4,14]
         },
         {
-            "ID" : "Test_Mineur",
+            "ID" : "Mineur",
             "Position" : [6,14]
         },
         {
-            "ID" : "Test_Mineur",
+            "ID" : "Mineur",
             "Position" : [10,14]
         },
         {
-            "ID" : "Test_Mineur",
+            "ID" : "Mineur",
             "Position" : [12,14]
+        },
+        {
+            "ID" : "Guildart",
+            "Position" : [7,0]
         }
     ],
-    "Joueur_pos" : [7,1],
+    "Joueur_pos" : [7,2],
     "Prochaine" : "Chapitre2"
 }

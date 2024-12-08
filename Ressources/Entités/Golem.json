@@ -1,7 +1,6 @@
 {
     "Nom" : "Jack",
     "Type" : "GolemTerre",
-    "Position" : [0,0],
     "PVMax" : 100,
     "PV" : 90,
     "Temp Chargement" : 3,

@@ -1,5 +1,6 @@
 from Entités.Entité import *
 from Entités.Golem import *
+from Entités.Paysan import *
 from Maths.Vec2 import Vec2
 from Carte.Tuile import Tuile
 
@@ -8,8 +9,8 @@ class Joueur(Golem):
     def __init__(self):
         super().__init__()
         self.nom = "Mélios"
-        self.camp = "Personnages"
-        self.campsEnnemis = ["Paysans"]
+        self.camp = Entité.CAMP_JOUEUR
+        self.campsEnnemis = [Entité.CAMP_PAYSANS]
         self.état.v = ÉtatIA.IMMOBILE
         self.PVMax = 20
         self.PV = self.PVMax
@@ -134,3 +135,15 @@ class Joueur(Golem):
         """
         if self.estAttaqué:
             print("Je suis attaqué!")
+
+class Personnage(Chevalier):
+    def __init__(self,nom : str):
+        super().__init__()
+        self.nom = nom
+        self.état.v = ÉtatIA.IMMOBILE
+        self.caratère_dessin = gras(coul("*|",GRIS))
+        self.camp = Entité.CAMP_PERSONNAGES
+        self.campsEnnemis = [Entité.CAMP_PAYSANS]
+    
+    def avoir_caractère_dessin(self):
+        return self.caratère_dessin
