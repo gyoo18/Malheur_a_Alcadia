@@ -32,6 +32,11 @@ class ÉtatCombat:
 # Classe abstraite de base d'une entitée
 class Entité:
 
+    CAMP_PAYSANS = "Monstres"
+    CAMP_GOLEMS = "Golems"
+    CAMP_JOUEUR = "Mélios"
+    CAMP_PERSONNAGES = "Personnages"
+
     def __init__(self):
         # Charactérisitques décrivant l'entité
         self.PVMax : int = 100         # Points de vies maximum
@@ -193,7 +198,7 @@ class Entité:
         # Si un ennemi se trouve sur une case adjascente, virer en mode combat
         for ennemi in self.carte.entités:
             # Chercher un ennemi à une distance de 1 ou moins de nous (sur une case adjascente)
-            if Vec2.distance(ennemi.pos, self.pos) <= 1 and ennemi.camp in self.campsEnnemis:
+            if Vec2.distance(ennemi.pos, self.pos) <= 1 and (ennemi.camp in self.campsEnnemis or ennemi == self.cible):
                 print("Un ennemi est à proximité! Mode combat activé.")
                 self.chemin = []
                 self.état.v = ÉtatIA.COMBAT
@@ -221,7 +226,7 @@ class Entité:
             # Si un ennemi se trouve sur une case adjascente, virer en mode combat
             for ennemi in self.carte.entités:
                 # Chercher un ennemi à une distance de 1 ou moins de nous (sur une case adjascente)
-                if Vec2.distance(ennemi.pos, self.pos) <= 1 and ennemi.camp in self.campsEnnemis:
+                if Vec2.distance(ennemi.pos, self.pos) <= 1 and (ennemi.camp in self.campsEnnemis or ennemi == self.cible):
                     print("Un ennemi est à proximité! Mode combat activé.")
                     self.chemin = []
                     self.état.v = ÉtatIA.COMBAT

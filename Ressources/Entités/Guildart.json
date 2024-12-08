@@ -1,0 +1,16 @@
+{
+    "Nom" : "Guildart",
+    "Type" : "Personnage",
+    "Caractère": "G←",
+    "Caractère Couleur": [0.85,0.85,0.95],
+    "PVMax" : 200,
+    "PV" : 150,
+    "Temp Chargement" : 3,
+    "Attaque Chargée" : 50.0,
+    "Attaque Normale" : 30.0,
+    "Dégats Défense" : 50.0,
+    "Dégats Libres" : 30.0,
+    "Dégats Charger" : 10.0,
+    "Camp" : "Personnage",
+    "Camps Ennemis" : ["Paysans"]
+}

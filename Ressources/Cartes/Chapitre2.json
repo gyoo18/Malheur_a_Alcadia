@@ -18,35 +18,35 @@
     ],
     "Entités":[
         {
-            "ID" : "Test_Gosse",
+            "ID" : "Gosse",
             "Position" : [3,7]
         },
         {
-            "ID" : "Test_Gosse",
+            "ID" : "Gosse",
             "Position" : [11,8]
         },
         {
-            "ID" : "Test_Gosse",
+            "ID" : "Gosse",
             "Position" : [7,9]
         },
         {
-            "ID" : "Test_Mineur",
+            "ID" : "Mineur",
             "Position" : [4,10]
         },
         {
-            "ID" : "Test_Mineur",
+            "ID" : "Mineur",
             "Position" : [9,11]
         },
         {
-            "ID" : "Test_Arbalettier",
+            "ID" : "Arbalettier",
             "Position" : [6,14]
         },
         {
-            "ID" : "Test_Arbalettier",
+            "ID" : "Arbalettier",
             "Position" : [14,10]
         },
         {
-            "ID" : "Test_Arbalettier",
+            "ID" : "Arbalettier",
             "Position" : [1,8]
         }
     ],

@@ -93,7 +93,7 @@ def ingameUI():
                 commande_menu_aide(jeu.état.v)
                 break
             else:
-                print(coul("Veuillez entrer une commande valide ou taper")+TFX("entré",gras=True,Pcoul=ROUGE)+coul(" pour finir le tour.",ROUGE))
+                print(coul("Veuillez entrer une commande valide ou taper",ROUGE)+TFX("entré",gras=True,Pcoul=ROUGE)+coul(" pour finir le tour.",ROUGE))
                 time.sleep(1.5)
                 effaceCommande()
     else:
@@ -502,13 +502,25 @@ def menu_select():
             objetCommande = Commande()
             objetCommande.faireCommandeCréerGolem(Vec2(x,y))
             jeu.menu.menu_select_entité.commande(objetCommande)
+        
+        elif commande[0] == 'C' or commande[0] == "COMBAT":
+            commande_menu_combat(MenuContextuel.SELECT,commande)
+            break
+        
+        elif commande[0] == 'S' or commande[0] == "SELECT":
+            if commande_menu_select(MenuContextuel.SELECT,commande):
+                break
+        
+        elif commande[0] == 'I' or commande[0] == "INFO":
+            if commande_menu_info(MenuContextuel.SELECT,commande):
+                break
+        
+        elif commande[0] == '?' or commande[0] == "AIDE":
+            commande_menu_aide(MenuContextuel.SELECT,commande)
+            break
 
         elif commande[0] == 'P' or commande[0] == "PRÉCÉDENT":
             commande_précédent()
-            break
-
-        elif commande[0] == '?' or commande[0] == "AIDE":
-            commande_menu_aide(MenuContextuel.SELECT,commande)
             break
         
         elif commande[0] == 'Q' or commande[0] == "QUITTER":

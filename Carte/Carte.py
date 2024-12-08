@@ -50,7 +50,7 @@ class Carte:
                 en = "  "
                 for e in self.entités:
                     if e.pos.x == x and e.pos.y == y:
-                        if e.camp == "Paysans":
+                        if e.camp == Entité.CAMP_PAYSANS:
                             match e:
                                 case Gosse():
                                     en = gras(coul(" ç",ROUGE))
@@ -73,7 +73,7 @@ class Carte:
                                 case _:
                                     raise TypeError("Entité " + str(e) + " n'est pas un paysan valide.")
                         
-                        if e.camp == "Golems":
+                        elif e.camp == Entité.CAMP_GOLEMS:
                             match e:
                                 case GolemTerre():
                                     en = gras(coul("(u",BRUN))
@@ -93,20 +93,26 @@ class Carte:
                                 case _:
                                     raise TypeError("Entité " + str(e) + " n'est pas un golem valide.")
                         
-                        if e.camp == "Personnages":
+                        elif e.camp == Entité.CAMP_JOUEUR:
                             match e:
                                 case Joueur():
                                     en = gras(coul("/\\",BLEU))
-                    if en == "  " and len(e.chemin) > 0:
-                        for pos in e.chemin:
-                            if pos.x == x and pos.y == y:
-                                if e.camp == "Paysans":
-                                    en = gras(coul("++",ROUGE))
-                                if e.camp == "Golems":
-                                    en = gras(coul("••",NOIR))
-                                if e.camp == "Personnages":
-                                    en = gras(coul("--",BLEU))
-                                break
+                                case _:
+                                    raise TypeError("Joueur " + str(e) + " n'est pas un joueur de type valide.")
+
+                        elif e.camp == Entité.CAMP_PERSONNAGES:
+                            en = e.avoir_caractère_dessin()
+
+                    # if en == "  " and len(e.chemin) > 0:
+                    #     for pos in e.chemin:
+                    #         if pos.x == x and pos.y == y:
+                    #             if e.camp == "Paysans":
+                    #                 en = gras(coul("++",ROUGE))
+                    #             if e.camp == "Golems":
+                    #                 en = gras(coul("••",NOIR))
+                    #             if e.camp == "Personnages":
+                    #                 en = gras(coul("--",BLEU))
+                    #             break
                 
                 match self.matrice[x][y].type:
                     case Tuile.TYPE_EAU:

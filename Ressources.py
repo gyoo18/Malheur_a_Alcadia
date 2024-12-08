@@ -125,6 +125,8 @@ class Ressources:
                     unitée = Arbalettier()
                 case "Prêtre":
                     unitée = Prêtre()
+                case "Personnage":
+                    unitée = Personnage("Personnage")
                 case _:
                     raise ValueError("L'entité " + str(unitée_dict["Type"]) + " n'est pas une entité reconnue.")
                 
@@ -132,49 +134,72 @@ class Ressources:
                 if type(unitée_dict["Nom"]) != str:
                     raise TypeError("[Création de carte] L'élément 'Nom' d'une entité doit être un string.")
                 unitée.nom = unitée_dict["Nom"]
+
             if "PVMax" in unitée_dict:
                 if type(unitée_dict["PVMax"]) != int and type(unitée_dict["PVMax"]) != float:
                     raise TypeError("L'élément 'PVMax' de " + unitée.nom + " doit être un int ou un float.")
                 unitée.PVMax = int(unitée_dict["PVMax"])
+
             if "PV" in unitée_dict:
                 if type(unitée_dict["PV"]) != int and type(unitée_dict["PV"]) != float:
                     raise TypeError("L'élément 'PV' de " + unitée.nom + " doit être un int ou un float.")
                 unitée.PV = unitée_dict["PV"]
+
             if "Temp Chargement" in unitée_dict:
                 if type(unitée_dict["Temp Chargement"]) != int and type(unitée_dict["Temp Chargement"]) != float:
                     raise TypeError("L'élément 'Temp Chargement' de " + unitée.nom + " doit être un int ou un float.")
                 unitée.TEMP_CHARGEMENT = int(unitée_dict["Temp Chargement"])
+
             if "Attaque Chargée" in unitée_dict:
                 if type(unitée_dict["Attaque Chargée"]) != int and type(unitée_dict["Attaque Chargée"]) != float:
                     raise TypeError("L'élément 'Attaque Chargée' de " + unitée.nom + " doit être un int ou un float.")
                 unitée.attaque_chargée = unitée_dict["Attaque Chargée"]
+
             if "Attaque Normale" in unitée_dict:
                 if type(unitée_dict["Attaque Normale"]) != int and type(unitée_dict["Attaque Normale"]) != float:
                     raise TypeError("L'élément 'Attaque Normale' de " + unitée.nom + " doit être un int ou un float.")
                 unitée.attaque_normale_dégats = unitée_dict["Attaque Normale"]
+
             if "Dégats Défense" in unitée_dict:
                 if type(unitée_dict["Dégats Défense"]) != int and type(unitée_dict["Dégats Défense"]) != float:
                     raise TypeError("L'élément 'Dégats Défense' de " + unitée.nom + " doit être un int ou un float.")
                 unitée.dégats_défense = unitée_dict["Dégats Défense"]
+
             if "Dégats Libres" in unitée_dict:
                 if type(unitée_dict["Dégats Libres"]) != int and type(unitée_dict["Dégats Libres"]) != float:
                     raise TypeError("L'élément 'Dégats Libres' de " + unitée.nom + " doit être un int ou un float.")
                 unitée.dégats_libre = unitée_dict["Dégats Libres"]
+
             if "Dégats Charger" in unitée_dict:
                 if type(unitée_dict["Dégats Charger"]) != int and type(unitée_dict["Dégats Charger"]) != float:
                     raise TypeError("L'élément 'Dégats Charger' de " + unitée.nom + " doit être un int ou un float.")
                 unitée.dégats_charger = unitée_dict["Dégats Charger"]
+
             if "Camp" in unitée_dict:
                 if type(unitée_dict["Camp"]) != str:
                     raise TypeError("L'élément 'Camp' de " + unitée.nom + " doit être un string.")
                 unitée.Camp = unitée_dict["Camp"]
+
             if "Camps Ennemis" in unitée_dict:
                 if type(unitée_dict["Camps Ennemis"]) != list:
-                    raise TypeError("L'élément 'Camps Ennemis' de " + unitée.nom + " doit être de type listunitée_dict[ str ].")
+                    raise TypeError("L'élément 'Camps Ennemis' de " + unitée.nom + " doit être de type list[ str ].")
                 for c in unitée_dict["Camps Ennemis"]:
                     if type(c) != str:
                         raise TypeError("L'élément 'Camps Ennemis' de " + unitée.nom + " ne doit contenir que des strings.")
                     unitée.campsEnnemis = unitée_dict["Camps Ennemis"]
+
+            if unitée_dict["Type"] == "Personnage" and "Caractère" in unitée_dict:
+                if type(unitée_dict["Caractère"]) != str:
+                    raise TypeError("L'élément 'Caractère' de " + unitée.nom + " doit être de type str.")
+                unitée.caratère_dessin = gras(unitée_dict["Caractère"])
+
+            if unitée_dict["Type"] == "Personnage" and "Caractère Couleur" in unitée_dict:
+                if type(unitée_dict["Caractère Couleur"]) != list:
+                    raise TypeError("L'élément 'Caractère Couleur' de " + unitée.nom + " doit être de type list[ float ].")
+                for c in unitée_dict["Caractère Couleur"]:
+                    if type(c) != float:
+                        raise TypeError("L'élément 'Caractère Couleur' de " + unitée.nom + " ne doit contenir que des float.")
+                    unitée.nom = coul(unitée.nom,Vec3(unitée_dict["Caractère Couleur"][0],unitée_dict["Caractère Couleur"][1],unitée_dict["Caractère Couleur"][2]))
                 
             self.entités.append(unitée)
             self.entités_chargées.append(nom)

@@ -138,8 +138,8 @@ class Golem(Entité):
 
     def __init__(self):
         super().__init__()
-        self.camp = "Golems"
-        self.campsEnnemis = ["Paysans"]
+        self.camp = Entité.CAMP_GOLEMS
+        self.campsEnnemis = [Entité.CAMP_PAYSANS]
         self.nom = "Golem"
 
     
@@ -201,7 +201,7 @@ class Golem(Entité):
 
         self.état.v = ÉtatIA.DÉPLACEMENT
         self.cible = commande.ennemi_cible
-        self.naviguerVers(self.cible.pos)
+        self.naviguerVers(self.cible.pos,True)
     def _commandeAttaqueSpéciale(self, commande : Commande):
         """ Exécute une commande ATTAQUE_SPÉCIALE
 
