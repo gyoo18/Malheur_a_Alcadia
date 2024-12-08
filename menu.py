@@ -175,7 +175,7 @@ def commande_menu_select(historique, commande : list[str]):
         for e in jeu.carte.entités:
             if e.nom.upper() == nom:
 
-                if e.camp == "Paysans":
+                if e.camp == Entité.CAMP_PAYSANS:
                     print(coul("Vous ne pouvez pas donner d'ordres aux paysans.",ROUGE))
                     time.sleep(1.5)
                     effaceCommande()
@@ -531,6 +531,15 @@ def menu_select():
             print(coul("Veuillez entrer une commande valide.",ROUGE))
             time.sleep(1.5)
             effaceCommande()
+
+def scène():
+    # jeu = Jeu.avoirJeu()
+    # carte = jeu.carte
+    # 
+    # match carte.séquence.v:
+    #     case _:
+    #         raise ValueError("Élément de séquence : " + carte.séquence.v +)
+    pass
 
 def main():
     width, eight = 20, 10
