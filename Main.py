@@ -1,10 +1,29 @@
+from Ressources import Ressources
+from Carte.Carte import Carte
+from Entités.Paysan import *
+from Entités.Golem import *
+from Jeu import Jeu, ÉtatJeu
+from random import randrange
+
+jeu : Jeu = None
+
 def Constructeur():
+    res = Ressources.avoirRessources()
+    carte = res.chargerCarte("Intro")
+
+    global jeu
+    jeu = Jeu.avoirJeu()
+    jeu.état.v = ÉtatJeu.MENU
+    jeu.changerCarte(carte)
     pass
 
 def Boucle():
-    return True
+    global jeu
+    jeu.miseÀJour()
+    return jeu.état.v != ÉtatJeu.TERMINÉ
 
 def Destructeur():
+    Ressources.avoirRessources().détruire()
     pass
 
 def main():

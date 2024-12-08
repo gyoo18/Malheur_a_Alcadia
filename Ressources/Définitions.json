@@ -1,0 +1,17 @@
+{
+    "Cartes" : {
+        "Test" : "Test.json",
+        "Intro" : "Intro.json",
+        "Chapitre1" : "Chapitre1.json",
+        "Chapitre2" : "Chapitre2.json",
+        "Chapitre3" : "Chapitre3.json"
+    },
+    "Entités" : {
+        "Test_Golem" : "Test_Golem.json",
+        "Test_Gosse" : "Test_Gosse.json",
+        "Test_Prêtre" : "Test_Prêtre.json",
+        "Test_Arbalettier" : "Test_Arbalettier.json",
+        "Test_Chevalier" : "Test_Chevalier.json",
+        "Test_Mineur" : "Test_Mineur.json"
+    }
+}
