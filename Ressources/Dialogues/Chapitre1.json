@@ -1,0 +1,34 @@
+{
+    "Titre" : "Prairie",
+    "Dialogues" : [
+        {
+            "Dialogue" : [
+                "Le château est attaqué par une menace extérieure ! Une multitude de créature ont émergées de la montagne sacrée, ravageant tout sur leur passage.",
+                "Le roi ordonne au bataillon d'alchimistes de défendre la plaine."
+            ]
+        },
+        {
+            "Dialogue" : [
+                "Félicitation !",
+                "Vous avez réussi à protéger la plaine ! Néanmoins, les ennemis sont de plus en plus nombreux, vous devez faire marche arrière dans la cité."
+            ]
+        },
+        {
+            "Personnage" : "Guildart",
+            "Dialogue" : [
+                "Soldat ! Défendez la cité."
+            ]
+        },
+        {
+            "Personnage" : "Mélios",
+            "Dialogue" : [
+                "Peut-être que je n'étais jamais destiné à être un guerrier, pardonnez-moi, j'ai échoué..."
+            ]
+        },
+        {
+            "Dialogue" : [
+                "Vous êtes tombé en défendant la plaine."
+            ]
+        }
+    ]
+}
