@@ -27,7 +27,7 @@
     "Séquence" : [
         {
             "Dialogue Groupe":"Intro",
-            "Dialogue ID" : 0
+            "Dialogue ID" : [0]
         }
     ],
     "Prochaine" : "Chapitre1"

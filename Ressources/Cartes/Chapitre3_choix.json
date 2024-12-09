@@ -1,0 +1,146 @@
+{
+    "Scène" : false,
+    "Carte" : [
+        ["#","#","#","#","#","#","#","#","#","#","#","#","#","#","#"],
+        ["#","*","*","0","0","0","#","#","#","0","0","0","*","*","#"],
+        ["#","*","*","0","0","0","#","#","#","0","0","0","*","*","#"],
+        ["#","0","0","0","0","0","0","$","0","0","0","0","0","0","#"],
+        ["#","0","0","0","0","0","0","$","0","0","0","0","0","0","#"],
+        ["#","0","0","0","0","0","0","$","0","0","0","0","0","0","#"],
+        ["#","0","0","0","0","0","0","$","0","0","0","0","0","0","#"],
+        ["#","0","0","0","0","0","0","$","0","0","0","0","0","0","#"],
+        ["#","0","0","0","0","0","0","$","0","0","0","0","0","0","#"],
+        ["#","0","0","0","#","0","0","$","0","0","0","0","0","0","#"],
+        ["#","0","0","0","0","0","0","$","0","0","#","0","0","0","#"],
+        ["#","0","#","0","0","0","0","$","0","0","0","0","0","0","#"],
+        ["#","0","*","#","0","0","0","$","0","0","0","#","*","0","#"],
+        ["#","0","0","*","0","0","0","$","0","0","#","*","0","0","#"],
+        ["#","#","#","#","#","#","0","$","0","#","#","#","#","#","#"]
+    ],
+    "Entités":[
+        {
+            "ID" : "Roi",
+            "Position":[7,4],
+            "Anim ID":"Roi"
+        },
+        {
+            "ID" : "Delain",
+            "Position" : [7,13],
+            "Anim ID":"Delain"
+        }
+    ],
+    "Séquence":{
+        "Début":[
+            {
+                "Roi":[7,3],
+                "Delain":[7,14],
+                "Dialogue Groupe":"C3_choix",
+                "Dialogue ID":[0]
+            },
+            {
+                "Dialogue Groupe":"C3_choix",
+                "Dialogue ID":[1]
+            },
+            {
+                "Dialogue Groupe":"C3_choix",
+                "Dialogue ID":[2]
+            },
+            {
+                "Dialogue Groupe":"C3_choix",
+                "Dialogue ID":[3]
+            },
+            {
+                "Delain":[7,13],
+                "Dialogue Groupe":"C3_choix",
+                "Dialogue ID":[4]
+            },
+            {
+                "Dialogue Groupe":"C3_choix",
+                "Dialogue ID":[5]
+            },
+            {
+                "Dialogue Groupe":"C3_choix",
+                "Dialogue ID":[6]
+            },
+            {
+                "Roi":[7,4],
+                "Dialogue Groupe":"C3_choix",
+                "Dialogue ID":[7]
+            },
+            {
+                "Dialogue Groupe":"C3_choix",
+                "Dialogue ID":[8]
+            },
+            {
+                "Dialogue Groupe":"C3_choix",
+                "Dialogue ID":[9]
+            },
+            {
+                "Dialogue Groupe":"C3_choix",
+                "Dialogue ID":[9,10]
+            },
+            {
+                "Dialogue Groupe":"C3_choix",
+                "Dialogue ID":[11]
+            }
+        ],
+        "Jeu":[
+            {
+                "Dialogue Groupe":"C3_choix",
+                "Dialogue ID":[12]
+            },
+            {
+                "Dialogue Groupe":"C3_choix",
+                "Dialogue ID":[13]
+            },
+            {
+                "Dialogue Groupe":"C3_choix",
+                "Dialogue ID":[14]
+            },
+            {
+                "Dialogue Groupe":"C3_choix",
+                "Dialogue ID":[15]
+            },
+            {
+                "Dialogue Groupe":"C3_choix",
+                "Dialogue ID":[16]
+            },
+            {
+                "Dialogue Groupe":"C3_choix",
+                "Dialogue ID":[17]
+            }
+        ],
+        "Succès":[
+            {
+                "Dialogue Groupe":"C3_choix",
+                "Dialogue ID":[21]
+            },
+            {
+                "Dialogue Groupe":"C3_choix",
+                "Dialogue ID":[22]
+            }
+        ],
+        "Échec":[
+            {
+                "Mélios":[7,9],
+                "Delain":[7,10],
+                "Dialogue Groupe":"C3_choix",
+                "Dialogue ID":[18]
+            },
+            {
+                "Mélios":[7,11],
+                "Delain":[7,12],
+                "Dialogue Groupe":"C3_choix",
+                "Dialogue ID":[19]
+            },
+            {
+                "Mélios":[7,14],
+                "Delain":[7,15],
+                "Dialogue Groupe":"C3_choix",
+                "Dialogue ID":[20]
+            }
+        ]
+    },
+    "Joueur_pos":[7,8],
+    "Prochain":"Intro"
+}

@@ -20,57 +20,230 @@
     "Entités":[
         {
             "ID" : "Chevalier",
-            "Position" : [9,13]
+            "Position" : [9,13],
+            "Anim ID":"01"
         },
         {
             "ID" : "Chevalier",
-            "Position" : [9,12]
+            "Position" : [9,12],
+            "Anim ID":"02"
         },
         {
             "ID" : "Chevalier",
-            "Position" : [8,12]
+            "Position" : [8,12],
+            "Anim ID":"03"
         },
         {
             "ID" : "Chevalier",
-            "Position" : [7,12]
+            "Position" : [7,12],
+            "Anim ID":"04"
         },
         {
             "ID" : "Chevalier",
-            "Position" : [6,12]
+            "Position" : [6,12],
+            "Anim ID":"05"
         },
         {
             "ID" : "Chevalier",
-            "Position" : [5,12]
+            "Position" : [5,12],
+            "Anim ID":"06"
         },
         {
             "ID" : "Chevalier",
-            "Position" : [5,13]
+            "Position" : [5,13],
+            "Anim ID":"07"
         },
         {
             "ID" : "Arbalettier",
-            "Position" : [8,14]
+            "Position" : [8,14],
+            "Anim ID":"08"
         },
         {
             "ID" : "Arbalettier",
-            "Position" : [8,13]
+            "Position" : [8,13],
+            "Anim ID":"09"
         },
         {
             "ID" : "Arbalettier",
-            "Position" : [7,14]
+            "Position" : [7,14],
+            "Anim ID":"10"
         },
         {
             "ID" : "Arbalettier",
-            "Position" : [7,13]
+            "Position" : [7,13],
+            "Anim ID":"11"
         },
         {
             "ID" : "Arbalettier",
-            "Position" : [6,14]
+            "Position" : [6,14],
+            "Anim ID":"12"
         },
         {
             "ID" : "Arbalettier",
-            "Position" : [6,13]
+            "Position" : [6,13],
+            "Anim ID":"13"
+        },
+        {
+            "ID" : "Roi",
+            "Position":[7,1],
+            "Anim ID":"Roi"
+        },
+        {
+            "ID" : "Guildart",
+            "Position":[10000,10000],
+            "Anim ID":"Guildart"
         }
     ],
+    "Séquence":{
+        "Début":[
+            {
+                "estAnimation":true,
+                "Temps" : 1.5,
+                "Plans":[
+                    {
+                        "01":[100,100],
+                        "02":[100,100],
+                        "03":[100,100],
+                        "04":[100,100],
+                        "05":[100,100],
+                        "06":[100,100],
+                        "07":[100,100],
+                        "08":[100,100],
+                        "09":[100,100],
+                        "10":[100,100],
+                        "11":[100,100],
+                        "12":[100,100],
+                        "13":[100,100],
+                        "Mélios":[6,14],
+                        "Guildart":[7,14],
+                        "Roi":[8,14],
+                        "Dialogue Groupe" : "Chapitre3",
+                        "Dialogue ID": [0]
+                    },
+                    {
+                        "Mélios":[6,13],
+                        "Guildart":[7,13],
+                        "Roi":[8,13],
+                        "Dialogue Groupe" : "Chapitre3",
+                        "Dialogue ID": [0]
+                    },
+                    {
+                        "Mélios":[6,12],
+                        "Guildart":[7,12],
+                        "Roi":[8,12],
+                        "Dialogue Groupe" : "Chapitre3",
+                        "Dialogue ID": [0]
+                    },
+                    {
+                        "Mélios":[6,11],
+                        "Guildart":[7,11],
+                        "Roi":[8,11],
+                        "Dialogue Groupe" : "Chapitre3",
+                        "Dialogue ID": [1]
+                    },
+                    {
+                        "Mélios":[6,10],
+                        "Guildart":[7,10],
+                        "Roi":[8,10],
+                        "Dialogue Groupe" : "Chapitre3",
+                        "Dialogue ID": [1]
+                    },
+                    {
+                        "Mélios":[6,9],
+                        "Guildart":[7,9],
+                        "Roi":[8,9],
+                        "Dialogue Groupe" : "Chapitre3",
+                        "Dialogue ID": [1]
+                    },
+                    {
+                        "Mélios":[6,8],
+                        "Guildart":[7,8],
+                        "Roi":[8,8],
+                        "Dialogue Groupe" : "Chapitre3",
+                        "Dialogue ID": [1]
+                    },
+                    {
+                        "Mélios":[6,7],
+                        "Guildart":[7,7],
+                        "Roi":[8,7],
+                        "Dialogue Groupe" : "Chapitre3",
+                        "Dialogue ID": [2]
+                    },
+                    {
+                        "Mélios":[6,6],
+                        "Guildart":[7,6],
+                        "Roi":[8,6],
+                        "Dialogue Groupe" : "Chapitre3",
+                        "Dialogue ID": [2]
+                    },
+                    {
+                        "Mélios":[6,5],
+                        "Guildart":[7,5],
+                        "Roi":[8,5],
+                        "Dialogue Groupe" : "Chapitre3",
+                        "Dialogue ID": [2]
+                    },
+                    {
+                        "Mélios":[6,4],
+                        "Guildart":[7,4],
+                        "Roi":[8,4],
+                        "Dialogue Groupe" : "Chapitre3",
+                        "Dialogue ID": [3]
+                    }
+                ]
+            }
+        ],
+        "Jeu":[
+            {
+                "Dialogue Groupe":"Chapitre3",
+                "Dialogue ID":[3]
+            },
+            {
+                "Dialogue Groupe":"Chapitre3",
+                "Dialogue ID":[4]
+            },
+            {
+                "Dialogue Groupe":"Chapitre3",
+                "Dialogue ID":[5]
+            },
+            {
+                "Dialogue Groupe":"Chapitre3",
+                "Dialogue ID":[6]
+            },
+            {
+                "Dialogue Groupe":"Chapitre3",
+                "Dialogue ID":[7]
+            }
+        ],
+        "Succès":[
+            {
+                "Dialogue Groupe": "Chapitre3",
+                "Dialogue ID": [8]
+            },
+            {
+                "Dialogue Groupe": "Chapitre3",
+                "Dialogue ID": [9]
+            }
+        ],
+        "Échec":[
+            {
+                "Dialogue Groupe": "Chapitre3",
+                "Dialogue ID": [10]
+            },
+            {
+                "Dialogue Groupe": "Chapitre3",
+                "Dialogue ID": [11]
+            },
+            {
+                "Dialogue Groupe": "Chapitre3",
+                "Dialogue ID": [8]
+            },
+            {
+                "Dialogue Groupe": "Chapitre3",
+                "Dialogue ID": [12]
+            }
+        ]    
+    },
     "Joueur_pos" : [7,7],
     "Prochaine" : "Intro"
 }

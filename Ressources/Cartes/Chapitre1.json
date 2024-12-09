@@ -52,10 +52,40 @@
         }
     ],
     "Joueur_pos" : [7,2],
-    "Séquence" : [
-        {
-            
-        }
-    ],
+    "Séquence" : {
+        "Début": [
+            {
+                "Dialogue Groupe": "Chapitre1",
+                "Dialogue ID" : [0]
+            }
+        ],
+        "Jeu": [
+            {
+                "Dialogue Groupe" : "Chapitre1",
+                "Dialogue ID" : [1]
+            },
+            {
+                "Dialogue Groupe" : "Chapitre1",
+                "Dialogue ID" : [2]
+            }
+
+        ],
+        "Succès": [
+            {
+                "Dialogue Groupe" : "Chapitre1",
+                "Dialogue ID" : [3,4]
+            }
+        ],
+        "Échec": [
+            {
+                "Dialogue Groupe" : "Chapitre1",
+                "Dialogue ID" : [5]
+            },
+            {
+                "Dialogue Groupe":"Chapitre1",
+                "Dialogue ID": [6]
+            }
+        ]
+    },
     "Prochaine" : "Chapitre2"
 }

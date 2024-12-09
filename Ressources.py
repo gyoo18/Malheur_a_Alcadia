@@ -42,6 +42,8 @@ class Ressources:
         if nom in self.cartes_chargées:
             return self.cartes[self.cartes_chargées.index(nom)]
         else: 
+            if not nom in self.indexe_ressources["Cartes"]:
+                raise AttributeError("[Charger Carte] La carte " + nom + " n'est pas définie.")
             source = "Ressources/Cartes/" + self.indexe_ressources["Cartes"][nom]
             matrice : list[list[Tuile]] = []
             entités : list[tuple[str,Vec2|None,str|None]] = []
@@ -71,6 +73,9 @@ class Ressources:
             
             if not "Joueur_pos" in carte_dict:
                 raise AttributeError("La Carte " + str(source) + " doit contenir un attribut 'Joueur_pos' de type list[int] et de longueur 2")
+            
+            if not "Séquence" in carte_dict:
+                raise AttributeError("La Carte " + str(source) + " doit contenir un attribut 'Séquence' de type liste ou dictionnaire.")
             
             for x in range(len(carte_dict["Carte"])):
                 colonne = []
@@ -168,6 +173,8 @@ class Ressources:
         if False and nom in self.entités_chargées:
             return self.entités[self.entités_chargées.index(nom)]
         else :
+            if not nom in self.indexe_ressources["Entités"]:
+                raise AttributeError("[Charger Entité] L'entité " + nom + " n'est pas définie.")
             source = "Ressources/Entités/" + self.indexe_ressources["Entités"][nom]
             unitée_dict : dict = None
             try:
@@ -286,6 +293,8 @@ class Ressources:
                 texte += self.dialogues[groupe][i] + '\n'
             return texte
         else:
+            if not groupe in self.indexe_ressources["Dialogues"]:
+                raise AttributeError("[Charger Dialogue] Le groupe de dialogue : " + str(groupe) + " n'est pas définit.")
             source : str = "Ressources/Dialogues/" + self.indexe_ressources["Dialogues"][groupe]
             dialogue_dict : dict= None
             try:

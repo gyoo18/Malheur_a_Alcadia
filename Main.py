@@ -10,7 +10,7 @@ jeu : Jeu = None
 
 def Constructeur():
     res = Ressources.avoirRessources()
-    carte = res.chargerCarte("Test_séquence")
+    carte = res.chargerCarte("Chapitre3")
 
     global jeu
     jeu = Jeu.avoirJeu()

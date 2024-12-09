@@ -1,0 +1,39 @@
+{
+    "Titre" : "Cité",
+    "Dialogues" : [
+        {   "Dialogue":["Les monstres se sont infiltré dans nos remparts."]},
+        {
+            "Personnage" : "Guildart",
+            "Dialogue": ["Soldat ! Défendez la cité!"]
+        },
+        {   "Dialogue": ["Votre expérience de combat vous permet d'utiliset un nouveau golem!"]},
+        {
+            "Personnage": "Mélios",
+            "Dialogue": ["Le sol a une composition différente. Je pense que ça ferait un résultat intéressant."]
+        },
+        {
+            "Personnage": "Guildart",
+            "Dialogue":["Ils sont si nombreux!"]
+        },
+        {
+            "Personnage": "Guildart",
+            "Dialogue":["Ne vous laissez pas abattre!"]
+        },
+        {
+            "Personnage": "Guildart",
+            "Dialogue":["Ils sont partout!"]
+        },
+        {   "Dialogue":["Vous avez réussi!"]},
+        {   "Dialogue":["Néanmoins, le corps d'un ami gis au sol."]},
+        {   "Dialogue":["Guildart s'est sacrifié pour protéger sa ville."]},
+        {   "Dialogue":["Mais pas le temps de pleurer : un nouvel ennemis approche."]},
+        {
+            "Personnage" :"Mélios",
+            "Dialogue":[
+                "J'espère que ma famille est en sécurité...",
+                "Je suis désolé de ne pas avoir pu vous protéger..."
+            ]
+        },
+        {   "Dialogue":["Vous êtes tombé en défendant la cité."]}
+    ]
+}

@@ -51,6 +51,60 @@
             "Position" : [1,8]
         }
     ],
+    "Séquence":{
+        "Début":[
+            {
+                "Dialogue Groupe" : "Chapitre2",
+                "Dialogue ID": [0,1]
+            },
+            {
+                "Dialogue Groupe": "Chapitre2",
+                "Dialogue ID": [2,3]
+            }
+        ],
+        "Jeu":[
+            {
+                "Dialogue Groupe": "Chapitre2",
+                "Dialogue ID":[4]
+            },
+            {
+                "Dialogue Groupe": "Chapitre2",
+                "Dialogue ID":[5]
+            },
+            {
+                "Dialogue Groupe": "Chapitre2",
+                "Dialogue ID":[6]
+            }
+        ],
+        "Succès":[
+            {
+                "Dialogue Groupe": "Chapitre2",
+                "Dialogue ID":[7]
+            },
+            {
+                "Dialogue Groupe": "Chapitre2",
+                "Dialogue ID":[8]
+            },
+            {
+                "Dialogue Groupe": "Chapitre2",
+                "Dialogue ID":[8,9]
+            },
+            {
+                "Dialogue Groupe": "Chapitre2",
+                "Dialogue ID":[8,9,10]
+            }
+        ],
+        "Échec":[
+            {
+                "Dialogue Groupe": "Chapitre2",
+                "Dialogue ID":[11]
+            },
+            {
+                "Dialogue Groupe":"Chapitre2",
+                "Dialogue ID":[12]
+            }
+        ]
+    },
     "Joueur_pos" : [7,3],
-    "Prochaine" : "Chapitre3"
+    "Prochaine" : "Chapitre2_Choix"
 }

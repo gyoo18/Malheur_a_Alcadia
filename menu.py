@@ -77,6 +77,7 @@ def ingameUI():
             input("")
     elif jeu.état.v != ÉtatJeu.JEU and plan.estAnimation and jeu.état.scène_animation_étape < len(plan.titres)-1:
         jeu.état.scène_animation_étape += 1
+        time.sleep(plan.temps[jeu.état.scène_animation_étape-1])
     elif jeu.état.v == ÉtatJeu.DÉBUT:
         if carte.estScène:
             pass

@@ -1,0 +1,12 @@
+{
+    "Nom" : "Petit Monstre",
+    "Type" : "Personnage",
+    "Caractère" : " Ç",
+    "Caractère Couleur" : [0.92,0.12,0.12],
+    "PVMax" : 75,
+    "PV" : 10,
+    "Attaque Normale" : 11,
+    "Dégâts Libres": 9,
+    "Camp": "Paysans",
+    "Camps Ennemis": ["Golem"]
+}

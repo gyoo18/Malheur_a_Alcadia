@@ -1,0 +1,10 @@
+{
+    "Nom":"Le Roi",
+    "Type":"Personnage",
+    "Caractère":"MM",
+    "Caractère Couleur" : [0.93,0.87,0.12],
+    "PVMax": 50,
+    "PV": 50,
+    "Camp" : "Personnages",
+    "CampsEnnemis":["Paysans"]
+}

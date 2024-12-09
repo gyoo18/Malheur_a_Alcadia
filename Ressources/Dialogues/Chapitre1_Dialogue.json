@@ -8,6 +8,18 @@
             ]
         },
         {
+            "Personnage" : "Guildart",
+            "Dialogue" : [
+                "Ne les laissez pas approcher!"
+            ]
+        },
+        {
+            "Personnage" : "Guildart",
+            "Dialogue" : [
+                "Repoussez-les!"
+            ]
+        },
+        {
             "Dialogue" : [
                 "Félicitation !",
                 "Vous avez réussi à protéger la plaine ! Néanmoins, les ennemis sont de plus en plus nombreux, vous devez faire marche arrière dans la cité."

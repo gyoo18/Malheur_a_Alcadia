@@ -26,13 +26,17 @@ def script(Zone : str, Timing : str, choix : str, jeu : Jeu) :
         jeu.état.v = ÉtatJeu.TRANSITION
     elif(Zone == Chapitre.CHAPITRE1):
         if(Timing == ÉtatJeu.DÉBUT):
-
-            pass
+            message += ("\nLe château est attaqué par une menace extérieure ! Une multitude de créature ont émergées de la montagne sacrée, ravageant tout sur leur passage.")
+            message += ("\nLe roi ordonne au bataillon d'alchimistes de défendre la plaine.")
+            message += ("\n________ Plaine ________")
         elif(Timing == ÉtatJeu.SUCCÈS):
-
+            message += ("\nFélicitation !") 
+            message += ("\nVous avez réussi à protéger la plaine ! Néanmoins, les ennemis sont de plus en plus nombreux, vous devez faire marche arrière dans la cité.")
+            message += dialogue("Soldat ! Défendez la cité.", "Guildart")
             jeu.état.v = ÉtatJeu.TRANSITION
         elif(Timing == ÉtatJeu.ÉCHEC):
-            
+            message += dialogue("Peut-être que je n'étais jamais destiné à être un guerrier, pardonnez-moi, j'ai échoué...", "Melios")
+            message += ("\nFin_01 : Vous êtes tombé en défendant la plaine.")
             jeu.état.v = ÉtatJeu.TERMINÉ
     elif(Zone == Chapitre.CHAPITRE2):
         if(Timing == ÉtatJeu.DÉBUT):
