@@ -1,5 +1,6 @@
 from __future__ import annotations
 from InclusionsCirculaires.Ressources_Jeu import *
+from Dessin.Texture import Texture
 from Carte.Carte import *
 from Carte.Tuile import Tuile
 from Entités.Entité import *
@@ -9,6 +10,7 @@ from Entités.Personnages import *
 import codecs
 import traceback
 import json
+import imageio.v3 as ImageIO
 
 class Ressources:
 
@@ -23,6 +25,8 @@ class Ressources:
         self.dialogues_chargés : list[str] = []
         self.resultat_zone_2 : str = ""
         self.indexe_ressources : dict = None
+        self.textures : list[Texture] = []
+        self.textures_chargées : list[str] = []
         try:
             self.indexe_ressources = json.load(codecs.open("Ressources/Définitions.json","r","utf-8"))
         except Exception as e:
@@ -518,3 +522,17 @@ class Ressources:
         m = Maillage()
         m.créer_indexes(attributs,attibuts_types,indexes)
         return m
+
+    def chargerTexture(self, nom : str):
+        if nom in self.textures_chargées:
+            return self.textures[self.textures_chargées.index(nom)]
+        else:
+            source = "Ressources/Textures/" + self.indexe_ressources["Textures"][nom]
+            text = None
+            try:
+                tex = ImageIO.imread(source)
+            except Exception as e:
+                traceback.print_exc()
+                traceback.print_exception(e)
+                exit(-1)
+            return Texture(source,tex)

@@ -1,23 +1,15 @@
-import imageio.v3 as ImageIO
 import numpy
 from OpenGL.GL import *
 
 class Texture:
-    hauteur : int
-    largeur : int
 
-    ID : int
-
-    source : str
-
-    tex : numpy.ndarray
-
-    def __init__(self, source : str):
-        self.source = source
-        self.tex = ImageIO.imread(source)
-        self.hauteur = self.tex.shape[1]
-        self.largeur = self.tex.shape[0]
-        self.ID = -1
+    def __init__(self, source : str, texture : numpy.ndarray):
+        self.source : str = source
+        self.tex : numpy.ndarray = texture
+        self.hauteur : int = texture.shape[0]
+        self.largeur : int = texture.shape[1]
+        self.ID : int = -1
+        self.estConstruit : bool = False
     
     def construire(self):
         self.ID = glGenTextures(1)
@@ -59,3 +51,5 @@ class Texture:
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR)
         glGenerateMipmap(GL_TEXTURE_2D)
+
+        self.estConstruit = True

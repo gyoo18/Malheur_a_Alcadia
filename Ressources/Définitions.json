@@ -29,5 +29,8 @@
         "C2_choix": "Chapitre2_choix_Dialogue.json",
         "Chapitre3": "Chapitre3_Dialogue.json",
         "C3_choix": "Chapitre3_choix_Dialogue.json"
+    },
+    "Textures":{
+        "Test":"Sans nom2.png"
     }
 }
