@@ -8,6 +8,7 @@ class Tuile:
 
     def __init__(self,type):
         self.type : str = type
+        self.dessin_atlas_indexe : int = -1
 
     
 

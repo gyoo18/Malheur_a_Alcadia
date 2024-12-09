@@ -47,6 +47,8 @@ class Peintre(GLCanvas):
         glViewport(0,0,largeure,hauteure)
         self.largeure = largeure
         self.hauteure = hauteure
+        taille = min(largeure,hauteure)
+        self.carte.dessin_taille = Vec2(taille, taille)
 
     def draw(self):
         if not self.initialisé:
@@ -64,25 +66,7 @@ class Peintre(GLCanvas):
         for i in range(len(self.carte.dessin_maillage.attributs)):
             glEnableVertexAttribArray(i)
 
-        indexes_texture = [
-            0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,
-            0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,
-            0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,
-            0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,
-            0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,
-            0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,
-            0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,
-            0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,
-            0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,
-            0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,
-            0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,
-            0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,
-            0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,
-            0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,
-            0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,
-            0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15
-        ]
-        self.carte.dessin_nuanceur.chargerUniformes(self.carte.dessin_position, self.carte.dessin_rotation, self.carte.dessin_taille*self.carte.dessin_échelle, Vec2(self.largeure,self.hauteure), Vec2(self.carte.colonnes,self.carte.lignes),indexes_texture,Vec2(4,4),Vec2(64,64))
+        self.carte.dessin_nuanceur.chargerUniformes(self.carte.dessin_position, self.carte.dessin_rotation, self.carte.dessin_taille*self.carte.dessin_échelle, Vec2(self.largeure,self.hauteure), Vec2(self.carte.colonnes,self.carte.lignes),self.carte.dessin_atlas_indexes,self.carte.dessin_atlas_taille)
 
         glActiveTexture(GL_TEXTURE0)
         glBindTexture(GL_TEXTURE_2D,self.carte.dessin_atlas.ID)

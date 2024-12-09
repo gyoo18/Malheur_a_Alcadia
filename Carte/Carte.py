@@ -63,8 +63,8 @@ class Carte:
         self.dessin_maillage : Maillage = Maillage()
         self.dessin_maillage.créer_bande([self.dessin_points],[2])
         self.dessin_nuanceur : NuaCarte = res.chargerNuanceur("NuaCarte",NuaCarte)
-        self.dessin_atlas : Texture = res.chargerTexture("Test")
-        self.dessin_atlas_taille : Vec2 = Vec2(1,1)
+        self.dessin_atlas : Texture = res.chargerTexture("Atlas")
+        self.dessin_atlas_taille : Vec2 = Vec2(16,16)
         self.dessin_atlas_indexes : list[int] = []
             
     def peutAller(self, entite: Entité, pos: Vec2):
@@ -183,3 +183,22 @@ class Carte:
         self.dessin_nuanceur.construire()
         self.dessin_maillage.construire()
         self.dessin_atlas.construire()
+        
+        for y in range(len(self.matrice[0])):
+            for x in range(len(self.matrice)):
+                match self.matrice[x][y].type:
+                    case Tuile.TYPE_EAU:
+                        self.matrice[x][y].dessin_atlas_indexe = 1
+                        self.dessin_atlas_indexes.append(1)
+                    case Tuile.TYPE_TERRE:
+                        self.matrice[x][y].dessin_atlas_indexe = 0
+                        self.dessin_atlas_indexes.append(0)
+                    case Tuile.TYPE_FEUX:
+                        self.matrice[x][y].dessin_atlas_indexe = 2
+                        self.dessin_atlas_indexes.append(2)
+                    case Tuile.TYPE_MUR:
+                        self.matrice[x][y].dessin_atlas_indexe = 3
+                        self.dessin_atlas_indexes.append(3)
+                    case Tuile.TYPE_OR:
+                        self.matrice[x][y].dessin_atlas_indexe = 4
+                        self.dessin_atlas_indexes.append(4)

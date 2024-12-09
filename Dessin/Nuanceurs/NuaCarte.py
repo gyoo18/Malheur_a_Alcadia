@@ -26,11 +26,10 @@ class NuaCarte(Nuanceur):
         self.TAILLE_CARTE = glGetUniformLocation(self.programme,"taille_carte")
         self.INDEXES_TEXTURE = glGetUniformLocation(self.programme,"indexes_texture")
         self.TAILLE_ATLAS = glGetUniformLocation(self.programme,"taille_atlas")
-        self.TAILLE_TEXTURE_ATLAS = glGetUniformLocation(self.programme,"tailles_texture_atlas")
 
         glUniform1i(glGetUniformLocation(self.programme,"tex"),0)
 
-    def chargerUniformes(self, position : Vec2, rot : float, échelle : Vec2, taille_fenetre : Vec2, taille_carte : Vec2, indexes_texture : list[int], taille_atlas : Vec2, taille_texture_atlas : Vec2):
+    def chargerUniformes(self, position : Vec2, rot : float, échelle : Vec2, taille_fenetre : Vec2, taille_carte : Vec2, indexes_texture : list[int], taille_atlas : Vec2):
         glUniform2f(self.POSITION,float32(position.x),float32(position.y))
         glUniform1f(self.ROTATION,float32(rot))
         glUniform2f(self.ÉCHELLE,float32(échelle.x),float32(échelle.y))
@@ -39,4 +38,3 @@ class NuaCarte(Nuanceur):
         données = (GLint * len(indexes_texture))(*indexes_texture)
         glUniform1iv(self.INDEXES_TEXTURE,len(indexes_texture),données)
         glUniform2i(self.TAILLE_ATLAS,int(taille_atlas.x),int(taille_atlas.y))
-        glUniform2i(self.TAILLE_TEXTURE_ATLAS,int(taille_texture_atlas.x),int(taille_texture_atlas.y))

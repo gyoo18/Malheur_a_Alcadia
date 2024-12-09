@@ -31,7 +31,8 @@
         "C3_choix": "Chapitre3_choix_Dialogue.json"
     },
     "Textures":{
-        "Test":"Sans nom2.png"
+        "Test":"Sans nom2.png",
+        "Atlas":"Atlas_textures.png"
     },
     "Nuanceurs":{
         "NuaImage":"NuaImage",
