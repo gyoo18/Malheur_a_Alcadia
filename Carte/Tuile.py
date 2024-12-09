@@ -1,8 +1,9 @@
-class Tuiles:
+class Tuile:
     
     TYPE_TERRE ="0"
     TYPE_EAU ="~"
     TYPE_FEUX ="*"
+    TYPE_OR = "$"
     TYPE_MUR ="#"
 
     def __init__(self,type):
@@ -12,8 +13,8 @@ class Tuiles:
 
 
 
-plat = Tuiles.TYPE_FEUX
-droit = Tuiles(Tuiles.TYPE_EAU)
+plat = Tuile.TYPE_FEUX
+droit = Tuile(Tuile.TYPE_EAU)
 
 
 print(plat)

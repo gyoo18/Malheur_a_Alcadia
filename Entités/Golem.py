@@ -4,6 +4,7 @@ from Entités.Paysan import *
 from Entités.Attaque import Attaque, Élément
 from Maths.Vec2 import *
 from TFX import *
+import copy
 
 class Commande:
     """ Classe décrivant une commande à un Golem
@@ -28,7 +29,7 @@ class Commande:
     Suivit de l'une des fonctions suivantes:
      - `commande.faireCommandeDéplacement( destination : Vec2 )`
      - `commande.faireCommandeAttaque( ennemi : Entité )`
-     - `commande.faireCommandeAttaqueSpéciale( attaque : str )` *Préciser l'attaque à effectuer avec l'une des attaques du golem en question Ex. : `GolemEau.ATTAQUE_TORNADE`*
+     - `commande.faireCommandeAttaqueSpéciale( attaque : str )` *Préciser l'attaque à effectuer avec l'une des attaques du golem en question Ex. : `GolemEau.ATTAQUE_SPÉCIALE`*
      - `commande.faireCommandeDéfense()`
      - `commande.faireCommandeLibérer()`
      - `commande.faireCommandeCharger()`
@@ -42,6 +43,8 @@ class Commande:
     LIBÉRER = "libre"
     CHARGER_ATTAQUE = "charger attaque"
     ATTAQUER_CHARGE = "attaquer charge"
+
+    CRÉER_GOLEM = "créer golem"
     
     def __init__(self):
         self.catégorie : str = ""
@@ -49,6 +52,7 @@ class Commande:
         self.destination : Vec2 = None
         self.ennemi_cible : Entité = None
         self.attaque_spéciale : str = None
+        self.position_création_golem : Vec2 = None
 
     def faireCommandeDéplacement(self,destination : Vec2):
         """ Créé une commande qui déplace un golem vers `destination`
@@ -75,12 +79,12 @@ class Commande:
     def faireCommandeAttaqueSpéciale(self, attaque : str):
         """ Créé une commande qui demandera au golem de commencer à charger une attaque
 
-        **Pour le paramètre attaque, se référer au golem auquel on tente d'accéder, exemple `GolemEau.ATTAQUE_TORNADE`**
+        **Pour le paramètre attaque, se référer au golem auquel on tente d'accéder, exemple `GolemEau.ATTAQUE_SPÉCIALE`**
         
         Placera le golem dans le mode CHARGER.
 
         Args:
-            attaque (str) : Nom de l'attaque à utiliser. Se référer au golem auquel on tente d'accéder, `exemple GolemEau.ATTAQUE_TORNADE`
+            attaque (str) : Nom de l'attaque à utiliser. Se référer au golem auquel on tente d'accéder, `exemple GolemEau.ATTAQUE_SPÉCIALE`
         """
         self.catégorie = self.ATTAQUE_SPÉCIALE
         self.attaque_spéciale = attaque
@@ -112,22 +116,33 @@ class Commande:
         Attaque l'Entité spécifié par `ennemi`
 
         Args:
-            ennemi (Entit): Entité à frapper avec l'attaque chargée
+            ennemi (Entité): Entité à frapper avec l'attaque chargée
         """
         self.catégorie = self.ATTAQUER_CHARGE
         self.ennemi_cible = ennemi
+    
+    def faireCommandeCréerGolem(self, position : Vec2):
+        """crééra une commande qui demandera au joueur de créer un golem à la position relative précisée
+
+        **Notez que la commande ne serat acceptée que par le joueur**
+
+        Raises:
+            AttributeError: Si `position` n'est pas un `Vec2`
+        """
+        if type(position) != Vec2:
+            raise AttributeError("L'argument 'position' doit être de type Vec2.")
+        self.catégorie = self.CRÉER_GOLEM
+        self.position_création_golem = position
 
 class Golem(Entité):
 
     def __init__(self):
         super().__init__()
-        self.camp = "Golems"
-        self.campsEnnemis = ["Paysans"]
+        self.camp = Entité.CAMP_GOLEMS
+        self.campsEnnemis = [Entité.CAMP_PAYSANS]
         self.nom = "Golem"
+        self.nomAffichage = self.nom
 
-    def nom_aléatoire(liste):
-        nom=random.choice(liste)
-        return nom
     
     def commande(self, commande : Commande):
         """commande Reçoit et interpète une commande donnée par le joueur
@@ -154,7 +169,8 @@ class Golem(Entité):
             case Commande.ATTAQUER_CHARGE:
                 self._commandeAttaquerCharge(commande)
             case _:
-                raise AttributeError(coul("[Golem.commande] Commande mal construite : catégorie invalide.",ROUGE))
+                print(coul("La commande " + str(commande.catégorie) + " n'est pas accepté par un golem.",ROUGE))
+                # raise AttributeError(coul("[Golem.commande] Commande mal construite : catégorie" + str(commande.catégorie) + " invalide.",ROUGE))
 
     def _commandeDéplacement(self, commande : Commande):
         """ Exécute une commande déplacement
@@ -178,15 +194,15 @@ class Golem(Entité):
         Raises:
             AttributeError: Si `commande.ennemi_cible` n'est pas une Entité
         """
-        if type(commande.ennemi_cible) != Entité:
-            raise AttributeError(coul("[Golem._commandeAttaque] Commande mal construite : commande.ennemi_cilbe est un " + str(type(commande.ennemi_cible)) + ", mais seules les Entités sont acceptées.",ROUGE))
+        if not issubclass(type(commande.ennemi_cible),Entité):
+            raise AttributeError(coul("[Golem._commandeAttaque] Commande mal construite : commande.ennemi_cible est un " + str(type(commande.ennemi_cible)) + ", mais seules les Entités sont acceptées.",ROUGE))
         
         if self.étatCombat.v == ÉtatCombat.CHARGER:
             self.chargement = 0
 
         self.état.v = ÉtatIA.DÉPLACEMENT
         self.cible = commande.ennemi_cible
-        self.naviguerVers(self.cible.pos)
+        self.naviguerVers(self.cible.pos,True)
     def _commandeAttaqueSpéciale(self, commande : Commande):
         """ Exécute une commande ATTAQUE_SPÉCIALE
 
@@ -204,7 +220,7 @@ class Golem(Entité):
             self.chargement = 0
 
         self.état.v = ÉtatIA.COMBAT
-        self.étatCombat = ÉtatCombat.DÉFENSE
+        self.étatCombat.v = ÉtatCombat.DÉFENSE
     def _commandeLibérer(self, commande : Commande):
         """ Exécute la commande LIBÉRER
         """
@@ -217,11 +233,19 @@ class Golem(Entité):
         """
         self.état.v = ÉtatIA.COMBAT
         self.étatCombat.v = ÉtatCombat.CHARGER
+
     def _commandeAttaquerCharge(self, commande : Commande):
         """_commandeAttaquerCharge Exécute la commande ATTAQUER_CHARGE
         """
+        if Vec2.distance(self.pos,commande.ennemi_cible.pos) > 1.0:
+            print(coul("La cible est trop loin.",ROUGE))  
+            return
+
+        self.cible = commande.ennemi_cible
         self.état.v = ÉtatIA.COMBAT
+        self._AttaquerCible()
         self.étatCombat.v = ÉtatCombat.LIBRE
+        self.chargement = 0
     
     def _modeCombat(self):
         """_modeCombat Exécute le combat du Golem
@@ -231,10 +255,13 @@ class Golem(Entité):
         Incrémente le compteur de chargement et appelle self._AttaquerCible()
         """
         if self.étatCombat.v == ÉtatCombat.CHARGER:
+            print("Chargement de l'attaque à : " + str(self.chargement))
             self.chargement += 1
         elif self.cible.estVivant and Vec2.distance(self.cible.pos, self.pos) <= 1:
+            print("Attaque de l'ennemi")
             self._AttaquerCible()
         else:
+            print("L'ennemi est soit mort, soit partis. À la recherche d'un nouvel ennemi.")
             self.état.v = ÉtatIA.RECHERCHE
             self.estAttaqué = False
             self.cible = None
@@ -254,28 +281,33 @@ class GolemTerre(Golem):
     Gros tas de terre avec un arbre sur le dos, il est polyvalent, mais faible.
 
     Propriétées : 
-     - Attaque spéciale : ATTAQUE_FRAPPER_SOL, attaque de zone.
+     - Attaque spéciale : FRAPPE LE SOL, attaque de zone.
      - Camp : "Golems"
      - CampsEnnemis : ["Paysans"]
     """
-    ATTAQUE_FRAPPER_SOL = "frapper sol"
+    ATTAQUE_SPÉCIALE = "frapper sol"
+
+    noms_originaux : list[str] = ["Gorb","Bob","Pierre","Fero","Crys","Gol","Morb","Pol"]
+    noms : list[str] = copy.deepcopy(noms_originaux)
 
     def __init__(self):
         super().__init__()
-        self.vieMax=150
-        self.vie = self.vieMax
-        self.attaque_normale_dégats= Entité.Random_Stats(10,16)
-        self.dégats_libre= Entité.Random_Stats(39,46)
-        self.nom=Golem.nom_aléatoire(["Gorb","Bob","Pierre","Fero","Crys"])
-        self.attaque_sol_dégats : str = 1.0
-        self.attaque_sol_rayon : str = 2.0
+        self.PVMax=150
+        self.PV = self.PVMax
+        self.attaque_normale_dégats= self.Random_Stats(10,16)
+        self.dégats_libre= self.Random_Stats(39,46)
+        self.nom=Entité.nom_aléatoire(GolemTerre.noms)
+        self.nomAffichage = self.nom
+        self.attaque_sol_dégats : float = 1.0
+        self.attaque_sol_rayon : float = 2.0
+        
     def _commandeAttaqueSpéciale(self, commande : Commande):
-        if commande.attaque_spéciale == self.ATTAQUE_FRAPPER_SOL:
+        if commande.attaque_spéciale == self.ATTAQUE_SPÉCIALE:
             attaque = Attaque(self)
             attaque.dégats = self.attaque_sol_dégats + self.attaque_chargée*self.chargement
             attaque.élément = Élément.TERRE
             for ennemi in self.carte.entités:
-                if Vec2.distance(self.pos, ennemi.pos) < self.attaque_sol_rayon:
+                if Vec2.distance(self.pos, ennemi.pos) < self.attaque_sol_rayon and ennemi != self:
                     attaque.distance = Vec2.distance(self.pos,ennemi.pos)
                     attaque.direction = ennemi.pos-self.pos
                     ennemi.Attaquer(attaque)
@@ -293,29 +325,33 @@ class GolemEau(Golem):
     Colonne d'eau, il n'est pas très mobile et difficile à placer, mais peut attaquer à distance
 
     Propriétés : 
-     - Attaque Spéciale : ATTAQUE_TORNADE, repousse les ennemis des quelques cases
+     - Attaque Spéciale : ATTAQUE TORNADE, repousse les ennemis des quelques cases
      - Camp : "Golem"
      - CampsEnnemis : ["Paysans"]
      - Immobile
      - Attaque à distance
     """
-    ATTAQUE_TORNADE = "attaque tornade"
+    ATTAQUE_SPÉCIALE = "attaque tornade"
+
+    noms_originaux : list[str] = ["Blob","Plouf","Sploch","Casca","Rive"]
+    noms : list[str] = copy.deepcopy(noms_originaux)
 
     def __init__(self):
         super().__init__()
-        self.vieMax=90
-        self.vie = self.vieMax
-        self.attaque_normale_dégats=Entité.Random_Stats(20,26)
-        self.dégats_libre=Entité.Random_Stats(25,31)
-        self.nom=Golem.nom_aléatoire(["Blob","Plouf","Sploch","Casca","Rive"])
+        self.PVMax=90
+        self.PV = self.PVMax
+        self.attaque_normale_dégats=self.Random_Stats(20,26)
+        self.dégats_libre=self.Random_Stats(25,31)
+        self.nom=Entité.nom_aléatoire(GolemEau.noms)
+        self.nomAffichage = self.nom
         self.tornade_pousser_distance : int = 3
 
         self.max_distance_attaque : float = 4
 
     def _commandeAttaqueSpéciale(self, commande):
-        if commande.attaque_spéciale == self.ATTAQUE_TORNADE and Vec2.distance(self.pos, commande.ennemi_cible.pos) <= self.max_distance_attaque:
+        if commande.attaque_spéciale == self.ATTAQUE_ and Vec2.distance(self.pos, commande.ennemi_cible.pos) <= self.max_distance_attaque:
             for i in range(self.tornade_pousser_distance + self.chargement):
-                direction = norm(commande.ennemi_cible.pos - self.pos)
+                direction = Vec2.norm(commande.ennemi_cible.pos - self.pos)
                 direction.x = round(direction.x)
                 direction.y = round(direction.y)
                 déplacement = Vec2(0)
@@ -329,6 +365,23 @@ class GolemEau(Golem):
     def _commandeDéplacement(self, commande):
         print(coul("Le golem d'eau ne peut pas se déplacer!",JAUNE))
 
+    def _commandeAttaquerCharge(self, commande : Commande):
+        """_commandeAttaquerCharge Exécute la commande ATTAQUER_CHARGE
+        """
+        for e in self.carte.entités:
+            if commande.ennemi_cible == e.nom:
+                if Vec2.distance(self.pos,e.pos) <= self.max_distance_attaque:
+                    self.cible = e
+                    break
+                else:
+                    print(coul("La cible est trop loin.",ROUGE))
+                    return
+        
+        self.état.v = ÉtatIA.COMBAT
+        self._AttaquerCible()
+        self.étatCombat.v = ÉtatCombat.LIBRE
+        self.chargement = 0
+
     def _modeRecherche(self):
         ennemiPlusPrès = None
         distanceMinimale = sys.float_info.max
@@ -338,7 +391,23 @@ class GolemEau(Golem):
                 distanceMinimale = Vec2.distance(ennemi.pos,self.pos)
         if ennemiPlusPrès != None:
             self.état.v = ÉtatIA.COMBAT
-            self.destination = ennemi.pos
+            self.cible = ennemiPlusPrès
+    
+    def _modeCombat(self):
+        """_modeCombat Exécute le combat du Golem
+
+        Supplante Entité._modeCombat
+
+        Incrémente le compteur de chargement et appelle self._AttaquerCible()
+        """
+        if self.étatCombat.v == ÉtatCombat.CHARGER:
+            self.chargement += 1
+        elif self.cible.estVivant and Vec2.distance(self.cible.pos, self.pos) <= self.max_distance_attaque:
+            self._AttaquerCible()
+        else:
+            self.état.v = ÉtatIA.RECHERCHE
+            self.estAttaqué = False
+            self.cible = None
     
     def _AttaquerCible(self):
         attaque = Attaque(self)
@@ -355,25 +424,28 @@ class GolemFeu(Golem):
     Extrait des profondeures de la terre, sa croûte de lave, lechée par ses cheveux de feux, peut cracher des boules brûlantes qui fonderont les armures.
 
     Propriétées :
-     - Attaque spéciale : ATTAQUE_BOULE_FEU, lance une boule de feu sur les ennemis
+     - Attaque spéciale : BOULE DE FEU, lance une boule de feu sur les ennemis
      - Camp : "Golems"
      - CampsEnnemis : ["Paysans"]
     """
-    ATTAQUE_BOULE_FEU = "attaque boule de feu"
+    ATTAQUE_SPÉCIALE = "attaque boule de feu"
     
+    noms_originaux : list[str]= ["Magme","Fusio","Larva","Manta","Ardenne"]
+    noms : list[str]= copy.deepcopy(noms_originaux)
 
     def __init__(self):
         super().__init__()
-        self.vieMax=120
-        self.vie = self.vieMax
-        self.attaque_normale_dégats=Entité.Random_Stats(26,29)
-        self.dégats_libre=Entité.Random_Stats(35,39)
-        self.nom=Golem.nom_aléatoire(["Magme","Fusio","Larva","Manta","Ardenne"])
+        self.PVMax=120
+        self.PV = self.PVMax
+        self.attaque_normale_dégats=self.Random_Stats(26,29)
+        self.dégats_libre=self.Random_Stats(35,39)
+        self.nom=Entité.nom_aléatoire(GolemFeu.noms)
+        self.nomAffichage = self.nom
         self.attaque_max_distance : float = 4.0
         self.boule_feu_dégats : int = 3
 
     def _commandeAttaqueSpéciale(self, commande):
-        if commande.attaque_spéciale == self.ATTAQUE_BOULE_FEU and Vec2.distance(self.pos,commande.ennemi_cible.pos) <= self.attaque_normale_dégats:
+        if commande.attaque_spéciale == self.ATTAQUE_SPÉCIALE and Vec2.distance(self.pos,commande.ennemi_cible.pos) <= self.attaque_normale_dégats:
             attaque = Attaque(self)
             attaque.élément = Élément.FEU
             attaque.est_projectile = True
@@ -388,3 +460,35 @@ class GolemFeu(Golem):
         attaque.élément = Élément.FEU
         self.cible.Attaquer(attaque)
         self.chargement = 0
+
+class GolemDoré(Golem):
+
+    noms_originaux : list[str] = ["Goldy","Flash","Shiny","Conqi","King"]
+    noms : list[str] = copy.deepcopy(noms_originaux)
+
+    def __init__(self):
+        super().__init__()
+        self.PVMax=150
+        self.PV = self.PVMax
+        self.attaque_normale_dégats=self.Random_Stats(25,31)
+        self.dégats_libre=self.Random_Stats(36,42)
+        self.nom=Entité.nom_aléatoire(GolemDoré.noms)
+        self.nomAffichage = self.nom
+
+        self.TEMP_GUÉRISON = 4
+        self.guérisonCompteur = 0
+        self.guérisonRayon = 4
+        self.guérisonPuissance = 4
+
+    def MiseÀJour(self):
+        super().MiseÀJour()
+
+        if self.guérisonCompteur > 0:
+            self.guérisonCompteur -= 1
+
+            for i in range(len(self.carte.entités)):
+                if self.carte.entités[i].camp == self.camp and self.carte.entités != self and Vec2.distance(self, self.carte.entités[i]) <= self.guérisonRayon:
+                    self.carte.entités[i].PV += self.guérisonPuissance
+                    self.carte.entités[i].PV = min(self.carte.entités[i].PV,self.carte.entités[i].PVMax)
+
+    

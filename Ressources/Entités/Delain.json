@@ -1,0 +1,10 @@
+{
+    "Nom" : "Monstre",
+    "Type" : "Personnage",
+    "Caractère" : "DI",
+    "Caractère Couleur" : [0.86,0.12,0.77],
+    "PVMax" : 50.0,
+    "PV" : 12.0,
+    "Camp": "Paysans",
+    "CampsEnnemis":["Golems"]
+}

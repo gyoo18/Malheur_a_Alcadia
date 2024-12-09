@@ -1,0 +1,14 @@
+{
+    "Nom" : "Jack",
+    "Type" : "GolemTerre",
+    "PVMax" : 100,
+    "PV" : 90,
+    "Temp Chargement" : 3,
+    "Attaque Chargée" : 30.0,
+    "Attaque Normale" : 10.0,
+    "Dégats Défense" : 30.0,
+    "Dégats Libres" : 10.0,
+    "Dégats Charger" : 0.0,
+    "Camp" : "Golems",
+    "Camps Ennemis" : ["Paysans"]
+}

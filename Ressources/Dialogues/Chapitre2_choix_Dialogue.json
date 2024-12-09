@@ -1,0 +1,52 @@
+{
+    "Titre" : "Un Ennemi Approche...",
+    "Dialogues":[
+        {   "Dialogue":["Mais pas le temps de pleurer : un nouvel ennemis approche."]},
+        {
+            "Dialogue":[
+                "Il n'attaque pas.",
+                "Il parle."
+            ]
+        },
+        {   "Dialogue":["Sa voix est rauque, à peine audible, mais emprunte de tristesse."]},
+        {
+            "Personnage": "Petit Monstre",
+            "Dialogue":["S'il vous plait, cessez cette folie... Rentrons à la maison..."]
+        },
+        {   "Dialogue":["Que faites-vous?"]},
+        {   
+            "Dialogue":[
+                "Vous lâchez vos armes, prenez la main du petit monstre", 
+                "et traversez les ruines de la cité pour partir."
+            ]
+        },
+        {
+            "Dialogue":[
+                "Un regard en arrière vous retient.",
+                "Était-ce vraiment la bonne décision?"
+            ]
+        },
+        {   "Dialogue":["De fuir ses responsabilité?"]},
+        {
+            "Dialogue":[
+                "Le petit monstre n'a rien de dangeureux, il est même frêle.",
+                "Ces monstres ont détruit leur ville, mais envoyaient égalemnt leurs enfants?"
+            ]
+        },
+        {   "Dialogue":["La question vous hante : "]},
+        {   "Dialogue":["Pourquoi?"]},
+        {   "Dialogue":["Vous vous êtes enfuis avec le petit monstre."]},
+        {   
+            "Dialogue":[
+                "D'un geste bref, votre golem abbat le Petit Monstre.",
+                "Il est inutile de prendre pitié pour l'ennemi."
+            ]
+        },
+        {
+            "Dialogue":[
+                "Ils ont massacré Guildart.",
+                "Il ne méritait pas ce destin."
+            ]
+        }
+    ]
+}

@@ -1,15 +1,17 @@
-from Entités.Entité import *
+from Entités.Entité import Entité,ÉtatCombat,ÉtatIA
 from InclusionsCirculaires.Entité_Attaque import *
 from Maths.Vec2 import *
 from math import acos, sqrt
+import copy
 
 class Paysan(Entité):
 
     def __init__(self):
         super().__init__()
-        self.camp = "Paysans"
-        self.campsEnnemis = ["Golems"]
+        self.camp = Entité.CAMP_PAYSANS
+        self.campsEnnemis = [Entité.CAMP_GOLEMS,Entité.CAMP_JOUEUR,Entité.CAMP_PERSONNAGES]
         self.nom = "Paysan"
+        self.nomAffichage = self.nom
 
     def _AttaquerEnnemi(self):
         match self.étatCombat.v:
@@ -45,12 +47,17 @@ class Paysan(Entité):
 
 class Gosse(Paysan):
 
+    noms_originaux : list[str] = ["Lhucra","Karck","Gryui","Vhynch"]
+    noms : list[str] = copy.deepcopy(noms_originaux)
+
     def __init__(self):
         super().__init__()
-        self.vieMax=75
-        self.vie = self.vieMax
-        self.attaque_normale_dégats=Entité.Random_Stats(8,11)
-        self.dégats_libre=Entité.Random_Stats(5,11)
+        self.PVMax=75
+        self.PV = self.PVMax
+        self.attaque_normale_dégats=self.Random_Stats(8,11)
+        self.dégats_libre=self.Random_Stats(5,11)
+        self.nom=Entité.nom_aléatoire(Gosse.noms)
+        self.nomAffichage = self.nom
 
     def _exécuterAttaque(self):
         attaque = Attaque(self)
@@ -60,12 +67,17 @@ class Gosse(Paysan):
 
 class Mineur(Paysan):
 
+    noms_originaux : list[str] = ["Kol","Patt","Mork","Bury","Jack"]
+    noms : list[str] = copy.deepcopy(noms_originaux)
+
     def __init__(self):
         super().__init__()
-        self.vieMax=75
-        self.vie = self.vieMax
-        self.attaque_normale_dégats=Entité.Random_Stats(14,21)
-        self.dégats_libre=Entité.Random_Stats(10,16)
+        self.PVMax=75
+        self.PV = self.PVMax
+        self.attaque_normale_dégats=self.Random_Stats(14,21)
+        self.dégats_libre=self.Random_Stats(10,16)
+        self.nom=Entité.nom_aléatoire(Mineur.noms)
+        self.nomAffichage = self.nom
         self.bonus_terre : int = 2 # Bonus contre les golems de terre
 
     def _exécuterAttaque(self):
@@ -77,15 +89,19 @@ class Mineur(Paysan):
         self.chargement = 0
     
 class Prêtre(Paysan):
-    vieAddition : int   # Nombre de points de vie à ajouter à un allié par tour de guérison
+
+    noms_originaux : list[str] = ["StFray","StClark","StTurc","StJoph","StLam"]
+    noms : list[str] = copy.deepcopy(noms_originaux)
 
     def __init__(self):
         super().__init__()
-        slef.vieMax=75
-        self.vie = self.vieMax
-        slef.attaque_normale_dégats=Entité.Random_Stats(12,17)
-        slef.dégats_libre=Entité.Random_Stats(12,15)
-        self.vieAddition : int = 2
+        self.PVMax=75
+        self.PV = self.PVMax
+        self.attaque_normale_dégats=self.Random_Stats(12,17)
+        self.dégats_libre=self.Random_Stats(12,15)
+        self.nom=Entité.nom_aléatoire(Prêtre.noms)   
+        self.nomAffichage = self.nom     
+        self.PVAddition : int = 2
 
     def _modeRecherche(self):
         ennemiPlusPrès = None
@@ -106,12 +122,12 @@ class Prêtre(Paysan):
             self.état.v = ÉtatIA.DÉPLACEMENT
             self.destination = alliéPlusPrès.pos
         elif ennemiPlusPrès != None and alliéPlusPrès != None:
-            if ennemiPlusPrès.vie/ennemiPlusPrès.vieMax < alliéPlusPrès.vie/alliéPlusPrès.vieMax:
+            if ennemiPlusPrès.PV/ennemiPlusPrès.PVMax < alliéPlusPrès.PV/alliéPlusPrès.PVMax:
                 self.destination = ennemiPlusPrès.pos
             else :
                 self.destination = alliéPlusPrès.pos
         
-    def _modeDéplacement(self):
+    def _modeDéplacement(self): # TODO #23 L'arbalettier ne se déplace pas
         faire_pathfinding = True
         if len(self.chemin) > 0:
             if self.carte.peutAller(self.chemin[0].pos):
@@ -144,26 +160,33 @@ class Prêtre(Paysan):
         self.cible.Attaquer(attaque)
     
     def _modeGuérison(self):
-        if self.cible.vie < self.cible.vieMax and Vec2.distance(self.cible.pos, self.pos) <= 1:
-            self.cible.vie += self.vie
+        if self.cible.PV < self.cible.PVMax and Vec2.distance(self.cible.pos, self.pos) <= 1:
+            self.cible.PV += self.PVAddition
+            self.cible.PV = min(self.cible.PV,self.cible.PVMax)
         else:
             self.état.v = ÉtatIA.RECHERCHE
             self.cible = None
     
 class Chevalier(Paysan):
+
+    noms_originaux : list[str] = ["SirRaudryguish","SirHarchurt","SirMorline","SirLrimqu"]
+    noms : list[str] = copy.deepcopy(noms_originaux)
+
     def __init__(self):
         super().__init__()
-        self.vieMax=125
-        self.vie = self.vieMax
-        self.attaque_normale_dégats=Entité.Random_Stats(19,26)
-        self.dégats_libre=Entité.Random_Stats(30,36)
+        self.PVMax=125
+        self.PV = self.PVMax
+        self.attaque_normale_dégats=self.Random_Stats(19,26)
+        self.dégats_libre=self.Random_Stats(30,36)
+        self.nom=Entité.nom_aléatoire(Chevalier.noms)
+        self.nomAffichage = self.nom
 
     def _exécuterAttaque(self):
         attaque = Attaque(self)
         attaque.dégats = self.attaque_normale_dégats + self.chargement*self.attaque_chargée
         if self.chargement > 0:
             for entité in self.carte.entités:
-                angle = acos(self.direction.norm() @ norm(entité.pos - self.pos))   # Le @ est un produit scalaire (a•b)
+                angle = acos(self.direction.norm() @ Vec2.norm(entité.pos - self.pos))   # Le @ est un produit scalaire (a•b)
                 """
                 #   Les trois cases en face du chevaliere se trouvent à un angle d'au plus 45° de la direction vers laquelle il fait face
                 #   et à une distance d'au plus √2. Pour s'assurer que les entitées prises dans l'attaque soient détectée, on augmente
@@ -189,14 +212,19 @@ class Chevalier(Paysan):
         else:
             self.cible.Attaquer(attaque)
     
-class Arbaletier(Paysan):
+class Arbalettier(Paysan):
+    
+    noms_originaux : list[str] = ["Rambo","Rocky","Laçette","Fréch","Chaubin","Soly"]
+    noms : list[str] = copy.deepcopy(noms_originaux)
 
     def __init__(self):
         super().__init__()
-        self.vieMax=int(50)
-        self.vie = self.vieMax
-        self.attaque_normale_dégats=Entité.Random_Stats(30,33)
-        self.dégats_libre=Entité.Random_Stats(5,11)
+        self.PVMax=int(50)
+        self.PV = self.PVMax
+        self.attaque_normale_dégats=self.Random_Stats(30,33)
+        self.dégats_libre=self.Random_Stats(5,11)
+        self.nom=Entité.nom_aléatoire(Arbalettier.noms)   
+        self.nomAffichage = self.nom     
         self.max_distance_attaque : float = 3.0
         self.min_distance_ennemi : float = 1.5
 
@@ -219,12 +247,12 @@ class Arbaletier(Paysan):
             self.état.v = ÉtatIA.DÉPLACEMENT
             self.destination = alliéPlusPrès.pos
         elif ennemiPlusPrès != None and alliéPlusPrès != None:
-            if ennemiPlusPrès.vie/ennemiPlusPrès.vieMax < alliéPlusPrès.vie/alliéPlusPrès.vieMax:
+            if ennemiPlusPrès.PV/ennemiPlusPrès.PVMax < alliéPlusPrès.PV/alliéPlusPrès.PVMax:
                 self.destination = ennemiPlusPrès.pos
             else :
                 self.destination = alliéPlusPrès.pos
     
-    def _modeDéplacement(self):
+    def _modeDéplacement(self): # TODO #23 L'arbalettier ne se déplace pas
         faire_pathfinding = True
         if len(self.chemin) > 0:
             if self.carte.peutAller(self.chemin[0].pos):

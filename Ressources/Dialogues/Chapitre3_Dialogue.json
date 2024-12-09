@@ -1,0 +1,67 @@
+{
+    "Titre":"Château",
+    "Dialogues":[
+        {
+            "Dialogue":[
+                "Après l'annonce de la mort de Guildart,",
+                "vous êtes désigné son successeur, à la tête du bataillon."
+            ]
+        },
+        {
+            "Dialogue":[
+                "Le roi compte sur vous pour le protéger.",
+                "Il n'y a plus que vous."
+            ]
+        },
+        {   "Dialogue":["Votre rage vous pousse à accepter et à combattre avec tout ce qui vous reste."]},
+        {
+            "Personnage" : "Mélios",
+            "Dialogue":["Je vous protégerai au péril de ma vie, Majesté!"]
+        },
+        {
+            "Personnage":"Roi",
+            "Dialogue":["Soldat! Protégez moi!"]
+        },
+        {
+            "Personnage":"Roi",
+            "Dialogue":["Massacrez ces geux!"]
+        },
+        {
+            "Personnage":"Roi",
+            "Dialogue":["Sortez-les de cet antre sacrée!"]
+        },
+        {
+            "Personnage":"Roi",
+            "Dialogue":["À moi! À moi! Mon beau tapis tout neuf!"]
+        },
+        {
+            "Dialogue":[
+                "Il n'y a plus de monstres...",
+                "Plus que des tas de chaire floues répandus sur le sol."
+            ]
+        },
+        {
+            "Dialogue":[
+                "Le roi est sain et sauf.",
+                "Vous avez réussi"
+            ]
+        },
+        {
+            "Personnage":"Mélios",
+            "Dialogue":[
+                "J'aurais voulus en faire plus...",
+                "Mais je ne peux pas...",
+                "Pardons..."
+            ]
+        },
+        {
+            "Personnage":"Mélios",
+            "Dialogue":[
+                "Pardon..."
+            ]
+        },
+        {
+            "Dialogue":["Vous êtes tombé en défendant le château."]
+        }
+    ]
+}

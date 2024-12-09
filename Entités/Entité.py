@@ -32,10 +32,15 @@ class ÉtatCombat:
 # Classe abstraite de base d'une entitée
 class Entité:
 
+    CAMP_PAYSANS = "Monstres"
+    CAMP_GOLEMS = "Golems"
+    CAMP_JOUEUR = "Mélios"
+    CAMP_PERSONNAGES = "Personnages"
+
     def __init__(self):
         # Charactérisitques décrivant l'entité
-        self.vieMax : int = 100         # Points de vies maximum
-        self.vie : float = self.vieMax  # Points de vies restants
+        self.PVMax : int = 100         # Points de vies maximum
+        self.PV : float = self.PVMax  # Points de vies restants
 
         self.TEMP_CHARGEMENT : int = 3      # Temps nécessaire pour charger une attaque puissante
         self.attaque_chargée : float = 30.0 # Dégats associés à l'attaque chargée
@@ -50,8 +55,10 @@ class Entité:
         self.campsEnnemis : list[str] = []   # Liste des camps ennemis à cette entité.
 
         self.nom : str = "Entité"
+        self.nomAffichage : str = "Entité"
 
-        # Variables de fonctionnement interne
+        # Variables de fonctionnement 
+        self.animID = ""
         self.estVivant : bool = True
 
         self.état : ÉtatIA = ÉtatIA()    # État de l'IA
@@ -67,18 +74,56 @@ class Entité:
         self.chemin : list[Vec2] = []  # Liste des tuiles sur le chemin précalculé
         self.carte : Carte = None  # Référence à la carte jouée en ce moment
 
+        noms = ["Jean", "Salom", "Guy", "Pascal", "Eva"]
 
-    def Random_Stats(x,y):
+        # Appel de la fonction avec la liste de noms
+        self.nom = Entité.nom_aléatoire(noms)
+
+    def avoirInfoStr(self):
+        # TODO #16 implémenter avoirInfoStr() dur toutes les entitées
+        return (gras(soul(self.nom.capitalize())) + '\n' +
+                gras("PV")+"      : " + str(int(self.PV)) + '\n' +
+                gras("PVMax")+"   : " + str(int(self.PVMax)) + '\n' +
+                gras("Attaque")+" : " + str(int(self.attaque_normale_dégats)) + '\n' +
+                gras("Défense")+" : " + str(int(self.dégats_libre)) + '\n')
+
+    def Random_Stats(self,x,y):
         Stats=int(random.choice(range(x,y)))
         return Stats
+    
+    def nom_aléatoire(liste):
+        if len(liste) == 0:
+            print(coul("Aucun nom n'est disponible. Génération aléatoire de nom.",ROUGE))
+            cons = ['b','c','d','f','g','h','j','k','l','m','n','p','q','r','s','t','v','w','x','z']
+            voy = ['a','e','i','o','u','y']
+            nom = random.choice(cons).upper() + random.choice(voy) + random.choice(cons)
+            return nom
+        nom=liste.pop(random.randrange(0,len(liste)))
+        return nom
 
     def MiseÀJour(self):
-        self._MiseÀJourIA()
+        from Jeu import Jeu,ÉtatJeu
+        jeu = Jeu.avoirJeu()
+        if jeu.état.v == ÉtatJeu.FIN_TOUR or jeu.état.v == ÉtatJeu.JEU:
+            self._MiseÀJourIA()
+        elif jeu.état.v in [ÉtatJeu.DÉBUT,ÉtatJeu.SUCCÈS,ÉtatJeu.ÉCHEC,ÉtatJeu.SCÈNE]:
+            personnages : list[str] = None
+            personnages_positions : list[Vec2] = None
+            if self.carte.estScène:
+                personnages = self.carte.séquences.plans[jeu.état.scène_étape].personnages[jeu.état.scène_animation_étape]
+                personnages_positions = self.carte.séquences.plans[jeu.état.scène_étape].personnages_positions[jeu.état.scène_animation_étape]
+            else:
+                personnages = self.carte.séquences[jeu.état.v].plans[jeu.état.scène_étape].personnages[jeu.état.scène_animation_étape]
+                personnages_positions = self.carte.séquences[jeu.état.v].plans[jeu.état.scène_étape].personnages_positions[jeu.état.scène_animation_étape]
+
+            for i in range(len(personnages)):
+                if personnages[i] == self.animID:
+                    self.pos = personnages_positions[i]
         
     # Mise à jour de l'IA de base
     def _MiseÀJourIA(self):
         # L'IA est basée sur une machine d'états
-        # Diagramme de la machine :
+        # Diagramme de la machine : TODO #31 Refaire le diagramme de la machine d'état des entités
         #                           |                               |                           |
         #       Mode Recherche      |       Mode Déplacement        |       Mode Combat         |
         #                           |                               |                           |
@@ -100,7 +145,7 @@ class Entité:
         #                           |                               |                           |
         #
         # L'algorithme fonctionne sur une base de fonctions, pour faciliter la spécialisation dans les classes enfants
-        print("Mise à jour de l'IA de " + self.nom + ", état : " + self.état.v)
+        print("\nMise à jour de l'IA de " + gras(self.nom) + ", état : " + gras(self.état.v))
         match self.état.v:
             case ÉtatIA.RECHERCHE:
                 print("Mode recherche activé.")
@@ -156,7 +201,7 @@ class Entité:
                 distanceMinimale = Vec2.distance(ennemi.pos,self.pos)
         # Si on a trouvé un ennemi le plus près
         if ennemiPlusPrès != None:
-            print("Ennemi trouvé : " + ennemiPlusPrès.nom + " à " + str(ennemiPlusPrès.pos.x) + ":" + str(ennemiPlusPrès.pos.y))
+            print("Ennemi trouvé : " + gras(ennemiPlusPrès.nom) + " à " + str(ennemiPlusPrès.pos.x) + ":" + str(ennemiPlusPrès.pos.y))
             # Se mettre en mode déplacement vers l'ennemi
             self.état.v = ÉtatIA.DÉPLACEMENT
             self.destination = ennemiPlusPrès.pos
@@ -171,51 +216,49 @@ class Entité:
         # Si un ennemi se trouve sur une case adjascente, virer en mode combat
         for ennemi in self.carte.entités:
             # Chercher un ennemi à une distance de 1 ou moins de nous (sur une case adjascente)
-            if Vec2.distance(ennemi.pos, self.pos) <= 1 and ennemi.camp in self.campsEnnemis:
+            if Vec2.distance(ennemi.pos, self.pos) <= 1 and (ennemi.camp in self.campsEnnemis or ennemi == self.cible):
                 print("Un ennemi est à proximité! Mode combat activé.")
                 self.chemin = []
                 self.état.v = ÉtatIA.COMBAT
                 self.cible = ennemi
                 return
+            
+        if self.état.v == ÉtatIA.DÉPLACEMENT:
+            if self.cible.estVivant :
+                print("Recherche d'un chemin vers " + self.cible.nom)
+                self.naviguerVers(self.cible.pos,True)
+            else:
+                print("La cible est morte. À la recherche d'un nouvel ennemi")
+                self.état.v = ÉtatIA.RECHERCHE
+        elif self.état.v == ÉtatIA.DÉPLACEMENT_IMMOBILE:
+            print("Recherche d'un chemin vers " + str(self.destination.x) + ';' + str(self.destination.y))
+            self.naviguerVers(self.destination,False)
 
-        faire_pathfinding = True
         # Si on n'a pas atteint le bout du chemin
         if len(self.chemin) > 0:
-            print("Un chemin existe")
+            print("Un chemin existe, avançons")
             # Avancer sur le chemin
-            if self.carte.peutAller(self,self.chemin[0]):
-                print("Le chemin est praticable, avançons.")
-                self.direction = self.chemin[0] - self.pos
-                self.pos = self.chemin.pop(0)
-                faire_pathfinding = False
+            self.direction = self.chemin[0] - self.pos
+            self.pos = self.chemin.pop(0)
 
-                # Si un ennemi se trouve sur une case adjascente, virer en mode combat
-                for ennemi in self.carte.entités:
-                    # Chercher un ennemi à une distance de 1 ou moins de nous (sur une case adjascente)
-                    if Vec2.distance(ennemi.pos, self.pos) <= 1 and ennemi.camp in self.campsEnnemis:
-                        print("Un ennemi est à proximité! Mode combat activé.")
-                        self.chemin = []
-                        self.état.v = ÉtatIA.COMBAT
-                        self.cible = ennemi
-                        return
-                # Si on n'a pas trouvé d'ennemi, mais qu'on est arrivé au bout du chemin,
-                if self.pos == self.destination:
-                    print("Arrivé à destination. Aucun ennemi à l'horison, Mode recherche activé.")
-                    # Chercher un autre ennemi si on est dans la boucle normale,
-                    # Rester immobile si on se déplace à cause d'une commande
-                    if self.état.v == ÉtatIA.DÉPLACEMENT:
-                        self.état.v = ÉtatIA.RECHERCHE
-                    elif self.état.v == ÉtatIA.DÉPLACEMENT_IMMOBILE:
-                        self.état.v = ÉtatIA.IMMOBILE
-            else:
-                print("Le chemin n'est pas praticable.")
-                # Si on ne peut pas se déplacer sur le chemin, en trouver un nouveau
-                self.chemin = []
-                faire_pathfinding = True
-
-        if faire_pathfinding:
-            print("Recherche d'un chemin.")
-            self.chemin = self._A_étoile()
+            # Si un ennemi se trouve sur une case adjascente, virer en mode combat
+            for ennemi in self.carte.entités:
+                # Chercher un ennemi à une distance de 1 ou moins de nous (sur une case adjascente)
+                if Vec2.distance(ennemi.pos, self.pos) <= 1 and (ennemi.camp in self.campsEnnemis or ennemi == self.cible):
+                    print("Un ennemi est à proximité! Mode combat activé.")
+                    self.chemin = []
+                    self.état.v = ÉtatIA.COMBAT
+                    self.cible = ennemi
+                    return
+            # Si on n'a pas trouvé d'ennemi, mais qu'on est arrivé au bout du chemin,
+            if self.pos == self.destination and self.état.v == ÉtatIA.COMBAT:
+                print("Arrivé à destination. Aucun ennemi à l'horison, Mode recherche activé.")
+                # Chercher un autre ennemi si on est dans la boucle normale,
+                # Rester immobile si on se déplace à cause d'une commande
+                if self.état.v == ÉtatIA.DÉPLACEMENT:
+                    self.état.v = ÉtatIA.RECHERCHE
+                elif self.état.v == ÉtatIA.DÉPLACEMENT_IMMOBILE:
+                    self.état.v = ÉtatIA.IMMOBILE
 
     def _modeCombat(self):
         """_modeCombat Exécute le combat
@@ -226,7 +269,7 @@ class Entité:
             print("Attaque de l'ennemi")
             self._AttaquerCible()
         else:
-            print("L'ennemi est soit mort, soit partis. À la rcherche d'un nouvel ennemi.")
+            print("L'ennemi est soit mort, soit partis. À la recherche d'un nouvel ennemi.")
             self.état.v = ÉtatIA.RECHERCHE
             self.estAttaqué = False
             self.cible = None
@@ -268,22 +311,21 @@ class Entité:
         Args:
             attaque (Attaque): Un objet Attaque qui contient les informations nécessaires pour subir une attaque.
         """
-        print(self.nom + " reçoit une attaque de " + attaque.provenance.nom)
-        print(self.nom + " a " + str(self.vie) + " PV, l'attaque fait " + str(attaque.dégats) + " PD")
+        print(TFX(self.nom,gras=True,Pcoul=ORANGE) + TFX(" reçoit une attaque de ",Pcoul=ORANGE) + TFX(attaque.provenance.nom,gras=True,Pcoul=ORANGE))
+        print(gras(self.nom) + " a " + str(self.PV) + " PV, l'attaque fait " + str(attaque.dégats) + " PD")
         # Virer au mode combat, si on n'y est pas déjà
         if not self.estAttaqué:
-            print(self.nom + " passe en mode combat.")
+            print(gras(self.nom) + " passe en mode combat.")
             self.estAttaqué = True
             self.cible = attaque.provenance
     
         attaque = self._Défense(attaque)    # Évaluer la défense
-        self.vie -= attaque.dégats          # Retirer les points de vies
+        self.PV -= attaque.dégats          # Retirer les points de vies
         # Évaluer si on est morts
-        if self.vie <= 0.0:
-            print(self.nom + " est mort.")
-            self.vie = 0.0
+        if self.PV <= 0.0:
+            print(TFX(self.nom,gras=True,Pcoul=ROUGE) + TFX(" est mort.",Pcoul=ROUGE))
+            self.PV = 0.0
             self.estVivant = False
-            self.carte.entités.remove(self)
 
     def _Défense(self, attaque : Attaque):
         """ Réduit les points d'attaques en fonction des points de défenses.
@@ -304,13 +346,13 @@ class Entité:
         """
         match self.étatCombat.v:
             case ÉtatCombat.DÉFENSE:
-                print(self.nom + " bloque " + str(self.dégats_défense) + f"% des dégats.")
+                print(gras(self.nom) + " bloque " + str(self.dégats_défense) + f"% des dégats.")
                 attaque.dégats -= attaque.dégats*(self.dégats_défense/100)
             case ÉtatCombat.LIBRE:
-                print(self.nom + " bloque " + str(self.dégats_libre) + f"% des dégats.")
+                print(gras(self.nom) + " bloque " + str(self.dégats_libre) + f"% des dégats.")
                 attaque.dégats -= attaque.dégats*(self.dégats_libre/100)
             case ÉtatCombat.CHARGER:
-                print(self.nom + " bloque " + str(self.dégats_charger) + f"% des dégats.")
+                print(gras(self.nom) + " bloque " + str(self.dégats_charger) + f"% des dégats.")
                 attaque.dégats -= attaque.dégats*(self.dégats_charger/100)
             case _:
                 raise ValueError("Éntité.Défense() L'état de combat " + self.étatCombat.v + " n'est pas un état valide.")
@@ -319,7 +361,7 @@ class Entité:
 
         return attaque
 
-    def naviguerVers(self, destination : Vec2):
+    def naviguerVers(self, destination : Vec2, destination_adjascente = False):
         """naviguerVers fait naviguer l'Entité vers `destination`
 
         **ATTENTION pour créer une commande `DÉPLACEMENT`, assurez-vous de modifier l'état à `DÉPLACEMENT_IMMOBILE`**
@@ -330,12 +372,13 @@ class Entité:
             destination (Vec2): Position de la destination voulue
         """
         print("Navigue vers : (" + str(destination.x) + ';' + str(destination.y) + ')')
-        self.état.v = ÉtatIA.DÉPLACEMENT
+        if self.état.v != ÉtatIA.DÉPLACEMENT and self.état.v != ÉtatIA.DÉPLACEMENT_IMMOBILE:
+            self.état.v = ÉtatIA.DÉPLACEMENT
         self.destination = destination
-        self.chemin = self._A_étoile()
+        self.chemin = self._A_étoile(self.destination,destination_adjascente)
 
     # Trouve le chemin le plus court entre le point A et B en utilisant A* et renvoie une liste des cases à prendre pour suivre le chemin
-    def _A_étoile(self):
+    def _A_étoile(self, destination : Vec2, destination_adjascente : bool):
         """ Algorithme A* pour trouver le chemin le plus court sur la carte
 
         Utilise `self.carte` et `self.destination` **modifier avant d'appeler**
@@ -347,7 +390,7 @@ class Entité:
             list[Vec2]: liste de positions représentant un chemin à suivre.
         """
         # Si on se trouve déjà à la destination, le chemin est nul
-        if self.pos == self.destination:
+        if self.pos == destination:
             return []
         """
         . Algorithme A* :
@@ -424,8 +467,10 @@ class Entité:
         cases_actives = [self.pos] # Liste des cases actives
         cases_passives = [] # Liste des cases déjà évaluées
         chemins = [[self.pos]] # Liste des chemins pour se rendre à chaque case active
-        poids = [Vec2.distance(self.pos, self.destination)] # Liste des poids
+        poids = [Vec2.distance(self.pos, destination)] # Liste des poids
         n_pas = [0] # Distance à parcourir pour se rendre à chaque case active
+        meilleur_chemin = []    # Meilleur chemin trouvé jusqu'à présent. Utilisé lorsqu'aucun chemin n'existe.
+        meilleur_poid = int(2**32) # Meilleur poid trouvé jusqu'à présent. Utilisé lorsqu'aucun chemin n'existe.
 
         while True:
 
@@ -442,17 +487,28 @@ class Entité:
                 curseur = i_case_min
             else :
                 # Si on n'a rien trouvé
-                # TODO #8 A* évaluer le cas où il n'y a pas de chemin possible
-                raise RuntimeError(coul("[A*] i_min_case = -1. A* n'a pus trouver de poids minimal.",ROUGE))
+                print(coul("Aucun chemin n'existe vers la destination. Renvoie du chemin qui mène le plus près.",ROUGE))
+                meilleur_chemin.pop(0)
+                return meilleur_chemin
             
-            #Vérifier si le poid le plus petit est la destination
-            if cases_actives[curseur] == self.destination:
-                print("Chemin trouvé")
-                ligne = "Chemin : "
-                for i in range(len(chemins[curseur])):
-                    ligne += '(' + str(chemins[curseur][i].x) + ';' + str(chemins[curseur][i].y) + ')'
-                print(ligne)
-                return chemins[curseur]
+            # Dans le cas où la destination est un ennemi, on ne pourra jamais se rendre sur la destination, il faut donc se rendre sur la case adjascente.
+            if not destination_adjascente:
+                #Vérifier si le poid le plus petit est la destination
+                if cases_actives[curseur] == destination:
+                    print(coul("Chemin trouvé",VERT))
+                    solution = chemins[curseur]
+                    solution.pop(0)
+                    return solution
+            else:
+                #Vérifier si la case adjascente est la destination
+                if ( cases_actives[curseur]+Vec2( 1,0) == destination or
+                     cases_actives[curseur]+Vec2(-1,0) == destination or
+                     cases_actives[curseur]+Vec2(0, 1) == destination or
+                     cases_actives[curseur]+Vec2(0,-1) == destination):
+                    print(coul("Chemin trouvé",VERT))
+                    solution = chemins[curseur]
+                    solution.pop(0)
+                    return solution
             
             #Ajouter les connexions du curseur à aux cases actives
             pos_curseur = cases_actives[curseur]
@@ -485,7 +541,7 @@ class Entité:
                 c.append(px)
                 chemins.append(c)
                 # Ajouter le poid
-                poids.append(n_pas[-1] + Vec2.distance(px,self.destination))
+                poids.append(n_pas[-1] + Vec2.distance(px,destination))
 
             if not py_dans_passif and self.carte.peutAller(self,py):
                 cases_actives.append(py) # ajouter case adjascente aux cases actives
@@ -495,7 +551,7 @@ class Entité:
                 c.append(py)
                 chemins.append(c)
                 # Ajouter le poid
-                poids.append(n_pas[-1] + Vec2.distance(py,self.destination))
+                poids.append(n_pas[-1] + Vec2.distance(py,destination))
 
             if not nx_dans_passif and self.carte.peutAller(self,nx):
                 cases_actives.append(nx) # ajouter case adjascente aux cases actives
@@ -505,7 +561,7 @@ class Entité:
                 c.append(nx)
                 chemins.append(c)
                 # Ajouter le poidà
-                poids.append(n_pas[-1] + Vec2.distance(nx,self.destination))
+                poids.append(n_pas[-1] + Vec2.distance(nx,destination))
 
             if not ny_dans_passif and self.carte.peutAller(self,ny):
                 cases_actives.append(ny) # ajouter case adjascente aux cases actives
@@ -515,7 +571,11 @@ class Entité:
                 c.append(ny)
                 chemins.append(c)
                 # Ajouter le poid
-                poids.append(n_pas[-1] + Vec2.distance(ny,self.destination))
+                poids.append(n_pas[-1] + Vec2.distance(ny,destination))
+
+            if Vec2.distance(pos_curseur,destination) < meilleur_poid:
+                meilleur_poid = Vec2.distance(pos_curseur,destination)
+                meilleur_chemin = chemins[curseur]
 
             #Passer le curseur aux cases passives
             n_pas.pop(curseur)

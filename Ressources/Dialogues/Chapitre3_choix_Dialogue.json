@@ -1,0 +1,114 @@
+{
+    "Titre":"Château",
+    "Dialogues":[
+        {
+            "Dialogue":[
+                "Alors que vous pensiez enfin pouvoir vous reposer,",
+                "un ennemi apparait entre les immenses portes."
+            ]
+        },
+        {
+            "Personnage":"Monstre (?)",
+            "Dialogue":["Mélios! Qu'est-ce que tu fais?"]
+        },
+        {
+            "Personnage":"Mélios",
+            "Dialogue":["Monstre! Comment connais-tu mon nom?!"]
+        },
+        {
+            "Personnage":"Roi",
+            "Dialogue":["Ce n'est pas important, tuez-le."]
+        },
+        {
+            "Personnage":"Monstre (?)",
+            "Dialogue":["Non Mélios!"]
+        },
+        {
+            "Personnage":"Monstre (?)",
+            "Dialogue":["C'est moi, Delain, tu te rappelles?"]
+        },
+        {
+            "Personnage":"Monstre (?)",
+            "Dialogue":["Le roi nous avait tous enfermés dans la montagne sacréer mais nous avons réussit à sortr!"]
+        },
+        {
+            "Personnage":"Rois",
+            "Dialogue":["Mensonges!"]
+        },
+        {
+            "Personnage":"Monstre (?)",
+            "Dialogue":[
+                "Mélios!",
+                "Je t'en conjure, arrêtons cette folie,",
+                "tout le monde est mort..."
+            ]
+        },
+        {
+            "Personnage":"Roi",
+            "Dialogue":["Soldat! Tuez ce monstre!"]
+        },
+        {
+            "Personnage":"Roi",
+            "Dialogue":["C'est un ordre!"]
+        },
+        {
+            "Dialogue":["Que faites vous?"]
+        },
+        {
+            "Personnage":"Roi",
+            "Dialogue":["Tuez-le, c'est un ordre!"]
+        },
+        {
+            "Personnage":"Roi",
+            "Dialogue":["Ne le laissez pas vous embrouiller l'esprit!"]
+        },
+        {
+            "Personnage":"Roi",
+            "Dialogue":["Faites votre devoir, Mélios."]
+        },
+        {
+            "Personnage":"Monstre (?)",
+            "Dialogue":["Tu ne te souvient pas?"]
+        },
+        {
+            "Personnage":"Monstre (?)",
+            "Dialogue":["Mélios, je t'en prie..."]
+        },
+        {
+            "Personnage":"Monstre (?)",
+            "Dialogue":["Mais que t'a-t-il fait?"]
+        },
+        {   
+            "Dialogue":[
+                "Vous attrapez la main du monstre, Delain.",
+                "Votre partenaire."
+            ]
+        },
+        {
+            "Dialogue":[
+                "En un instant vous fuyez les ruines de la ville,",
+                "vous vous précipitez dans les décombres,",
+                "trébuchez sur les cadavres pour sortir jusque dans la forêt."
+            ]
+        },
+        {
+            "Dialogue":[
+                "Là-bas, vous construisez un chalet et vivrez calmement",
+                "pour le reste de vos vies."
+            ]
+        },
+        {
+            "Dialogue":[
+                "Vous tuez le roi et prenez le trône",
+                "Vous et Delain reignez sur la ville pour réparer les erreurs passées du Roi."
+            ]
+        },
+        {
+            "Dialogue":[
+                "Vous tuez le monstre et vivez dans le luxe.",
+                "Chaque verre de vin ingurgité vous rappelle que vous étiez à deux doigts de mourrir,",
+                "maintes fois. Vous aimez la sensation d'oublier, une fois saoul."
+            ]
+        }
+    ]
+}

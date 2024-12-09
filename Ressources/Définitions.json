@@ -1,0 +1,33 @@
+{
+    "Cartes": {
+        "Test": "Test.json",
+        "Test_séquence": "Test_séquence.json",
+        "Intro": "Intro.json",
+        "Chapitre1": "Chapitre1.json",
+        "Chapitre2": "Chapitre2.json",
+        "Chapitre2_Choix": "Chapitre2_choix.json",
+        "Chapitre3": "Chapitre3.json",
+        "Chapitre3_choix":"Chapitre3_choix.json"
+    },
+    "Entités": {
+        "Golem": "Golem.json",
+        "Gosse": "Gosse.json",
+        "Prêtre": "Prêtre.json",
+        "Arbalettier": "Arbalettier.json",
+        "Chevalier": "Chevalier.json",
+        "Mineur": "Mineur.json",
+        "Guildart": "Guildart.json",
+        "Fils":"Fils.json",
+        "Roi":"Roi.json",
+        "Delain":"Delain.json"
+    },
+    "Dialogues": {
+        "Test" : "Test_Dialogue.json",
+        "Intro": "Intro_Dialogue.json",
+        "Chapitre1": "Chapitre1_Dialogue.json",
+        "Chapitre2": "Chapitre2_Dialogue.json",
+        "C2_choix": "Chapitre2_choix_Dialogue.json",
+        "Chapitre3": "Chapitre3_Dialogue.json",
+        "C3_choix": "Chapitre3_choix_Dialogue.json"
+    }
+}

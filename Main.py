@@ -1,7 +1,4 @@
-from Ressources import Ressources
-from Carte.class_carte import Carte
-from Entités.Paysan import *
-from Entités.Golem import *
+from GestionnaireRessources import Ressources
 from Jeu import Jeu, ÉtatJeu
 from random import randrange
 
@@ -9,23 +6,12 @@ jeu : Jeu = None
 
 def Constructeur():
     res = Ressources.avoirRessources()
-    carte = Carte(5,5)
-    carte.creation()
-    paysan = Gosse()
-    paysan.pos = Vec2(randrange(0,4),randrange(0,4))
-    golem = GolemTerre()
-    golem.pos = Vec2(randrange(0,4),randrange(0,4))
-    golem.carte = carte
-    paysan.carte = carte
-    carte.entités.append(paysan)
-    carte.entités.append(golem)
-    res.cartes.append(carte)
-    res.entités.append(paysan)
-    res.entités.append(golem)
+    carte = res.chargerCarte("Chapitre3")
 
     global jeu
-    jeu = Jeu()
+    jeu = Jeu.avoirJeu()
     jeu.état.v = ÉtatJeu.MENU
+    jeu.changerCarte(carte)
     pass
 
 def Boucle():

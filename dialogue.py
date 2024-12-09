@@ -1,5 +1,5 @@
 from Jeu import Chapitre, ÉtatJeu, Jeu
-from Ressources import Ressources
+from GestionnaireRessources import Ressources
 from TFX import * # TFX pour TerminalFX
 from Maths.Vec3 import Vec3
 
@@ -22,8 +22,7 @@ def titre(nombreZone):
 def script(Zone : str, Timing : str, choix : str, jeu : Jeu) : 
     message = ""
     if(Zone == Chapitre.INTRODUCTION) :
-        message += ("\nVous êtes Melios, un alchimiste atteint de Glaucoma, un type de malvoyance, chargé de protéger le roi.")
-        message += ("\nTrès tôt ce matin, l'alarme d'invasion avait retentie dans l'enceinte de la paisible ville d'Alcadia.")
+        
         jeu.état.v = ÉtatJeu.TRANSITION
     elif(Zone == Chapitre.CHAPITRE1):
         if(Timing == ÉtatJeu.DÉBUT):
