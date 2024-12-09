@@ -1,17 +1,18 @@
+from __future__ import annotations
+from InclusionsCirculaires.Ressources_Jeu import *
 from Carte.Carte import *
 from Carte.Tuile import Tuile
-from Entités.Entité import Entité
+from Entités.Entité import *
 from Entités.Golem import *
 from Entités.Paysan import *
 from Entités.Personnages import *
-from typing_extensions import Self
 import codecs
 import traceback
 import json
 
 class Ressources:
 
-    ressources : Self = None
+    ressources : Ressources = None
 
     def __init__(self):
         self.cartes : list[Carte] = []
@@ -102,7 +103,7 @@ class Ressources:
             for e in liste_entités:
                 unité = (e["ID"],None,None)
                 if "Position" in e:
-                    if type(e["Position"]) != list or (type(e["Position"][0]) != int and type(e["Position"][0]) != float) or (type(e["Position"][1]) != int and type(unitée_dict["Position"][1]) != float):
+                    if type(e["Position"]) != list or (type(e["Position"][0]) != int and type(e["Position"][0]) != float) or (type(e["Position"][1]) != int and type(e["Position"][1]) != float):
                         raise TypeError("[Création de carte] L'élément 'Position' de " + e["ID"] + " doit être de type list[ int ou float ].")
                     unité = (unité[0],Vec2(float(e["Position"][0]),float(e["Position"][1])),unité[2])
                 if "Anim ID" in e:
@@ -160,10 +161,17 @@ class Ressources:
                     séquences[clé] = séquence
                 pass
 
+            script : str = None
+            if "Script" in carte_dict:
+                if type(carte_dict["Script"]) != str:
+                    raise TypeError("[Création de carte] L'élément 'Script' de " + source + " doit être de type string.")
+                script = carte_dict["Script"]
+
             prochaine = carte_dict["Prochaine"]
             joueur_pos_init = Vec2(carte_dict["Joueur_pos"][0],carte_dict["Joueur_pos"][1])
             carte = Carte(estScène,colonnes,lignes,matrice,entités,joueur_pos_init,séquences,prochaine)
             carte.estScène = estScène
+            carte.script = script
             self.cartes.append(carte)
             self.cartes_chargées.append(nom)
 
@@ -213,6 +221,7 @@ class Ressources:
                 if type(unitée_dict["Nom"]) != str:
                     raise TypeError("[Création de carte] L'élément 'Nom' d'une entité doit être un string.")
                 unitée.nom = unitée_dict["Nom"]
+                unitée.nomAffichage = unitée.nom
 
             if "PVMax" in unitée_dict:
                 if type(unitée_dict["PVMax"]) != int and type(unitée_dict["PVMax"]) != float:
@@ -278,7 +287,7 @@ class Ressources:
                 for c in unitée_dict["Caractère Couleur"]:
                     if type(c) != float:
                         raise TypeError("L'élément 'Caractère Couleur' de " + unitée.nom + " ne doit contenir que des float.")
-                    unitée.nom = coul(unitée.nom,Vec3(unitée_dict["Caractère Couleur"][0],unitée_dict["Caractère Couleur"][1],unitée_dict["Caractère Couleur"][2]))
+                    unitée.nomAffichage = coul(unitée.nomAffichage,Vec3(unitée_dict["Caractère Couleur"][0],unitée_dict["Caractère Couleur"][1],unitée_dict["Caractère Couleur"][2]))
                 
             self.entités.append(unitée)
             self.entités_chargées.append(nom)

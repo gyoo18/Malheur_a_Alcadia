@@ -1,5 +1,5 @@
 from Jeu import Chapitre, ÉtatJeu, Jeu
-from Ressources import Ressources
+from GestionnaireRessources import Ressources
 from TFX import * # TFX pour TerminalFX
 from Maths.Vec3 import Vec3
 

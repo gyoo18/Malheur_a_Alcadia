@@ -3,7 +3,7 @@ import os
 import time
 from Carte.Carte import Carte
 from Carte.Tuile import Tuile
-from Ressources import Ressources
+from GestionnaireRessources import Ressources
 from Jeu import *
 import dialogue
 from TFX import *
@@ -348,7 +348,7 @@ def menu_combat():
         print("\n" + soul(c) + " : \n")
         for e in jeu.carte.entités:
             if e.camp == c:
-                print(gras(e.nom) + " > PV : " + str(int(e.PV)))
+                print(gras(e.nomAffichage) + " > PV : " + str(int(e.PV)))
     
     print("="*50)
     
@@ -411,7 +411,7 @@ def menu_select():
     jeu = Jeu.avoirJeu()
 
     print("="*50)
-    print(("Donnez un ordre à " + jeu.menu.menu_select_entité.nom).center(50))
+    print(("Donnez un ordre à " + jeu.menu.menu_select_entité.nomAffichage).center(50))
     print("="*50)
 
     print(jeu.carte.dessiner().center(50))
@@ -432,7 +432,7 @@ def menu_select():
                 x = int(commande[1])
                 y = int(commande[2])
             except:
-                print("Veuillez préciser deux entiers positifs décrivant la destination de " + jeu.menu.menu_select_entité.nom)
+                print("Veuillez préciser deux entiers positifs décrivant la destination de " + jeu.menu.menu_select_entité.nomAffichage)
                 time.sleep(1.5)
                 effaceCommande()
                 continue

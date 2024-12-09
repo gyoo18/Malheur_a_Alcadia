@@ -141,6 +141,7 @@ class Golem(Entité):
         self.camp = Entité.CAMP_GOLEMS
         self.campsEnnemis = [Entité.CAMP_PAYSANS]
         self.nom = "Golem"
+        self.nomAffichage = self.nom
 
     
     def commande(self, commande : Commande):
@@ -296,6 +297,7 @@ class GolemTerre(Golem):
         self.attaque_normale_dégats= self.Random_Stats(10,16)
         self.dégats_libre= self.Random_Stats(39,46)
         self.nom=Entité.nom_aléatoire(GolemTerre.noms)
+        self.nomAffichage = self.nom
         self.attaque_sol_dégats : float = 1.0
         self.attaque_sol_rayon : float = 2.0
         
@@ -341,6 +343,7 @@ class GolemEau(Golem):
         self.attaque_normale_dégats=self.Random_Stats(20,26)
         self.dégats_libre=self.Random_Stats(25,31)
         self.nom=Entité.nom_aléatoire(GolemEau.noms)
+        self.nomAffichage = self.nom
         self.tornade_pousser_distance : int = 3
 
         self.max_distance_attaque : float = 4
@@ -437,6 +440,7 @@ class GolemFeu(Golem):
         self.attaque_normale_dégats=self.Random_Stats(26,29)
         self.dégats_libre=self.Random_Stats(35,39)
         self.nom=Entité.nom_aléatoire(GolemFeu.noms)
+        self.nomAffichage = self.nom
         self.attaque_max_distance : float = 4.0
         self.boule_feu_dégats : int = 3
 
@@ -469,6 +473,7 @@ class GolemDoré(Golem):
         self.attaque_normale_dégats=self.Random_Stats(25,31)
         self.dégats_libre=self.Random_Stats(36,42)
         self.nom=Entité.nom_aléatoire(GolemDoré.noms)
+        self.nomAffichage = self.nom
 
         self.TEMP_GUÉRISON = 4
         self.guérisonCompteur = 0

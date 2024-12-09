@@ -1,8 +1,4 @@
-from Ressources import Ressources
-from Carte.Carte import Carte
-from Entités.Paysan import *
-from Entités.Golem import *
-from Entités.Personnages import *
+from GestionnaireRessources import Ressources
 from Jeu import Jeu, ÉtatJeu
 from random import randrange
 

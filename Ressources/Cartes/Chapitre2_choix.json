@@ -1,5 +1,6 @@
 {
     "Scène": false,
+    "Script":"Script1",
     "Carte":[
         ["#","#","#","#","0","0","0","~","0","0","0","#","#","#","#"],
         ["#","#","#","#","0","0","0","~","0","0","0","0","#","#","#"],
@@ -20,7 +21,8 @@
     "Entités":[
         {
             "ID" : "Fils",
-            "Position" : [7,13]
+            "Position" : [7,13],
+            "Anim ID" : "Fils"
         }
     ],
     "Séquence":{
@@ -69,15 +71,23 @@
             },
             {
                 "Dialogue Groupe":"C2_choix",
-                "Dialogue ID":[7]
+                "Dialogue ID":[6,7]
             },
             {
                 "Dialogue Groupe":"C2_choix",
-                "Dialogue ID":[7,8]
+                "Dialogue ID":[8]
             },
             {
                 "Dialogue Groupe":"C2_choix",
                 "Dialogue ID":[9]
+            },
+            {
+                "Dialogue Groupe":"C2_choix",
+                "Dialogue ID":[10]
+            },
+            {
+                "Dialogue Groupe":"C2_choix",
+                "Dialogue ID":[11]
             }
         ]
     },

@@ -1,12 +1,14 @@
-from typing_extensions import Self
-from Ressources import Ressources
-from Carte.Carte import Carte
+from __future__ import annotations
+import GestionnaireRessources
+#from InclusionsCirculaires.Ressources_Jeu import *
+from InclusionsCirculaires.Jeu_Carte import *
 import os
 from Entités.Entité import Entité
 from Entités.Golem import *
 from Entités.Paysan import *
 from Entités.Personnages import *
 import copy
+from Ressources.Scripts import GestionnaireScripts
 
 class ÉtatJeu:
     MENU = "menu"
@@ -42,14 +44,13 @@ class MenuContextuel:
     SELECT = "select"   # Menu de commande des golems
 
     def __init__(self, valeur = AIDE):
-        from Entités.Entité import Entité
         self.v = valeur
         self.menu_entité_entité : Entité = None
         self.menu_historique : list[str] = []
         self.menu_select_entité : Golem = None
 
 class Jeu:
-    jeu : Self = None
+    jeu : Jeu = None
 
     def __init__(self):
         self.état : ÉtatJeu = ÉtatJeu()    # Indique l'état du jeu
@@ -57,6 +58,7 @@ class Jeu:
         self.choix : str = ""       # Décrit le choix que le joueur a fait à la fin du niveau s'il y a lieu
         self.menu : MenuContextuel = MenuContextuel() # Décrit le menu contextuel ouvert ou précédemment ouvert.
         self.carte : Carte = None
+        self.conditionsDeTransitionManuelles = False
     
     def avoirJeu():
         if Jeu.jeu == None:
@@ -65,7 +67,7 @@ class Jeu:
 
     def miseÀJour(self):
         import menu
-        res = Ressources.avoirRessources()
+        res = GestionnaireRessources.Ressources.avoirRessources()
 
         if self.état.v == ÉtatJeu.MENU:
             menu.displayUI()
@@ -89,9 +91,9 @@ class Jeu:
                 if e.camp == Entité.CAMP_PAYSANS:
                     paysans = True
             
-            if not paysans:
+            if not paysans and not self.conditionsDeTransitionManuelles:
                 self.état.v = ÉtatJeu.SUCCÈS
-            elif not joueur:
+            elif not joueur and not self.conditionsDeTransitionManuelles:
                 self.état.v = ÉtatJeu.ÉCHEC
             else :
                 print("Mise à jour des entitées.")
@@ -105,32 +107,33 @@ class Jeu:
                 self.état.v = ÉtatJeu.JEU
         
         elif self.état.v == ÉtatJeu.TRANSITION:
-            GolemTerre.noms = copy.deepcopy(GolemTerre.noms_originaux)
-            GolemEau.noms = copy.deepcopy(GolemEau.noms_originaux)
-            GolemFeu.noms = copy.deepcopy(GolemFeu.noms_originaux)
-            GolemDoré.noms = copy.deepcopy(GolemDoré.noms_originaux)
-            Gosse.noms = copy.deepcopy(Gosse.noms_originaux)
-            Mineur.noms = copy.deepcopy(Mineur.noms_originaux)
-            Prêtre.noms = copy.deepcopy(Prêtre.noms_originaux)
-            Arbalettier.noms = copy.deepcopy(Arbalettier.noms_originaux)
-            Chevalier.noms = copy.deepcopy(Chevalier.noms_originaux)
-            self.changerCarte(res.chargerCarte(self.carte.prochaine))
-            if self.carte.estScène:
-                self.état.v = ÉtatJeu.SCÈNE
+            if self.carte.prochaine != "$TERMINÉ":
+                if self.carte.script != None:
+                    GestionnaireScripts.Terminer(self.carte.script)
+                GolemTerre.noms = copy.deepcopy(GolemTerre.noms_originaux)
+                GolemEau.noms = copy.deepcopy(GolemEau.noms_originaux)
+                GolemFeu.noms = copy.deepcopy(GolemFeu.noms_originaux)
+                GolemDoré.noms = copy.deepcopy(GolemDoré.noms_originaux)
+                Gosse.noms = copy.deepcopy(Gosse.noms_originaux)
+                Mineur.noms = copy.deepcopy(Mineur.noms_originaux)
+                Prêtre.noms = copy.deepcopy(Prêtre.noms_originaux)
+                Arbalettier.noms = copy.deepcopy(Arbalettier.noms_originaux)
+                Chevalier.noms = copy.deepcopy(Chevalier.noms_originaux)
+                self.changerCarte(res.chargerCarte(self.carte.prochaine))
+                if self.carte.estScène:
+                    self.état.v = ÉtatJeu.SCÈNE
+                else:
+                    self.état.v = ÉtatJeu.DÉBUT
+                for e in self.carte.entités:
+                    e.MiseÀJour()
             else:
-                self.état.v = ÉtatJeu.DÉBUT
-            #  match self.chapitre.v:
-            #      case Chapitre.INTRODUCTION:
-            #          self.chapitre.v = Chapitre.CHAPITRE1
-            #      case Chapitre.CHAPITRE1:
-            #          self.chapitre.v = Chapitre.CHAPITRE2
-            #      case Chapitre.CHAPITRE2:
-            #          self.chapitre.v = Chapitre.CHAPITRE3
-            #      case Chapitre.CHAPITRE3:
-            #          self.chapitre.v = Chapitre.INTRODUCTION
+                self.état.v = ÉtatJeu.TERMINÉ
+
+        if self.carte.script != None:
+            GestionnaireScripts.MettreÀJourScript(self.carte.script)
 
     def changerCarte(self,carte : Carte):
-        res = Ressources.avoirRessources()
+        res = GestionnaireRessources.Ressources.avoirRessources()
 
         if self.carte != None:
             del self.carte
@@ -147,3 +150,6 @@ class Jeu:
         joueur.pos = self.carte.joueur_pos_init
         joueur.carte = self.carte
         self.carte.entités.append(joueur)
+
+        if self.carte.script != None:
+            GestionnaireScripts.InitialiserScript(self.carte.script)

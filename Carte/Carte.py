@@ -1,11 +1,13 @@
 from __future__ import annotations
+from InclusionsCirculaires.Entité_Carte import *
+from InclusionsCirculaires.Jeu_Carte import *
 from Maths.Vec2 import Vec2
 from Entités.Paysan import *
 from Entités.Golem import *
 from Entités.Personnages import *
 from Carte.Tuile import Tuile
 from TFX import *
-from InclusionsCirculaires.Entité_Carte import *
+from Ressources.Scripts.GestionnaireScripts import *
 
 class Plan:
     def __init__(self):
@@ -39,6 +41,8 @@ class Carte:
 
         self.estScène : bool = estScène
         self.séquences : Séquence|list[Séquence] = séquences
+
+        self.script : str = None
             
     def peutAller(self, entite: Entité, pos: Vec2):
         if pos.x<0 or pos.x>len(self.matrice)-1 or pos.y<0 or pos.y>len(self.matrice[0])-1:

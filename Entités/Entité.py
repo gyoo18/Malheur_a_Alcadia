@@ -55,6 +55,7 @@ class Entité:
         self.campsEnnemis : list[str] = []   # Liste des camps ennemis à cette entité.
 
         self.nom : str = "Entité"
+        self.nomAffichage : str = "Entité"
 
         # Variables de fonctionnement 
         self.animID = ""

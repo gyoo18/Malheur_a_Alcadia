@@ -1,4 +1,4 @@
-from Entités.Entité import *
+from Entités.Entité import Entité,ÉtatCombat,ÉtatIA
 from InclusionsCirculaires.Entité_Attaque import *
 from Maths.Vec2 import *
 from math import acos, sqrt
@@ -11,6 +11,7 @@ class Paysan(Entité):
         self.camp = Entité.CAMP_PAYSANS
         self.campsEnnemis = [Entité.CAMP_GOLEMS,Entité.CAMP_JOUEUR,Entité.CAMP_PERSONNAGES]
         self.nom = "Paysan"
+        self.nomAffichage = self.nom
 
     def _AttaquerEnnemi(self):
         match self.étatCombat.v:
@@ -56,6 +57,7 @@ class Gosse(Paysan):
         self.attaque_normale_dégats=self.Random_Stats(8,11)
         self.dégats_libre=self.Random_Stats(5,11)
         self.nom=Entité.nom_aléatoire(Gosse.noms)
+        self.nomAffichage = self.nom
 
     def _exécuterAttaque(self):
         attaque = Attaque(self)
@@ -75,6 +77,7 @@ class Mineur(Paysan):
         self.attaque_normale_dégats=self.Random_Stats(14,21)
         self.dégats_libre=self.Random_Stats(10,16)
         self.nom=Entité.nom_aléatoire(Mineur.noms)
+        self.nomAffichage = self.nom
         self.bonus_terre : int = 2 # Bonus contre les golems de terre
 
     def _exécuterAttaque(self):
@@ -96,7 +99,8 @@ class Prêtre(Paysan):
         self.PV = self.PVMax
         self.attaque_normale_dégats=self.Random_Stats(12,17)
         self.dégats_libre=self.Random_Stats(12,15)
-        self.nom=Entité.nom_aléatoire(Prêtre.noms)        
+        self.nom=Entité.nom_aléatoire(Prêtre.noms)   
+        self.nomAffichage = self.nom     
         self.PVAddition : int = 2
 
     def _modeRecherche(self):
@@ -175,6 +179,7 @@ class Chevalier(Paysan):
         self.attaque_normale_dégats=self.Random_Stats(19,26)
         self.dégats_libre=self.Random_Stats(30,36)
         self.nom=Entité.nom_aléatoire(Chevalier.noms)
+        self.nomAffichage = self.nom
 
     def _exécuterAttaque(self):
         attaque = Attaque(self)
@@ -218,7 +223,8 @@ class Arbalettier(Paysan):
         self.PV = self.PVMax
         self.attaque_normale_dégats=self.Random_Stats(30,33)
         self.dégats_libre=self.Random_Stats(5,11)
-        self.nom=Entité.nom_aléatoire(Arbalettier.noms)        
+        self.nom=Entité.nom_aléatoire(Arbalettier.noms)   
+        self.nomAffichage = self.nom     
         self.max_distance_attaque : float = 3.0
         self.min_distance_ennemi : float = 1.5
 
