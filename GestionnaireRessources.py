@@ -36,7 +36,7 @@ class Ressources:
             traceback.print_exc()
             traceback.print_exception(e)
             exit(-1)
-        self.joueur = Joueur()
+        self.joueur = None
 
     def avoirRessources():
         if Ressources.ressources == None:

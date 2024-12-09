@@ -202,3 +202,7 @@ class Carte:
                     case Tuile.TYPE_OR:
                         self.matrice[x][y].dessin_atlas_indexe = 4
                         self.dessin_atlas_indexes.append(4)
+
+        for e in self.entités:
+            if e.dessin_Image != None:
+                e.dessin_Image.construire()

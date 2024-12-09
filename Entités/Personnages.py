@@ -7,6 +7,7 @@ from Carte.Tuile import Tuile
 class Joueur(Golem):
 
     def __init__(self):
+        from Dessin.Image import Image
         super().__init__()
         self.nom = "Mélios"
         self.animID = "Mélios"
@@ -17,6 +18,8 @@ class Joueur(Golem):
         self.PV = self.PVMax
         
         self.distance_création_golem = 4.0
+
+        self.dessin_Image : Image = Image("Mélios")
 
     def commande(self, commande):
         """commande Reçoit et interpète une commande donnée par le joueur

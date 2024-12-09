@@ -146,6 +146,9 @@ class Jeu:
             entité.carte = self.carte
             self.carte.entités.append(entité)
 
+        if res.joueur == None:
+            res.joueur = Joueur()
+
         joueur = copy.deepcopy(res.joueur)
         joueur.pos = self.carte.joueur_pos_init
         joueur.carte = self.carte

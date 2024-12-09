@@ -291,7 +291,10 @@ class GolemTerre(Golem):
     noms : list[str] = copy.deepcopy(noms_originaux)
 
     def __init__(self):
+        from Dessin.Image import Image
+        from GestionnaireRessources import Ressources
         super().__init__()
+        res = Ressources.avoirRessources()
         self.PVMax=150
         self.PV = self.PVMax
         self.attaque_normale_dégats= self.Random_Stats(10,16)
@@ -300,6 +303,7 @@ class GolemTerre(Golem):
         self.nomAffichage = self.nom
         self.attaque_sol_dégats : float = 1.0
         self.attaque_sol_rayon : float = 2.0
+        self.dessin_Image : Image = Image("Golem_Terre")
         
     def _commandeAttaqueSpéciale(self, commande : Commande):
         if commande.attaque_spéciale == self.ATTAQUE_SPÉCIALE:

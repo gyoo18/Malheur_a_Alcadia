@@ -32,7 +32,9 @@
     },
     "Textures":{
         "Test":"Sans nom2.png",
-        "Atlas":"Atlas_textures.png"
+        "Atlas":"Atlas_textures.png",
+        "Golem_Terre":"Golem_Terre.png",
+        "Mélios":"Mélios.png"
     },
     "Nuanceurs":{
         "NuaImage":"NuaImage",

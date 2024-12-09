@@ -38,6 +38,7 @@ class Entité:
     CAMP_PERSONNAGES = "Personnages"
 
     def __init__(self):
+        from Dessin.Image import Image
         # Charactérisitques décrivant l'entité
         self.PVMax : int = 100         # Points de vies maximum
         self.PV : float = self.PVMax  # Points de vies restants
@@ -73,6 +74,7 @@ class Entité:
 
         self.chemin : list[Vec2] = []  # Liste des tuiles sur le chemin précalculé
         self.carte : Carte = None  # Référence à la carte jouée en ce moment
+        self.dessin_Image : Image = None
 
         noms = ["Jean", "Salom", "Guy", "Pascal", "Eva"]
 

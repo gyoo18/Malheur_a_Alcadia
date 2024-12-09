@@ -9,6 +9,7 @@ from tkinter_gl import GLCanvas
 
 from Carte.Carte import Carte
 from GestionnaireRessources import Ressources
+from Jeu import Jeu
 
 class Peintre(GLCanvas):
 
@@ -18,15 +19,18 @@ class Peintre(GLCanvas):
         res = Ressources.avoirRessources()
         self.hauteure : int = 0
         self.largeure : int = 0
-        self.couleur_arrière_plan = (0.2,0.5,0.8)
+        self.couleur_arrière_plan = (0.8,0.8,0.8)
         self.carte : Carte = res.chargerCarte("Test")
+        jeu = Jeu.avoirJeu()
+        jeu.changerCarte(self.carte)
+        self.carte = jeu.carte
         self.initialisé = False
         print("Peintre créé.")
     
     def initialiser(self,largeure : int, hauteure : int):
         print("Couleur arrière-plan : ", self.couleur_arrière_plan)
         glClearColor(self.couleur_arrière_plan[0],self.couleur_arrière_plan[1],self.couleur_arrière_plan[2],1.0)
-        glEnable(GL_DEPTH_TEST)
+        #glEnable(GL_DEPTH_TEST)
         glEnable(GL_BLEND)
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
@@ -58,7 +62,7 @@ class Peintre(GLCanvas):
 
         self.make_current()
 
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+        glClear(GL_COLOR_BUFFER_BIT)
 
         self.carte.dessin_nuanceur.démarrer()
 
@@ -80,7 +84,36 @@ class Peintre(GLCanvas):
                 glDrawArrays(GL_TRIANGLE_FAN,0,self.carte.dessin_maillage.n_sommets)
             case Maillage.MODE_DESSIN_BANDE:
                 glDrawArrays(GL_TRIANGLE_STRIP,0,self.carte.dessin_maillage.n_sommets)
-        
+
+        for i in range(len(self.carte.entités)):
+            if self.carte.entités[i].dessin_Image != None:
+                entité = self.carte.entités[i]
+                image = self.carte.entités[i].dessin_Image
+                image.nuanceur.démarrer()
+
+                glBindVertexArray(image.maillage.vao)
+                for i in range(len(image.maillage.attributs)):
+                    glEnableVertexAttribArray(i)
+
+                image.taille = self.carte.dessin_taille/Vec2(self.carte.colonnes,self.carte.lignes)
+                image.pos = ((entité.pos+Vec2(0.5))/Vec2(self.carte.colonnes,self.carte.lignes)*2.0 - 1.0)*self.carte.dessin_taille
+                image.pos.y = -image.pos.y
+
+                image.nuanceur.chargerUniformes(image.pos, image.rot, image.taille*image.échelle, Vec2(self.largeure,self.hauteure))
+
+                glActiveTexture(GL_TEXTURE0)
+                glBindTexture(GL_TEXTURE_2D,image.image.ID)
+                
+                match image.maillage.mode_dessin:
+                    case Maillage.MODE_DESSIN_INDEXES:
+                        glDrawElements(GL_TRIANGLES,image.maillage.n_sommets,GL_UNSIGNED_INT,None)
+                    case Maillage.MODE_DESSIN_LISTE:
+                        glDrawArrays(GL_TRIANGLES,0,image.maillage.n_sommets)
+                    case Maillage.MODE_DESSIN_ÉVENTAIL:
+                        glDrawArrays(GL_TRIANGLE_FAN,0,image.maillage.n_sommets)
+                    case Maillage.MODE_DESSIN_BANDE:
+                        glDrawArrays(GL_TRIANGLE_STRIP,0,image.maillage.n_sommets)
+
         error = glGetError()
         if error != GL_NO_ERROR:
             print("[GLError] :",gluErrorString(error))
