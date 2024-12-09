@@ -8,6 +8,9 @@ from Entités.Personnages import *
 from Carte.Tuile import Tuile
 from TFX import *
 from Ressources.Scripts.GestionnaireScripts import *
+from Dessin.Maillage import Maillage
+from Dessin.Nuanceurs.NuaCarte import NuaCarte
+from Dessin.Texture import Texture
 
 class Plan:
     def __init__(self):
@@ -29,8 +32,17 @@ class Séquence:
         self.plans : list[Plan] = []
 
 class Carte:
+
+    dessin_points : list[float] = [
+        -1.0,-1.0,
+         1.0,-1.0,
+        -1.0, 1.0,
+         1.0, 1.0
+    ]
     
     def __init__(self,estScène : bool, lignes : int ,colonnes :int, matrice : list[list[Tuile]], entités_préchargement : list[tuple[str,Vec2|None,str|None]], joueur_pos_init : Vec2, séquences : Séquence|list[Séquence], prochaine : str):
+        from GestionnaireRessources import Ressources
+        res = Ressources.avoirRessources()
         self.lignes : int = lignes
         self.colonnes : int = colonnes
         self.matrice : list[list[Tuile]] = matrice
@@ -43,6 +55,17 @@ class Carte:
         self.séquences : Séquence|list[Séquence] = séquences
 
         self.script : str = None
+
+        self.dessin_position : Vec2 = Vec2(0,0)
+        self.dessin_rotation : float = 0
+        self.dessin_échelle : Vec2 = Vec2(1,1)
+        self.dessin_taille : Vec2 = Vec2(300,300)
+        self.dessin_maillage : Maillage = Maillage()
+        self.dessin_maillage.créer_bande([self.dessin_points],[2])
+        self.dessin_nuanceur : NuaCarte = res.chargerNuanceur("NuaCarte",NuaCarte)
+        self.dessin_atlas : Texture = res.chargerTexture("Test")
+        self.dessin_atlas_taille : Vec2 = Vec2(1,1)
+        self.dessin_atlas_indexes : list[int] = []
             
     def peutAller(self, entite: Entité, pos: Vec2):
         if pos.x<0 or pos.x>len(self.matrice)-1 or pos.y<0 or pos.y>len(self.matrice[0])-1:
@@ -155,3 +178,8 @@ class Carte:
                         raise TypeError("Tuile " + str(self.matrice[x][y]) + " de type " + str(self.matrice[x][y].type) + " n'a pas de type valide.")
             dessin += ligne + '\n'
         return dessin
+    
+    def dessin_construire(self):
+        self.dessin_nuanceur.construire()
+        self.dessin_maillage.construire()
+        self.dessin_atlas.construire()

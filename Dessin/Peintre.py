@@ -7,24 +7,21 @@ from Maths.Vec2 import Vec2
 
 from tkinter_gl import GLCanvas
 
-class Peintre(GLCanvas):
-    hauteure : int
-    largeure : int
-    couleur_arrière_plan : tuple[float]
+from Carte.Carte import Carte
+from GestionnaireRessources import Ressources
 
-    image :Image
-    
-    initialisé : bool
+class Peintre(GLCanvas):
+
     def __init__(self, parent):
         super().__init__(parent)
-        print("Peintre créé.")
+        print("Création du peintre.")
+        res = Ressources.avoirRessources()
+        self.hauteure : int = 0
+        self.largeure : int = 0
         self.couleur_arrière_plan = (0.2,0.5,0.8)
-        # self.nuanceur = NuaBase("Dessin/Ressources/Nuanceurs/NuaBase")
-        # self.maillage = Ressources.avoirRessources().chargerObj("Dessin/Ressources/Maillages/cube.obj")
-        # self.trans = Matrice().positionner(Vec3(0,0,3.0))
-        # self.rot = Matrice()
-        self.image = Image("Test")
+        self.carte : Carte = res.chargerCarte("Test")
         self.initialisé = False
+        print("Peintre créé.")
     
     def initialiser(self,largeure : int, hauteure : int):
         print("Couleur arrière-plan : ", self.couleur_arrière_plan)
@@ -33,9 +30,7 @@ class Peintre(GLCanvas):
         glEnable(GL_BLEND)
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
-        # self.nuanceur.construire()
-        # self.maillage.construire()
-        self.image.construire()
+        self.carte.dessin_construire()
         self.largeure = largeure
         self.hauteure = hauteure
 
@@ -62,42 +57,45 @@ class Peintre(GLCanvas):
         self.make_current()
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-        
-        # self.nuanceur.démarrer()
 
-        # f = 100.0
-        # n = 0.01
-        # perspective = Matrice().fairePerspective(0.01, 100.0, 70.0, self.largeure/self.hauteure)
-        # from math import cos,sin
-        # x = 0.001
-        # y = 0.001
-        # z = 0.001
-        # self.rot.tourner(Vec3(0.001))
-        # matrice = perspective*self.trans*self.rot
-        # self.nuanceur.chargerMatrice(matrice)
+        self.carte.dessin_nuanceur.démarrer()
 
-        # self.nuanceur.chargerColor(1.0)
-
-        self.image.nuanceur.démarrer()
-
-        glBindVertexArray(self.image.maillage.vao)
-        for i in range(len(self.image.maillage.attributs)):
+        glBindVertexArray(self.carte.dessin_maillage.vao)
+        for i in range(len(self.carte.dessin_maillage.attributs)):
             glEnableVertexAttribArray(i)
 
-        self.image.nuanceur.chargerUniformes(self.image.pos, self.image.rot, self.image.taille*self.image.échelle, Vec2(self.largeure,self.hauteure))
+        indexes_texture = [
+            0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,
+            0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,
+            0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,
+            0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,
+            0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,
+            0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,
+            0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,
+            0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,
+            0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,
+            0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,
+            0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,
+            0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,
+            0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,
+            0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,
+            0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,
+            0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15
+        ]
+        self.carte.dessin_nuanceur.chargerUniformes(self.carte.dessin_position, self.carte.dessin_rotation, self.carte.dessin_taille*self.carte.dessin_échelle, Vec2(self.largeure,self.hauteure), Vec2(self.carte.colonnes,self.carte.lignes),indexes_texture,Vec2(4,4),Vec2(64,64))
 
         glActiveTexture(GL_TEXTURE0)
-        glBindTexture(GL_TEXTURE_2D,self.image.image.ID)
+        glBindTexture(GL_TEXTURE_2D,self.carte.dessin_atlas.ID)
         
-        match self.image.maillage.mode_dessin:
+        match self.carte.dessin_maillage.mode_dessin:
             case Maillage.MODE_DESSIN_INDEXES:
-                glDrawElements(GL_TRIANGLES,self.image.maillage.n_sommets,GL_UNSIGNED_INT,None)
+                glDrawElements(GL_TRIANGLES,self.carte.dessin_maillage.n_sommets,GL_UNSIGNED_INT,None)
             case Maillage.MODE_DESSIN_LISTE:
-                glDrawArrays(GL_TRIANGLES,0,self.image.maillage.n_sommets)
+                glDrawArrays(GL_TRIANGLES,0,self.carte.dessin_maillage.n_sommets)
             case Maillage.MODE_DESSIN_ÉVENTAIL:
-                glDrawArrays(GL_TRIANGLE_FAN,0,self.image.maillage.n_sommets)
+                glDrawArrays(GL_TRIANGLE_FAN,0,self.carte.dessin_maillage.n_sommets)
             case Maillage.MODE_DESSIN_BANDE:
-                glDrawArrays(GL_TRIANGLE_STRIP,0,self.image.maillage.n_sommets)
+                glDrawArrays(GL_TRIANGLE_STRIP,0,self.carte.dessin_maillage.n_sommets)
         
         error = glGetError()
         if error != GL_NO_ERROR:
