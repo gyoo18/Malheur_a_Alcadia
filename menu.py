@@ -26,24 +26,19 @@ def effaceCommande():
 def ingameUI():
     """Display the in-game UI."""
     jeu = Jeu.avoirJeu()
-    game_map = jeu.carte
+    carte = jeu.carte
+    séquence : Séquence = None
+    if carte.estScène:
+        séquence = carte.séquences
+    else:
+        séquence = carte.séquences[jeu.état.v]
+    plan = séquence.plans[jeu.état.scène_étape]
 
     clearScreen()
 
     # Header
     header = "=" * 50
-    header2 = ""
-    match jeu.chapitre.v:
-        case Chapitre.INTRODUCTION:
-            header2 = gras("Malheur à Alcadia!") # TODO #21 Envoyer les titres dans dialogue
-        case Chapitre.CHAPITRE1:
-            header2 = dialogue.titre(1)
-        case Chapitre.CHAPITRE2:
-            header2 = dialogue.titre(2)
-        case Chapitre.CHAPITRE3:
-            header2 = dialogue.titre(3)
-        case _:
-            raise ValueError("Le chapitre " + str(jeu.chapitre.v) + " n'est pas un chapitre valide.")
+    header2 = gras(plan.titres[jeu.état.scène_animation_étape])
     header2 = header2.center(50)
     header3 = "=" * 50
 
@@ -52,26 +47,55 @@ def ingameUI():
     print(header3)
 
     # Display game map
-    print(game_map.dessiner().center(50))
+    print(carte.dessiner().center(50))
     
     # Footer
     footer = "=" * 50
     controls = ""
-    #print(controls)
     if jeu.état.v == ÉtatJeu.JEU:
-        controls = "Tapez « ? » ou « aide » pour obtenir les contrôles ou entré pour terminer votre tour"
-    else :
-        controls = dialogue.script(jeu.chapitre.v,jeu.état.v,jeu.choix,jeu)
+        controls = random.choice(séquence.plans).dialogues[jeu.état.scène_animation_étape]
+        controls += "Tapez « ? » ou « aide » pour obtenir la liste des commandes.\n"
+    else:
+        controls = plan.dialogues[jeu.état.scène_animation_étape]
     controls = controls.center(50)
     footer_end = "=" * 50
 
     print(footer)
-    print(controls)
+    print(controls,end='')
     print(footer_end)
-    if jeu.état.v == ÉtatJeu.CHOIX:
-        jeu.choix = input("Melios > ")
+    if jeu.état.v == ÉtatJeu.SCÈNE:
+        if plan.estAnimation and jeu.état.scène_animation_étape < len(plan.titres)-1:
+            jeu.état.scène_animation_étape += 1
+            time.sleep(plan.temps[jeu.état.scène_animation_étape-1])
+        elif not plan.estAnimation and jeu.état.scène_étape < len(séquence.plans)-1:
+            jeu.état.scène_étape += 1
+            input("")
+        else:
+            jeu.état.scène_étape = 0
+            jeu.état.scène_animation_étape = 0
+            jeu.état.v = ÉtatJeu.TRANSITION
+            input("")
+    elif jeu.état.v != ÉtatJeu.JEU and plan.estAnimation and jeu.état.scène_animation_étape < len(plan.titres)-1:
+        jeu.état.scène_animation_étape += 1
     elif jeu.état.v == ÉtatJeu.DÉBUT:
-        jeu.état.v = ÉtatJeu.JEU
+        if carte.estScène:
+            pass
+        else:
+            if jeu.état.scène_étape == len(séquence.plans)-1:
+                jeu.état.v = ÉtatJeu.JEU
+                jeu.état.scène_étape = 0
+                jeu.état.scène_animation_étape = 0
+
+                décalage = 0
+                for i in range(len(carte.entités)):
+                    if type(carte.entités[i]) != Joueur:
+                        carte.entités[i].pos = carte.entités_préchargement[i + décalage][1].copie()
+                    else:
+                        carte.entités[i].pos = carte.joueur_pos_init
+                        décalage = -1
+
+            else:
+                jeu.état.scène_étape += 1
         input("")
     elif jeu.état.v == ÉtatJeu.JEU:
         while True:
@@ -96,8 +120,30 @@ def ingameUI():
                 print(coul("Veuillez entrer une commande valide ou taper",ROUGE)+TFX("entré",gras=True,Pcoul=ROUGE)+coul(" pour finir le tour.",ROUGE))
                 time.sleep(1.5)
                 effaceCommande()
-    else:
+    elif jeu.état.v == ÉtatJeu.SUCCÈS:
+        if carte.estScène:
+            pass
+        else:
+            if jeu.état.scène_étape == len(séquence.plans)-1:
+                jeu.état.v = ÉtatJeu.TRANSITION
+                jeu.état.scène_étape = 0
+                jeu.état.scène_animation_étape = 0
+            else:
+                jeu.état.scène_étape += 1
         input("")
+    elif jeu.état.v == ÉtatJeu.ÉCHEC:
+        if carte.estScène:
+            pass
+        else:
+            if jeu.état.scène_étape == len(séquence.plans)-1:
+                jeu.état.v = ÉtatJeu.TERMINÉ
+                jeu.état.scène_étape = 0
+                jeu.état.scène_animation_étape = 0
+            else:
+                jeu.état.scène_étape += 1
+        input("")
+    else:
+        raise ValueError("[inGameUI] L'état du jeu n'est pas reconnus.")
 
 def displayUI():
     jeu = Jeu.avoirJeu()
@@ -126,7 +172,10 @@ def displayUI():
     key = input("Que voulez-vous faire? ").strip().lower()
     if key == "s":
         # ingameUI(game_map)  # Pass the game map to the in-game UI
-        jeu.état.v = ÉtatJeu.DÉBUT
+        if jeu.carte.estScène:
+            jeu.état.v = ÉtatJeu.SCÈNE
+        else:
+            jeu.état.v = ÉtatJeu.DÉBUT
     elif key == "t":
         print("W (haut), S (bas), A (gauche), D (droite)")
         time.sleep(2)

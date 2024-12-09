@@ -25,13 +25,13 @@ class Vec2:
         if (type(x) == float or type(x) == int) and (type(y) == float or type(y) == int):
             self.x = x
             self.y = y
-        elif (type(x) == float or int) and y == None:
+        elif (type(x) == float or type(x) == int) and y == None:
             self.x = x
             self.y = x
-        elif type(x) == Self and y == None:
+        elif type(x) == Vec2 and y == None:
             self.x = x.x
             self.y = x.y
-        elif (type(x) and type(y)) == None:
+        elif type(x) == None and type(y) == None:
             self.x = 0
             self.y = 0
         else:
@@ -44,7 +44,7 @@ class Vec2:
         Returns:
             Vec2 : copie du vecteur
         """
-        return Vec2(vec2=self)
+        return Vec2(self)
     
     def __eq__(a : Self,b : Self):
         if type(b) != Vec2:
@@ -302,3 +302,9 @@ class Vec2:
         if type(b) != Vec2:
             raise TypeError("Vec2.distance(a : Vec2, b: Vec2) n'accepte pas d'arguement de type b : " + str(type(b)) + ", seulement de type Vec2.")
         return sqrt((a.x-b.x)*(a.x-b.x) + (a.y-b.y)*(a.y-b.y))
+
+    def __str__(self):
+        return "("+str(self.x)+"; "+str(self.y)+")"
+    
+    def __repr__(self):
+        return str(self)

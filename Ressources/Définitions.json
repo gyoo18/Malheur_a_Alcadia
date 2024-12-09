@@ -1,6 +1,7 @@
 {
     "Cartes": {
         "Test": "Test.json",
+        "Test_séquence": "Test_séquence.json",
         "Intro": "Intro.json",
         "Chapitre1": "Chapitre1.json",
         "Chapitre2": "Chapitre2.json",
@@ -14,5 +15,8 @@
         "Chevalier": "Chevalier.json",
         "Mineur": "Mineur.json",
         "Guildart": "Guildart.json"
+    },
+    "Dialogues": {
+        "Test" : "Test.json"
     }
 }

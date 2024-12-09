@@ -56,7 +56,8 @@ class Entité:
 
         self.nom : str = "Entité"
 
-        # Variables de fonctionnement interne
+        # Variables de fonctionnement 
+        self.animID = ""
         self.estVivant : bool = True
 
         self.état : ÉtatIA = ÉtatIA()    # État de l'IA
@@ -100,7 +101,23 @@ class Entité:
         return nom
 
     def MiseÀJour(self):
-        self._MiseÀJourIA()
+        from Jeu import Jeu,ÉtatJeu
+        jeu = Jeu.avoirJeu()
+        if jeu.état.v == ÉtatJeu.FIN_TOUR or jeu.état.v == ÉtatJeu.JEU:
+            self._MiseÀJourIA()
+        elif jeu.état.v in [ÉtatJeu.DÉBUT,ÉtatJeu.SUCCÈS,ÉtatJeu.ÉCHEC,ÉtatJeu.SCÈNE]:
+            personnages : list[str] = None
+            personnages_positions : list[Vec2] = None
+            if self.carte.estScène:
+                personnages = self.carte.séquences.plans[jeu.état.scène_étape].personnages[jeu.état.scène_animation_étape]
+                personnages_positions = self.carte.séquences.plans[jeu.état.scène_étape].personnages_positions[jeu.état.scène_animation_étape]
+            else:
+                personnages = self.carte.séquences[jeu.état.v].plans[jeu.état.scène_étape].personnages[jeu.état.scène_animation_étape]
+                personnages_positions = self.carte.séquences[jeu.état.v].plans[jeu.état.scène_étape].personnages_positions[jeu.état.scène_animation_étape]
+
+            for i in range(len(personnages)):
+                if personnages[i] == self.animID:
+                    self.pos = personnages_positions[i]
         
     # Mise à jour de l'IA de base
     def _MiseÀJourIA(self):

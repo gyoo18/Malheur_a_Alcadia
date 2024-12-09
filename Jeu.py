@@ -11,12 +11,12 @@ import copy
 class ÉtatJeu:
     MENU = "menu"
     MENU_CONTEXTUEL = "menu contextuel"
-    JEU = "jeu"
+    JEU = "Jeu"
     FIN_TOUR = "fin de tour"
-    DÉBUT = "début"
+    DÉBUT = "Début"
     CHOIX = "choix"
-    SUCCÈS = "succès"
-    ÉCHEC = "échec"
+    SUCCÈS = "Succès"
+    ÉCHEC = "Échec"
     TRANSITION = "transition"
     TERMINÉ = "terminé"
     SCÈNE = "scène"
@@ -24,6 +24,7 @@ class ÉtatJeu:
     def __init__(self, valeur = MENU):
         self.v : str = valeur
         self.scène_étape = 0
+        self.scène_animation_étape = 0
 
 class Chapitre:
     INTRODUCTION = "Introduction"
@@ -72,6 +73,10 @@ class Jeu:
             menu.menu_contextuel()
         else :
             menu.ingameUI()
+        
+        if self.état.v in [ÉtatJeu.DÉBUT,ÉtatJeu.SUCCÈS,ÉtatJeu.ÉCHEC,ÉtatJeu.SCÈNE]:
+            for i in range(len(self.carte.entités)):
+                self.carte.entités[i].MiseÀJour()
 
         os.system("cls" if os.name == 'nt' else "clear")
         if self.état.v == ÉtatJeu.FIN_TOUR:
@@ -91,7 +96,7 @@ class Jeu:
             else :
                 print("Mise à jour des entitées.")
                 for i in range(len(self.carte.entités)):
-                    self.carte.entités[i]._MiseÀJourIA()
+                    self.carte.entités[i].MiseÀJour()
                 lo = len(self.carte.entités) -1
                 for i in range(len(self.carte.entités)):
                     if not self.carte.entités[lo-i].estVivant:
@@ -100,7 +105,6 @@ class Jeu:
                 self.état.v = ÉtatJeu.JEU
         
         elif self.état.v == ÉtatJeu.TRANSITION:
-            self.état.v = ÉtatJeu.DÉBUT
             GolemTerre.noms = copy.deepcopy(GolemTerre.noms_originaux)
             GolemEau.noms = copy.deepcopy(GolemEau.noms_originaux)
             GolemFeu.noms = copy.deepcopy(GolemFeu.noms_originaux)
@@ -111,32 +115,34 @@ class Jeu:
             Arbalettier.noms = copy.deepcopy(Arbalettier.noms_originaux)
             Chevalier.noms = copy.deepcopy(Chevalier.noms_originaux)
             self.changerCarte(res.chargerCarte(self.carte.prochaine))
-            match self.chapitre.v:
-                case Chapitre.INTRODUCTION:
-                    self.chapitre.v = Chapitre.CHAPITRE1
-                case Chapitre.CHAPITRE1:
-                    self.chapitre.v = Chapitre.CHAPITRE2
-                case Chapitre.CHAPITRE2:
-                    self.chapitre.v = Chapitre.CHAPITRE3
-                case Chapitre.CHAPITRE3:
-                    self.chapitre.v = Chapitre.INTRODUCTION
+            if self.carte.estScène:
+                self.état.v = ÉtatJeu.SCÈNE
+            else:
+                self.état.v = ÉtatJeu.DÉBUT
+            #  match self.chapitre.v:
+            #      case Chapitre.INTRODUCTION:
+            #          self.chapitre.v = Chapitre.CHAPITRE1
+            #      case Chapitre.CHAPITRE1:
+            #          self.chapitre.v = Chapitre.CHAPITRE2
+            #      case Chapitre.CHAPITRE2:
+            #          self.chapitre.v = Chapitre.CHAPITRE3
+            #      case Chapitre.CHAPITRE3:
+            #          self.chapitre.v = Chapitre.INTRODUCTION
 
     def changerCarte(self,carte : Carte):
         res = Ressources.avoirRessources()
+
         if self.carte != None:
             del self.carte
-        self.carte = copy.deepcopy(carte)
-        for i in range(len(self.carte.entités)):
-            for j in range(len(self.carte.entités)-i-1):
-                if self.carte.entités[i] == self.carte.entités[len(self.carte.entités)-1-j]:
-                    self.carte.entités[i] = copy.deepcopy(self.carte.entités[i])
-                    self.carte.entités[i].nom = Entité.nom_aléatoire(self.carte.entités[i].noms)
-                    break
 
-        for i in range(len(self.carte.entités)):
-            self.carte.entités[i].carte = self.carte
-            self.carte.entités[i].pos = carte.positions_entitées_initiales[i]
-        
+        self.carte = copy.deepcopy(carte)
+        for i in range(len(self.carte.entités_préchargement)):
+            entité = res.chargerEntité(self.carte.entités_préchargement[i][0])
+            entité.pos = self.carte.entités_préchargement[i][1].copie()
+            entité.animID = self.carte.entités_préchargement[i][2]
+            entité.carte = self.carte
+            self.carte.entités.append(entité)
+
         joueur = copy.deepcopy(res.joueur)
         joueur.pos = self.carte.joueur_pos_init
         joueur.carte = self.carte

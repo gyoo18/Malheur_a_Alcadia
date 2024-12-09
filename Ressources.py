@@ -1,4 +1,4 @@
-from Carte.Carte import Carte
+from Carte.Carte import *
 from Carte.Tuile import Tuile
 from Entités.Entité import Entité
 from Entités.Golem import *
@@ -18,6 +18,8 @@ class Ressources:
         self.cartes_chargées : list[str] = []
         self.entités : list[Entité] = []
         self.entités_chargées : list[str] = []
+        self.dialogues : dict[list[str]] = []
+        self.dialogues_chargés : list[str] = []
         self.resultat_zone_2 : str = ""
         self.indexe_ressources : dict = None
         try:
@@ -42,20 +44,34 @@ class Ressources:
         else: 
             source = "Ressources/Cartes/" + self.indexe_ressources["Cartes"][nom]
             matrice : list[list[Tuile]] = []
-            entités : list[Entité] = []
-            positions_entités_initiales = []
+            entités : list[tuple[str,Vec2|None,str|None]] = []
             colonnes = 0
             lignes = 0
+            estScène : bool= False
+            séquences : Séquence|dict[Séquence] = None
 
             carte_dict : dict = None
             try:
-                carte_dict = json.load(codecs.open(source,"r","utf-8"))
+                fichier = codecs.open(source,"r","utf-8")
+                carte_dict = json.load(fichier)
+                fichier.close()
             except Exception as e:
                 traceback.print_exc()
                 traceback.print_exception(e)
                 exit(-1) 
+
             if not "Carte" in carte_dict:
-                raise AttributeError("La carte " + str(source) + "doit contenir un attribut 'Carte' de type list[list[int]].")
+                raise AttributeError("La carte " + str(source) + " doit contenir un attribut 'Carte' de type list[list[str]].")
+            
+            if not "Entités" in carte_dict:
+                raise AttributeError("La Carte " + str(source) + " doit contenir un attribut 'Entités' de type list[dict]")
+            
+            if not "Prochaine" in carte_dict:
+                raise AttributeError("La Carte " + str(source) + " doit contenir un attribut 'Prochaine' de type str")
+            
+            if not "Joueur_pos" in carte_dict:
+                raise AttributeError("La Carte " + str(source) + " doit contenir un attribut 'Joueur_pos' de type list[int] et de longueur 2")
+            
             for x in range(len(carte_dict["Carte"])):
                 colonne = []
                 for y in range(len(carte_dict["Carte"])):
@@ -77,35 +93,91 @@ class Ressources:
             colonnes = len(matrice)
             lignes = len(matrice[0])
             
-            liste_entités : list[dict]= carte_dict["Entités"]
+            liste_entités : list[dict] = carte_dict["Entités"]
             for e in liste_entités:
-                entités.append(self.chargerEntité(e["ID"]))
+                unité = (e["ID"],None,None)
                 if "Position" in e:
                     if type(e["Position"]) != list or (type(e["Position"][0]) != int and type(e["Position"][0]) != float) or (type(e["Position"][1]) != int and type(unitée_dict["Position"][1]) != float):
-                        raise TypeError("[Création de carte] L'élément 'Position' de " + unitée.nom + " doit être de type list[ int ou float ].")
-                    positions_entités_initiales.append(Vec2(float(e["Position"][0]),float(e["Position"][1])))
-                else:
-                    positions_entités_initiales.append(Vec2(random.randrange(0,colonnes),random.randrange(0,lignes)))
+                        raise TypeError("[Création de carte] L'élément 'Position' de " + e["ID"] + " doit être de type list[ int ou float ].")
+                    unité = (unité[0],Vec2(float(e["Position"][0]),float(e["Position"][1])),unité[2])
+                if "Anim ID" in e:
+                    if type(e["Anim ID"]) != str:
+                        raise TypeError("[Création de carte] L'élément 'Anim ID' de " + e["ID"] + " doit être de type str.")
+                    unité = (unité[0],unité[1],e["Anim ID"])
+                entités.append(unité)
+            
+            if "Scène" in carte_dict:
+                if type(carte_dict["Scène"]) != bool:
+                    raise TypeError("[Création de carte] L'élément 'estScène' de " + str(source) + " doit être de type bool.")
+                estScène = carte_dict["Scène"]
+            
+            if estScène:
+                séquences = Séquence()
+                if type(carte_dict["Séquence"]) != list:
+                    raise TypeError("[Création de carte] L'élément 'Séquence' de " + str(source) + " doit être une list[dict]. Changez 'estScène' à False si vous voulez en faire une liste.")
+                for plan_dict in carte_dict["Séquence"]:
+                    if type(plan_dict) != dict:
+                        raise TypeError("[Création de carte] Les éléments de 'Séquence' dans " + str(source) + " ne doit contenir que des dictionnaires.")
+                    
+                    plan : Plan = self.chargerPlan(plan_dict,entités,source,None)
+                    séquences.plans.append(plan)
+            else:
+                séquences = {}
+                if type(carte_dict["Séquence"]) != dict:
+                    raise TypeError("[Création de carte] L'élément 'Séquence' de " + str(source) + " doit être un dict[list[dict]]. Changez 'estScène' à False si vous voulez en faire une liste.")
+                
+                if not "Début" in carte_dict["Séquence"] or not "Jeu" in carte_dict["Séquence"] or not "Succès" in carte_dict["Séquence"] or not "Échec" in carte_dict["Séquence"]:
+                    raise AttributeError("[Création de carte] L'élément 'Séquence' de " + str(source) + " doit contenir les clé suivantes : 'Début', 'Jeu', 'Succès' et 'Échec', qui sont toutes des list[dict]")
+                
+                if type(carte_dict["Séquence"]["Début"]) != list or type(carte_dict["Séquence"]["Jeu"]) != list or type(carte_dict["Séquence"]["Succès"]) != list or type(carte_dict["Séquence"]["Échec"]) != list:
+                    raise TypeError("[Création de carte] Les clés de l'élément 'Séquence' de " + str(source) + " ne sont pas toutes des listes.")
+                
+                for clé in list(carte_dict["Séquence"].keys()):
+                    séquence : Séquence = Séquence()
+                    match clé:
+                        case "Début":
+                            séquence.position = Séquence.DÉBUT
+                        case "Jeu":
+                            séquence.position = Séquence.JEU
+                        case "Succès":
+                            séquence.position = Séquence.SUCCÈS
+                        case "Échec":
+                            séquence.position = Séquence.ÉCHEC
+                        case _:
+                            raise AttributeError("[Création de carte] La clé " + str(clé) + " de séquence n'est pas une clé reconnue. Veuillez utiliser 'Début', 'Jeu', 'Réussite' ou 'Échec'.")
+                        
+                    for plan_dict in carte_dict["Séquence"][clé]:
+                        if type(plan_dict) != dict:
+                            raise TypeError("[Création de carte] " + str(source) + ">Séquence>" + clé + " ne doit contenir que des dictionnaires.")
+                        
+                        plan : Plan = self.chargerPlan(plan_dict, entités,source,clé)
+                        séquence.plans.append(plan)
+                    séquences[clé] = séquence
+                pass
 
             prochaine = carte_dict["Prochaine"]
             joueur_pos_init = Vec2(carte_dict["Joueur_pos"][0],carte_dict["Joueur_pos"][1])
-            carte = Carte(colonnes,lignes,matrice,entités,positions_entités_initiales,joueur_pos_init,prochaine)
+            carte = Carte(estScène,colonnes,lignes,matrice,entités,joueur_pos_init,séquences,prochaine)
+            carte.estScène = estScène
             self.cartes.append(carte)
             self.cartes_chargées.append(nom)
 
             return carte
 
     def chargerEntité(self,nom : str):
-        if nom in self.entités_chargées:
+        if False and nom in self.entités_chargées:
             return self.entités[self.entités_chargées.index(nom)]
         else :
             source = "Ressources/Entités/" + self.indexe_ressources["Entités"][nom]
             unitée_dict : dict = None
             try:
-                unitée_dict = json.load(codecs.open(source,"r","utf-8"))
+                fichier = codecs.open(source,"r","utf-8")
+                unitée_dict = json.load(fichier)
+                fichier.close()
             except Exception as e:
                 traceback.print_exc()
                 traceback.print_exception(e)
+                exit(-1)
             
             unitée = None
             match unitée_dict["Type"]:
@@ -204,3 +276,156 @@ class Ressources:
             self.entités.append(unitée)
             self.entités_chargées.append(nom)
             return unitée
+    
+    def chargerDialogue(self, groupe : str, ID : list[int]):
+        from dialogue import dialogue
+
+        if groupe in self.dialogues_chargés:
+            texte = ""
+            for i in ID:
+                texte += self.dialogues[groupe][i] + '\n'
+            return texte
+        else:
+            source : str = "Ressources/Dialogues/" + self.indexe_ressources["Dialogues"][groupe]
+            dialogue_dict : dict= None
+            try:
+                fichier = codecs.open(source,"r","utf-8")
+                dialogue_dict = json.load(fichier)
+                fichier.close()
+            except Exception as e:
+                traceback.print_exc()
+                traceback.print_exception(e)
+                exit(-1)
+            
+            if not "Titre" in dialogue_dict:
+                raise AttributeError("[Charger Dialogue] Le groupe de dialogues " + str(source) + " a besoin d'un 'Titre' par défaut.")
+            if type(dialogue_dict["Titre"]) != str:
+                raise AttributeError("[Charger Dialogue] Le titre par défaut du groupe de dialogues " + str(source) + " doit être un string.")
+            if not "Dialogues" in dialogue_dict:
+                raise AttributeError("[Charger Dialogue] Le groupe de dialogues " + str(source) + " n'a pas de clé 'Dialogue'.")
+            if type(dialogue_dict["Dialogues"]) != list:
+                raise AttributeError("[Charger Dialogue] L'élément 'Dialogue' du groupe de dialogues " + str(source) + " doit être une liste.")
+            
+            dialogue_texte : tuple[str,str] = (dialogue_dict["Titre"],None)
+            texte : str = ""
+
+            for i in ID:
+                if len(dialogue_dict["Dialogues"])-1 < i:
+                    raise IndexError("[Charger Dialogue] L'indexe " + str(i) + " n'existe pas dans le groupe " + source + ". L'indexe maximum est " + str(len(dialogue_dict["Dialogues"])-1))
+                if not "Dialogue" in dialogue_dict["Dialogues"][i]:
+                    raise AttributeError("[Charger Dialogue] Le dialogue à l'indexe " + str(i) + " du groupe" + source + " n'a pas d'élément 'Dialogue'.")
+                if type(dialogue_dict["Dialogues"][i]["Dialogue"]) != list:
+                    raise TypeError("[Charger Dialogue] L'élément 'Dialogue' à l'indexe " + str(i) + " du groupe " + source + " doit être une liste.")
+                
+                if "Titre" in dialogue_dict["Dialogues"][i]:
+                    dialogue_texte = (dialogue_dict["Dialogue"][i]["Titre"],None)
+                
+                personnage : str = None
+                if "Personnage" in dialogue_dict["Dialogues"][i]:
+                    if type(dialogue_dict["Dialogues"][i]["Personnage"]) != str:
+                        raise TypeError("[Charger Dialogue] " + source + ">Dialogues>" + str(i) + ">Personnage n'est pas un string.")
+                    personnage = dialogue_dict["Dialogues"][i]["Personnage"]
+
+                for d in dialogue_dict["Dialogues"][i]["Dialogue"]:
+                    if type(d) != str:
+                        raise TypeError("[Charger Dialogue] " + source + ">Dialogues>" + str(i) + ">Ligne " + str(dialogue_dict["Dialogues"][i]["Dialogue"].indexe(d)) + " n'est pas un string.")
+                    
+                    if personnage:
+                        texte += dialogue(d,personnage) + '\n'
+                    else:
+                        texte += d + '\n'
+                dialogue_texte = (dialogue_texte[0],texte)
+            return dialogue_texte
+        
+    def chargerPlan(self, plan_dict : dict, entités : list[tuple[str,Vec2|None,str|None]], source : str, clé : str|None,):
+        plan = Plan()
+        if clé == None:
+            clé_str = ""
+        else:
+            clé_str = clé + '>'
+        if "estAnimation" in plan_dict and type(plan_dict["estAnimation"]) == bool and plan_dict["estAnimation"]:
+            plan.estAnimation = True
+            Temps_défaut : float = None
+            if "Temps" in plan_dict:
+                if type(plan_dict["Temps"]) != float and type(plan_dict["Temps"]) != int:
+                    raise TypeError("[Charger Plan] L'élément 'Temps' dans " + source + '>' + clé_str + str(plan_dict) + " doit être de type int ou float.")
+                Temps_défaut = plan_dict["Temps"]
+            if not "Plans" in plan_dict:
+                raise AttributeError("[Charger Plan] " + source + '>' + clé_str + str(plan_dict) + " doit contenir une clé 'Plans' de type list[dict]")
+            if type(plan_dict["Plans"]) != list:
+                raise TypeError("[Charger Plan] " + source + '>' + clé_str + str(plan_dict) + " doit contenir une clé 'Plans' de type list[dict]")
+            
+            for anim_plan_dict in plan_dict["Plans"]:
+                plan.personnages.append([])
+                plan.personnages_positions.append([])
+                plan.dialogues.append("")
+                plan.titres.append("")
+                if type(anim_plan_dict) != dict:
+                    raise TypeError("[Charger Plan] " + source + '>Séquence>' + clé_str + str(plan_dict) + '>' + str(anim_plan_dict) + " doit être de type dict")
+                
+                if not "Temps" in anim_plan_dict:
+                    plan.temps.append(Temps_défaut)
+                
+                for e in list(anim_plan_dict.keys()):
+                    estEntité = False
+                    if not (e == "Dialogue Groupe" or e == "Dialogue ID" or e == "Mélios"):
+                        for en in entités:
+                            if en[2] == e:
+                                estEntité = True
+
+                    if not (e == "Dialogue Groupe" or e == "Dialogue ID" or e == "Temps" or e == "Mélios" or estEntité):
+                        raise AttributeError("[Création de carte] Le plan " + str(source) + ">Séquence>" + clé_str + str(plan_dict) + '>' + str(anim_plan_dict) + " contient une clé invalide : " + str(e) + " qui n'est ni 'Dialogue Groupe', ni 'Dialogue ID', ni 'Temps', ni un 'Anim ID' de cette carte.")
+
+                    if estEntité or e == "Mélios":
+                        if type(anim_plan_dict[e]) != list or len(anim_plan_dict[e]) != 2 or (type(anim_plan_dict[e][0]) != int and type(anim_plan_dict[e][0]) != float) or (type(anim_plan_dict[e][1]) != int and type(anim_plan_dict[e][1]) != float):
+                            raise TypeError("[Création de carte] L'élément " + e + " dans "  + str(source) + ">Séquence>" + clé_str + str(plan_dict) + '>' + str(anim_plan_dict) + " doit être de type list[int|float] de longueur 2")
+                        
+                        plan.personnages[-1].append(e)
+                        plan.personnages_positions[-1].append(Vec2(anim_plan_dict[e][0],anim_plan_dict[e][1]))
+                    
+                    if e == "Dialogue Groupe":
+                        if not "Dialogue ID" in anim_plan_dict:
+                            raise AttributeError("[Création de carte] " + str(source) + '>Séquences>' + clé_str + str(plan_dict) + '>' + str(anim_plan_dict) + " ne possède pas d'élément 'Dialogue ID'.")
+                        
+                        dialogues : tuple[str,str] = self.chargerDialogue(anim_plan_dict["Dialogue Groupe"],anim_plan_dict["Dialogue ID"])
+                        plan.dialogues[-1] = dialogues[1]
+                        plan.titres[-1] = dialogues[0]
+
+                    if e == "Temps":
+                        if type(anim_plan_dict["Temps"]) != int and type(anim_plan_dict["Temps"]) != float:
+                            raise TypeError( TypeError("[Création de carte] L'élément " + e + " dans "  + str(source) + ">Séquence>" + clé_str + str(plan_dict) + '>' + str(anim_plan_dict) + " doit être de type int ou float."))
+                        plan.temps.append(anim_plan_dict["Temps"])
+                
+        elif "estAnimation" in plan_dict and type(plan_dict["estAnimation"] != bool):
+            raise TypeError("[Charger Plan] L'élément 'estAnimation' dans " + source + '>' + clé_str + str(plan_dict) + " doit être de type bool.")
+        else:
+            plan.personnages.append([])
+            plan.personnages_positions.append([])
+            plan.dialogues.append("")
+            plan.titres.append("")
+            for e in list(plan_dict.keys()):
+                estEntité = False
+                if not (e == "Dialogue Groupe" or e == "Dialogue ID" or e == "Mélios"):
+                    for en in entités:
+                        if en[2] == e:
+                            estEntité = True
+
+                if not (e == "Dialogue Groupe" or e == "Dialogue ID" or e == "Mélios" or estEntité):
+                    raise AttributeError("[Création de carte] Le plan " + str(source) + ">Séquence>" + clé_str + str(plan_dict) + " contient une clé invalide : " + str(e) + " qui n'est ni 'Dialogue Groupe', ni 'Dialogue ID', ni un 'Anim ID' de cette carte.")
+
+                if estEntité or e == "Mélios":
+                    if type(plan_dict[e]) != list or len(plan_dict[e]) != 2 or (type(plan_dict[e][0]) != int and type(plan_dict[e][0]) != float) or (type(plan_dict[e][1]) != int and type(plan_dict[e][1]) != float):
+                        raise TypeError("[Création de carte] L'élément " + e + " dans "  + str(source) + ">Séquence>" + clé_str + str(plan_dict) + " doit être de type list[int|float] de longueur 2")
+                    
+                    plan.personnages[0].append(e)
+                    plan.personnages_positions[0].append(Vec2(plan_dict[e][0],plan_dict[e][1]))
+                
+                if e == "Dialogue Groupe":
+                    if not "Dialogue ID" in plan_dict:
+                        raise AttributeError("[Création de carte] " + str(source) + '>Séquences>' + clé_str + " ne possède pas d'élément 'Dialogue ID'.")
+                    
+                    dialogues : tuple[str,str] = self.chargerDialogue(plan_dict["Dialogue Groupe"],plan_dict["Dialogue ID"])
+                    plan.dialogues[0] = dialogues[1]
+                    plan.titres[0] = dialogues[0]
+        return plan
+        

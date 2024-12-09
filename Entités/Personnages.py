@@ -9,6 +9,7 @@ class Joueur(Golem):
     def __init__(self):
         super().__init__()
         self.nom = "Mélios"
+        self.animID = "Mélios"
         self.camp = Entité.CAMP_JOUEUR
         self.campsEnnemis = [Entité.CAMP_PAYSANS]
         self.état.v = ÉtatIA.IMMOBILE
@@ -97,36 +98,27 @@ class Joueur(Golem):
             self.estVivant = False
 
     def _modeDéplacement(self):
-        """ Se déplace vers la destination sélectionnée
+        """ Se déplace vers la destionation sélectionnée
 
         Calcule un chemin vers la destination et s'y déplace.
         """
-        faire_pathfinding = True
+            
+        print("Recherche d'un chemin vers " + str(self.destination.x) + ';' + str(self.destination.y))
+        self.naviguerVers(self.destination,False)
+
         # Si on n'a pas atteint le bout du chemin
         if len(self.chemin) > 0:
-            print("Un chemin existe")
+            print("Un chemin existe, avançons")
             # Avancer sur le chemin
-            if self.carte.peutAller(self,self.chemin[0]):
-                print("Le chemin est praticable, avançons.")
-                self.direction = self.chemin[0] - self.pos
-                self.pos = self.chemin.pop(0)
-                faire_pathfinding = False
+            self.direction = self.chemin[0] - self.pos
+            self.pos = self.chemin.pop(0)
 
-                # Si on est arrivé au bout du chemin,
-                if self.pos == self.destination:
-                    print("Arrivé à destination. Mode immobile activé")
-                    # Rester immobile
-                    self.état.v = ÉtatIA.IMMOBILE
-            else:
-                print("Le chemin n'est pas praticable.")
-                # Si on ne peut pas se déplacer sur le chemin, en trouver un nouveau
-                self.chemin = []
-                faire_pathfinding = True
-
-        if faire_pathfinding:
-            print("Recherche d'un chemin.")
-            self.chemin = self._A_étoile(False)
-
+            # Si on n'a pas trouvé d'ennemi, mais qu'on est arrivé au bout du chemin,
+            if self.pos == self.destination and self.état.v == ÉtatIA.COMBAT:
+                print("Arrivé à destination. Aucun ennemi à l'horison, Mode recherche activé.")
+                # Chercher un autre ennemi si on est dans la boucle normale,
+                # Rester immobile si on se déplace à cause d'une commande
+                self.état.v = ÉtatIA.IMMOBILE
 
     def _modeImmobile(self):
         """_modeImmobile Rest immobile à la suite d'un déplacement dûs à une commande

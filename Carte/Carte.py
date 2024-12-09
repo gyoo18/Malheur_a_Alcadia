@@ -7,16 +7,38 @@ from Carte.Tuile import Tuile
 from TFX import *
 from InclusionsCirculaires.Entité_Carte import *
 
+class Plan:
+    def __init__(self):
+        self.estAnimation = False
+        self.personnages : list[list[str]] = []
+        self.personnages_positions : list[list[Vec2]] = []
+        self.dialogues : list[str] = []
+        self.titres : list[str] = []
+        self.temps : list[float] = []
+
+class Séquence:
+    DÉBUT = "Début"
+    JEU = "Jeu"
+    SUCCÈS = "Succès"
+    ÉCHEC = "Échec"
+
+    def __init__(self):
+        self.position : str = Séquence.DÉBUT
+        self.plans : list[Plan] = []
+
 class Carte:
     
-    def __init__(self,lignes : int ,colonnes :int, matrice : list[list[Tuile]], entités : list[Entité], positions_entitées_initiales : list[Vec2], joueur_pos_init : Vec2, prochaine : str):
+    def __init__(self,estScène : bool, lignes : int ,colonnes :int, matrice : list[list[Tuile]], entités_préchargement : list[tuple[str,Vec2|None,str|None]], joueur_pos_init : Vec2, séquences : Séquence|list[Séquence], prochaine : str):
         self.lignes : int = lignes
         self.colonnes : int = colonnes
         self.matrice : list[list[Tuile]] = matrice
-        self.entités : list[Entité] = entités
+        self.entités : list[Entité] = []
+        self.entités_préchargement : list[tuple[str,Vec2|None,str|None]] = entités_préchargement
         self.prochaine : str = prochaine
-        self.positions_entitées_initiales : list[Vec2] = positions_entitées_initiales
         self.joueur_pos_init : Vec2 = joueur_pos_init
+
+        self.estScène : bool = estScène
+        self.séquences : Séquence|list[Séquence] = séquences
             
     def peutAller(self, entite: Entité, pos: Vec2):
         if pos.x<0 or pos.x>len(self.matrice)-1 or pos.y<0 or pos.y>len(self.matrice[0])-1:

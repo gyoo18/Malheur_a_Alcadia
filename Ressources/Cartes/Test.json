@@ -20,30 +20,87 @@
     ],
     "Entités" : [
         {
-            "ID" : "Test_Golem",
-            "Position" : [0,0]
+            "ID" : "Golem",
+            "Position" : [0,0],
+            "Anim ID" : "Gol1"
         },
         {
-            "ID" : "Test_Gosse",
-            "Position" : [5,4]
+            "ID" : "Gosse",
+            "Position" : [5,4],
+            "Anim ID" : "Gos1"
         },
         {
-            "ID" : "Test_Prêtre",
-            "Position" : [5,5]
+            "ID" : "Prêtre",
+            "Position" : [5,5],
+            "Anim ID" : "Pre1"
         },
         {
-            "ID" : "Test_Chevalier",
-            "Position" : [15,7]
+            "ID" : "Chevalier",
+            "Position" : [15,7],
+            "Anim ID" : "Che1"
         },
         {
-            "ID" : "Test_Arbalettier",
-            "Position" : [10,5]
+            "ID" : "Arbalettier",
+            "Position" : [10,5],
+            "Anim ID" : "Arb1"
         },
         {
-            "ID" : "Test_Mineur",
-            "Position" : [0,7]
+            "ID" : "Mineur",
+            "Position" : [0,7],
+            "Anim ID" : "Min1"
         }
     ],
     "Joueur_pos" : [4,9],
-    "Prochaine" : "Test"
+    "Séquence": {
+        "Début": [
+            {
+                "Mélios" : [0,0],
+                "Min1" : [0,8],
+                "Dialogue Groupe" : "Test",
+                "Dialogue ID" : [0]
+            },
+            {
+                "Pre1" : [0,1],
+                "Che1" : [0,2],
+                "Dialogue Groupe" : "Test",
+                "Dialogue ID" : [0,1]
+            }
+        ],
+        "Jeu": [
+            {
+                "Dialogue Groupe" : "Test",
+                "Dialogue ID" : [2]
+            },
+            {
+                "Dialogue Groupe" : "Test",
+                "Dialogue ID" : [2,3]
+            }
+        ],
+        "Échec": [
+            {
+                "Mélios" : [0,1],
+                "Dialogue Groupe" : "Test",
+                "Dialogue ID" : [6]
+            },
+            {
+                "Mélios":[0,2],
+                "Gos1": [3,4],
+                "Dialogue Groupe" : "Test",
+                "Dialogue ID" : [6,7]
+            }
+        ],
+        "Succès": [
+            {
+                "Mélios" : [2,1],
+                "Dialogue Groupe" : "Test",
+                "Dialogue ID" : [4]
+            },
+            {
+                "Mélios" : [2,2],
+                "Dialogue Groupe" : "Test",
+                "Dialogue ID" : [4,5]
+            }
+        ]
+    },
+    "Prochaine" : "Test_séquence"
 }

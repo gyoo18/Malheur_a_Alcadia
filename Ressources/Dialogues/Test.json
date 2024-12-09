@@ -1,0 +1,54 @@
+{
+    "Titre" : "Test",
+    "Dialogues" : [
+        {
+            "Dialogue" : [
+                "Ceci est un test au début",
+                "Ceci est un test au début"
+            ]
+        },
+        {
+            "Personnage" : "Mélios",
+            "Dialogue" : [
+                "Ceci est un test au début",
+                "Ceci est un test au début"
+            ]
+        },
+        {
+            "Personnage" : "Mélios",
+            "Dialogue" : [
+                "Ceci est un test en jeu"
+            ]
+        },
+        {
+            "Personnage" : "Guildart",
+            "Dialogue" : [
+                "Ceci est un test en jeu"
+            ]
+        },
+        {
+            "Dialogue" : [
+                "Ceci est un test à la Réussite",
+                "Ceci est un test à la Réussite"
+            ]
+        },
+        {
+            "Dialogue" : [
+                "Ceci est un test à la Réussite 2",
+                "Ceci est un test à la Réussite 2"
+            ]
+        },
+        {
+            "Dialogue" : [
+                "Ceci est un test à l'échec",
+                "Ceci est un test à l'échec"
+            ]
+        },
+        {
+            "Dialogue" : [
+                "Ceci est un test à l'échec 2",
+                "Ceci est un test à l'échec 2"
+            ]
+        }
+    ]
+}
