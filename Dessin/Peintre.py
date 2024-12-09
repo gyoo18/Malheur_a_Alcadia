@@ -23,7 +23,7 @@ class Peintre(GLCanvas):
         # self.maillage = Ressources.avoirRessources().chargerObj("Dessin/Ressources/Maillages/cube.obj")
         # self.trans = Matrice().positionner(Vec3(0,0,3.0))
         # self.rot = Matrice()
-        self.image = Image("Ressources/Textures/Sans nom2.png")
+        self.image = Image("Test")
         self.initialisé = False
     
     def initialiser(self,largeure : int, hauteure : int):

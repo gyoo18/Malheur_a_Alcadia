@@ -5,17 +5,12 @@ from glm import float32
 
 class NuaImage(Nuanceur):
 
-    POSITION : int
-    ROTATION : int
-    TAILLE_FENETRE : int
-    ÉCHELLE : int
-
-    def __init__(self,source : str):
-        super().__init__(source)
-        self.POSITION = -1
-        self.ROTATION = -1
-        self.TAILLE = -1
-        self.ÉCHELLE = -1
+    def __init__(self,sommets_source : str, fragments_source : str,):
+        super().__init__(sommets_source, fragments_source)
+        self.POSITION : int = -1
+        self.ROTATION : int = -1
+        self.TAILLE : int= -1
+        self.ÉCHELLE  : int= -1
 
     def construire(self):
         super().construire()

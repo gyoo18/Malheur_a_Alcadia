@@ -2,24 +2,11 @@ from OpenGL.GL import *
 import time
 
 class Nuanceur:
-    sommets_source : str
-    fragments_source : str
-    programme : int
 
-    def __init__(self, source : str):
-        fichier  = open(source+".vert","r")
-        lignes = fichier.readlines()
-        self.sommets_source = ""
-        for ligne in lignes:
-            self.sommets_source += ligne
-        fichier.close()
-        
-        fichier  = open(source+".frag","r")
-        lignes = fichier.readlines()
-        self.fragments_source = ""
-        for ligne in lignes:
-            self.fragments_source += ligne
-        fichier.close()
+    def __init__(self, sommet_source : str, fragment_source : str):
+        self.sommets_source : str = sommet_source
+        self.fragments_source : str = fragment_source
+        self.programme = -1
     
     def construire(self):
         programme_sommets = glCreateShader(GL_VERTEX_SHADER)

@@ -4,11 +4,11 @@ from Maths.Matrice import Matrice
 import glm
 
 class NuaBase(Nuanceur):
-    MATRICE : int
-    COLOR : int
 
-    def __init__(self,source : str):
-        super().__init__(source)
+    def __init__(self,sommets_source : str, fragments_source : str):
+        super().__init__(sommets_source,fragments_source)
+        self.MATRICE : int = -1
+        self.COLOR : int = -1
 
     def construire(self):
         super().construire()

@@ -32,5 +32,8 @@
     },
     "Textures":{
         "Test":"Sans nom2.png"
+    },
+    "Nuanceurs":{
+        "NuaImage":"NuaImage"
     }
 }

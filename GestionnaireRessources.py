@@ -1,6 +1,7 @@
 from __future__ import annotations
 from InclusionsCirculaires.Ressources_Jeu import *
 from Dessin.Texture import Texture
+from Dessin.Nuanceurs.Nuanceur import Nuanceur
 from Carte.Carte import *
 from Carte.Tuile import Tuile
 from Entités.Entité import *
@@ -27,6 +28,8 @@ class Ressources:
         self.indexe_ressources : dict = None
         self.textures : list[Texture] = []
         self.textures_chargées : list[str] = []
+        self.nuanceurs : list[Nuanceur] = []
+        self.nuanceurs_chargés : list[str] = []
         try:
             self.indexe_ressources = json.load(codecs.open("Ressources/Définitions.json","r","utf-8"))
         except Exception as e:
@@ -535,4 +538,43 @@ class Ressources:
                 traceback.print_exc()
                 traceback.print_exception(e)
                 exit(-1)
-            return Texture(source,tex)
+
+            texture = Texture(source,tex)
+            self.textures.append(texture)
+            self.textures_chargées.append(nom)
+            return texture
+
+    def chargerNuanceur(self, nom : str, enfant):
+        if nom in self.nuanceurs_chargés:
+            return self.nuanceurs[self.nuanceurs_chargés.index(nom)]
+        else:
+            source = "Ressources/Nuanceurs/" + self.indexe_ressources["Nuanceurs"][nom]
+            fichier = None
+            try:
+                fichier  = open(source+".vert","r")
+            except Exception as e:
+                traceback.print_exc()
+                traceback.print_exception(e)
+                exit(-1)
+            lignes = fichier.readlines()
+            sommets_source = ""
+            for ligne in lignes:
+                sommets_source += ligne
+            fichier.close()
+            
+            try:
+                fichier  = open(source+".frag","r")
+            except Exception as e:
+                traceback.print_exc()
+                traceback.print_exception(e)
+                exit(-1)
+            lignes = fichier.readlines()
+            fragments_source = ""
+            for ligne in lignes:
+                fragments_source += ligne
+            fichier.close()
+
+            nuanceur = enfant(sommets_source,fragments_source)
+            self.nuanceurs.append(nuanceur)
+            self.nuanceurs_chargés.append(nom)
+            return nuanceur
