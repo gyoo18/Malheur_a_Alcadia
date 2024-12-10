@@ -341,6 +341,7 @@ class GolemEau(Golem):
     noms : list[str] = copy.deepcopy(noms_originaux)
 
     def __init__(self):
+        from Dessin.Image import Image
         super().__init__()
         self.PVMax=90
         self.PV = self.PVMax
@@ -351,6 +352,8 @@ class GolemEau(Golem):
         self.tornade_pousser_distance : int = 3
 
         self.max_distance_attaque : float = 4
+
+        self.dessin_Image : Image = Image("Golem_Eau")
 
     def _commandeAttaqueSpéciale(self, commande):
         if commande.attaque_spéciale == self.ATTAQUE_ and Vec2.distance(self.pos, commande.ennemi_cible.pos) <= self.max_distance_attaque:
@@ -438,6 +441,7 @@ class GolemFeu(Golem):
     noms : list[str]= copy.deepcopy(noms_originaux)
 
     def __init__(self):
+        from Dessin.Image import Image
         super().__init__()
         self.PVMax=120
         self.PV = self.PVMax
@@ -447,6 +451,8 @@ class GolemFeu(Golem):
         self.nomAffichage = self.nom
         self.attaque_max_distance : float = 4.0
         self.boule_feu_dégats : int = 3
+
+        self.dessin_Image : Image = Image("Golem_Feu")
 
     def _commandeAttaqueSpéciale(self, commande):
         if commande.attaque_spéciale == self.ATTAQUE_SPÉCIALE and Vec2.distance(self.pos,commande.ennemi_cible.pos) <= self.attaque_normale_dégats:
@@ -471,6 +477,7 @@ class GolemDoré(Golem):
     noms : list[str] = copy.deepcopy(noms_originaux)
 
     def __init__(self):
+        from Dessin.Image import Image
         super().__init__()
         self.PVMax=150
         self.PV = self.PVMax
@@ -483,6 +490,8 @@ class GolemDoré(Golem):
         self.guérisonCompteur = 0
         self.guérisonRayon = 4
         self.guérisonPuissance = 4
+
+        self.dessin_Image : Image = Image("Golem_Or")
 
     def MiseÀJour(self):
         super().MiseÀJour()

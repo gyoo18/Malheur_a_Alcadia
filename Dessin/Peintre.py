@@ -14,6 +14,7 @@ from Jeu import Jeu
 class Peintre(GLCanvas):
 
     def __init__(self, parent):
+        from Entités.Golem import GolemEau, GolemFeu, GolemDoré
         super().__init__(parent)
         print("Création du peintre.")
         res = Ressources.avoirRessources()
@@ -21,6 +22,16 @@ class Peintre(GLCanvas):
         self.largeure : int = 0
         self.couleur_arrière_plan = (0.8,0.8,0.8)
         self.carte : Carte = res.chargerCarte("Test")
+        gE = GolemEau()
+        gF = GolemFeu()
+        gD = GolemDoré()
+        gE.pos = Vec2(7,7)
+        gF.pos = Vec2(3,3)
+        gD.pos = Vec2(4,12)
+        self.carte.entités.append(gE)
+        self.carte.entités.append(gF)
+        self.carte.entités.append(gD)
+
         jeu = Jeu.avoirJeu()
         jeu.changerCarte(self.carte)
         self.carte = jeu.carte

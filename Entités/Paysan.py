@@ -51,6 +51,7 @@ class Gosse(Paysan):
     noms : list[str] = copy.deepcopy(noms_originaux)
 
     def __init__(self):
+        from Dessin.Image import Image
         super().__init__()
         self.PVMax=75
         self.PV = self.PVMax
@@ -58,6 +59,8 @@ class Gosse(Paysan):
         self.dégats_libre=self.Random_Stats(5,11)
         self.nom=Entité.nom_aléatoire(Gosse.noms)
         self.nomAffichage = self.nom
+
+        self.dessin_Image : Image = Image("Gosse")
 
     def _exécuterAttaque(self):
         attaque = Attaque(self)
@@ -71,6 +74,7 @@ class Mineur(Paysan):
     noms : list[str] = copy.deepcopy(noms_originaux)
 
     def __init__(self):
+        from Dessin.Image import Image
         super().__init__()
         self.PVMax=75
         self.PV = self.PVMax
@@ -79,6 +83,7 @@ class Mineur(Paysan):
         self.nom=Entité.nom_aléatoire(Mineur.noms)
         self.nomAffichage = self.nom
         self.bonus_terre : int = 2 # Bonus contre les golems de terre
+        self.dessin_Image : Image = Image("Mineur")
 
     def _exécuterAttaque(self):
         attaque = Attaque(self)
@@ -94,6 +99,7 @@ class Prêtre(Paysan):
     noms : list[str] = copy.deepcopy(noms_originaux)
 
     def __init__(self):
+        from Dessin.Image import Image
         super().__init__()
         self.PVMax=75
         self.PV = self.PVMax
@@ -102,6 +108,7 @@ class Prêtre(Paysan):
         self.nom=Entité.nom_aléatoire(Prêtre.noms)   
         self.nomAffichage = self.nom     
         self.PVAddition : int = 2
+        self.dessin_Image : Image = Image("Prêtre")
 
     def _modeRecherche(self):
         ennemiPlusPrès = None
@@ -173,6 +180,7 @@ class Chevalier(Paysan):
     noms : list[str] = copy.deepcopy(noms_originaux)
 
     def __init__(self):
+        from Dessin.Image import Image
         super().__init__()
         self.PVMax=125
         self.PV = self.PVMax
@@ -180,6 +188,7 @@ class Chevalier(Paysan):
         self.dégats_libre=self.Random_Stats(30,36)
         self.nom=Entité.nom_aléatoire(Chevalier.noms)
         self.nomAffichage = self.nom
+        self.dessin_Image : Image = Image("Chevalier")
 
     def _exécuterAttaque(self):
         attaque = Attaque(self)
@@ -218,6 +227,7 @@ class Arbalettier(Paysan):
     noms : list[str] = copy.deepcopy(noms_originaux)
 
     def __init__(self):
+        from Dessin.Image import Image
         super().__init__()
         self.PVMax=int(50)
         self.PV = self.PVMax
@@ -227,6 +237,7 @@ class Arbalettier(Paysan):
         self.nomAffichage = self.nom     
         self.max_distance_attaque : float = 3.0
         self.min_distance_ennemi : float = 1.5
+        self.dessin_Image : Image = Image("Arbalettier")
 
     def _modeRecherche(self):
         ennemiPlusPrès = None
