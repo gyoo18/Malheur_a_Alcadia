@@ -2,7 +2,6 @@ from Dessin.Maillage import Maillage
 from Dessin.Nuanceurs.NuaImage import NuaImage
 from Dessin.Texture import Texture
 from Maths.Vec2 import Vec2
-from GestionnaireRessources import Ressources
 
 class Image:
 
@@ -14,6 +13,7 @@ class Image:
     ]
 
     def __init__(self, texture : str):
+        from GestionnaireRessources import Ressources
         res = Ressources.avoirRessources()
         self.pos : Vec2 = Vec2(0,0)
         self.rot : float = 0

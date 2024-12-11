@@ -9,6 +9,8 @@ from Entités.Paysan import *
 from Entités.Personnages import *
 import copy
 from Ressources.Scripts import GestionnaireScripts
+import tkinter as tk
+from InclusionsCirculaires.Jeu_Peintre import *
 
 class ÉtatJeu:
     MENU = "menu"
@@ -59,6 +61,10 @@ class Jeu:
         self.menu : MenuContextuel = MenuContextuel() # Décrit le menu contextuel ouvert ou précédemment ouvert.
         self.carte : Carte = None
         self.conditionsDeTransitionManuelles = False
+
+        self.tkracine = tk.Tk()
+        self.peintre = Peintre(self.tkracine)
+        self.peintre.pack(expand=True, fill='both',padx = 10,pady=10)
     
     def avoirJeu():
         if Jeu.jeu == None:
@@ -132,6 +138,10 @@ class Jeu:
         if self.carte.script != None:
             GestionnaireScripts.MettreÀJourScript(self.carte.script)
 
+        self.tkracine.after_idle(self.peintre.peindre)
+        self.tkracine.update_idletasks()
+        self.tkracine.update()
+
     def changerCarte(self,carte : Carte):
         res = GestionnaireRessources.Ressources.avoirRessources()
 
@@ -156,3 +166,5 @@ class Jeu:
 
         if self.carte.script != None:
             GestionnaireScripts.InitialiserScript(self.carte.script)
+        
+        self.peintre.changerCarte(self.carte)

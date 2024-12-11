@@ -1,56 +1,64 @@
+from __future__ import annotations
 from OpenGL.GL import *
 from OpenGL.GLU import *
 
-from Dessin.Image import Image
 from Dessin.Maillage import Maillage
 from Maths.Vec2 import Vec2
 
-from tkinter_gl import GLCanvas
-
 from Carte.Carte import Carte
-from GestionnaireRessources import Ressources
-from Jeu import Jeu
+from InclusionsCirculaires.Jeu_Peintre import *
 
-class Peintre(GLCanvas):
+import tkinter
+import sys
+import os
 
-    def __init__(self, parent):
-        from Entités.Golem import GolemEau, GolemFeu, GolemDoré
-        super().__init__(parent)
+import time
+import math
+
+class Peintre(tkinter.Widget, tkinter.Misc):
+
+    def __init__(self, parent, cnf={}, **kw):
         print("Création du peintre.")
-        res = Ressources.avoirRessources()
         self.hauteure : int = 0
         self.largeure : int = 0
         self.couleur_arrière_plan = (0.8,0.8,0.8)
-        self.carte : Carte = res.chargerCarte("Test")
-        gE = GolemEau()
-        gF = GolemFeu()
-        gD = GolemDoré()
-        gE.pos = Vec2(7,7)
-        gF.pos = Vec2(3,3)
-        gD.pos = Vec2(4,12)
-        self.carte.entités.append(gE)
-        self.carte.entités.append(gF)
-        self.carte.entités.append(gD)
-
-        jeu = Jeu.avoirJeu()
-        jeu.changerCarte(self.carte)
-        self.carte = jeu.carte
+        self.carte : Carte = None
         self.initialisé = False
+
+        # !==== Code copié de la librairie tkinter-gl ====!
+
+        if sys.platform == 'win32':
+            # Make sure the parent has been mapped.
+            parent.update()
+        pkg_dir = "TkGL/"+str(sys.platform)
+        if not os.path.exists(pkg_dir):
+            raise RuntimeError('TkGL package directory "%s" is missing.' % pkg_dir)
+        parent.tk.call('lappend', 'auto_path', pkg_dir)
+        parent.tk.call('package', 'require', 'Tkgl')
+        # if self.profile:
+        #     kw['profile'] = self.profile
+        tkinter.Widget.__init__(self, parent, 'tkgl', cnf, kw)
+        
+        # !==== Code copié de la librairie tkinter-gl ====!
+
+        self.bind("<Map>",self.initialiser)
+        self.bind("<Expose>",self.surModificationFenetre)
+        self.bind("<Visibility>",self.surModificationFenetre)
+
         print("Peintre créé.")
     
-    def initialiser(self,largeure : int, hauteure : int):
+    def initialiser(self,event):
         print("Couleur arrière-plan : ", self.couleur_arrière_plan)
         glClearColor(self.couleur_arrière_plan[0],self.couleur_arrière_plan[1],self.couleur_arrière_plan[2],1.0)
         #glEnable(GL_DEPTH_TEST)
         glEnable(GL_BLEND)
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
-        self.carte.dessin_construire()
-        self.largeure = largeure
-        self.hauteure = hauteure
+        self.largeure = self.winfo_width()
+        self.hauteure = self.winfo_height()
 
         # glPointSize(4)
-        glViewport(0,0,largeure, hauteure)
+        glViewport(0,0,self.largeure, self.hauteure)
         self.initialisé = True
         print("Peintre Initialisé")
 
@@ -58,19 +66,14 @@ class Peintre(GLCanvas):
         if error != GL_NO_ERROR:
             print("[GLError] :",gluErrorString(error))
     
-    def surModificationFenetre(self,largeure : int, hauteure : int):
-        glViewport(0,0,largeure,hauteure)
-        self.largeure = largeure
-        self.hauteure = hauteure
-        taille = min(largeure,hauteure)
+    def surModificationFenetre(self,event):
+        self.largeure = self.winfo_width()
+        self.hauteure = self.winfo_height()
+        glViewport(0,0,self.largeure,self.hauteure)
+        taille = min(self.largeure,self.hauteure)
         self.carte.dessin_taille = Vec2(taille, taille)
 
-    def draw(self):
-        if not self.initialisé:
-            self.initialiser(self.winfo_width(),self.winfo_height())
-        if self.winfo_width != self.largeure or self.winfo_height != self.hauteure:
-            self.surModificationFenetre(self.winfo_width(), self.winfo_height())
-
+    def peindre(self):
         self.make_current()
 
         glClear(GL_COLOR_BUFFER_BIT)
@@ -130,3 +133,33 @@ class Peintre(GLCanvas):
             print("[GLError] :",gluErrorString(error))
 
         self.swap_buffers()
+
+    def changerCarte(self,carte : Carte):
+        self.carte = carte
+        self.carte.dessin_construire()
+
+    # !==== Code copié de la librairie tkinter-gl ====!
+
+    def gl_version(self):
+        """
+        The result of glGetString(GL_VERSION).
+        """
+        return self.tk.call(self._w, 'glversion')
+
+    def gl_extensions(self):
+        return self.tk.call(self._w, 'extensions')
+
+    def make_current(self):
+        """
+        Makes the OpenGL context for this GLCanvas the current context.
+        """
+        self.tk.call(self._w, 'makecurrent')
+
+    def swap_buffers(self):
+        """
+        Makes back buffer (which we draw to by default) be displayed
+        in GLCanvas.
+        """
+        self.tk.call(self._w, 'swapbuffers')
+    
+    # !==== Code copié de la librairie tkinter-gl ====!

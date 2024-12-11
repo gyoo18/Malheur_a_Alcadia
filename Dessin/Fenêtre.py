@@ -53,7 +53,7 @@ class Fenetre:
 
     def dessin(self):
         self.fpsPostier += 1
-        self.peintre.draw()
+        self.peintre.peindre()
         glutSwapBuffers()
 
         if self.fpsPostier >= 5000:
