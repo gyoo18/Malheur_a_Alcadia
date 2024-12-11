@@ -30,7 +30,7 @@ class Paysan(Entité):
             case ÉtatCombat.LIBRE:
                 match self.cible.étatCombat.v:
                     case ÉtatCombat.LIBRE:
-                        attaque = Attaque()
+                        attaque = Attaque(self)
                         attaque.dégats = self.attaque_normale_dégats
                         self.cible.Attaquer(attaque)
 
@@ -226,8 +226,8 @@ class Arbalettier(Paysan):
         self.dégats_libre=self.Random_Stats(5,11)
         self.nom=Entité.nom_aléatoire(Arbalettier.noms)   
         self.nomAffichage = self.nom     
-        self.max_distance_attaque : float = 3.0
-        self.min_distance_ennemi : float = 1.5
+        self.max_distance_attaque : float = 4.0
+        self.min_distance_ennemi : float = 2.0
 
     def _modeRecherche(self):
         """_modeRecherche Recherche un ennemi à poursuivre
@@ -256,29 +256,78 @@ class Arbalettier(Paysan):
             self.destination = ennemiPlusPrès.pos
             self.cible = ennemiPlusPrès
     
-    def _modeDéplacement(self): # TODO #23 L'arbalettier ne se déplace pas
+    def _modeDéplacement(self):
         """ Se déplace vers la cible sélectionnée
 
         Calcule un chemin vers la cible et s'y déplace. Vire vers le mode combat s'il est attaqué en chemin ou trouve la cible au bout du chemin
         et vire vers le mode recherche si on ne trouve pas la cible au bout du chemin.
         """
         # Si un ennemi se trouve sur une case adjascente, virer en mode combat
+        modefuite = False
+        ennemiTropPrès = None
         for ennemi in self.carte.entités:
             # Chercher un ennemi à une distance de 1 ou moins de nous (sur une case adjascente)
-            if Vec2.distance(ennemi.pos, self.pos) <= self.max_distance_attaque and (ennemi.camp in self.campsEnnemis or ennemi == self.cible):
-                print("Un ennemi est à proximité! Mode combat activé.")
-                self.chemin = []
-                self.état.v = ÉtatIA.COMBAT
-                self.cible = ennemi
-                return
+            if Vec2.distance(ennemi.pos, self.pos) <= self.min_distance_ennemi and (ennemi.camp in self.campsEnnemis or ennemi == self.cible):
+                modefuite= True
+                direction = Vec2.norm(self.pos - ennemi.pos)
+
+                xp = direction @ Vec2(1.0,0.0)
+                yp = direction @ Vec2(0.0,1.0)
+                xn = direction @ Vec2(-1.0,0.0)
+                yn = direction @ Vec2(0.0,-1.0)
+
+                trouvé = False
+                dirs = [xp,yp,xn,yn]
+                while not trouvé and len(dirs) != 0:
+                    maxd = -10
+                    for e in dirs:
+                        maxd = max(maxd,e)
+                    if maxd == xp and not trouvé:
+                        self.destination = self.pos + Vec2(1.0,0.0)
+                        if self.carte.peutAller(self,self.destination):
+                            trouvé = True
+                        else:
+                            dirs.remove(xp)
+                    if maxd == xn and not trouvé:
+                        self.destination = self.pos + Vec2(-1.0,0.0)
+                        if self.carte.peutAller(self,self.destination):
+                            trouvé = True
+                        else:
+                            dirs.remove(xn)
+                    if maxd == yp and not trouvé:
+                        self.destination = self.pos + Vec2(0.0,1.0)
+                        if self.carte.peutAller(self,self.destination):
+                            trouvé = True
+                        else:
+                            dirs.remove(yp)
+                    if maxd == yn and not trouvé:
+                        self.destination = self.pos + Vec2(0.0,-1.0)
+                        if self.carte.peutAller(self,self.destination):
+                            trouvé = True
+                        else:
+                            dirs.remove(yn)
+                break
+            
+        if not modefuite:
+            for ennemi in self.carte.entités:
+                # Chercher un ennemi à une distance de 1 ou moins de nous (sur une case adjascente)
+                if Vec2.distance(ennemi.pos, self.pos) <= self.max_distance_attaque and Vec2.distance(ennemi.pos, self.pos) > self.min_distance_ennemi and (ennemi.camp in self.campsEnnemis or ennemi == self.cible):
+                    print("Un ennemi est à proximité! Mode combat activé.")
+                    self.chemin = []
+                    self.état.v = ÉtatIA.COMBAT
+                    self.cible = ennemi
+                    return
             
         if self.état.v == ÉtatIA.DÉPLACEMENT:
-            if self.cible.estVivant :
+            if self.cible != None and self.cible.estVivant :
                 print("Recherche d'un chemin vers " + self.cible.nom)
                 self.naviguerVers(self.cible.pos,True)
-            else:
+            elif self.cible != None and not self.cible.estVivant:
                 print("La cible est morte. À la recherche d'un nouvel ennemi")
                 self.état.v = ÉtatIA.RECHERCHE
+            elif self.pos != self.destination:
+                print("Recherche d'un chemin ver " + str(self.destination))
+                self.naviguerVers(self.destination,False)
         elif self.état.v == ÉtatIA.DÉPLACEMENT_IMMOBILE:
             print("Recherche d'un chemin vers " + str(self.destination.x) + ';' + str(self.destination.y))
             self.naviguerVers(self.destination,False)
@@ -290,15 +339,16 @@ class Arbalettier(Paysan):
             self.direction = self.chemin[0] - self.pos
             self.pos = self.chemin.pop(0)
 
-            # Si un ennemi se trouve sur une case adjascente, virer en mode combat
-            for ennemi in self.carte.entités:
-                # Chercher un ennemi à une distance de 1 ou moins de nous (sur une case adjascente)
-                if Vec2.distance(ennemi.pos, self.pos) <= self.max_distance_attaque and (ennemi.camp in self.campsEnnemis or ennemi == self.cible):
-                    print("Un ennemi est à proximité! Mode combat activé.")
-                    self.chemin = []
-                    self.état.v = ÉtatIA.COMBAT
-                    self.cible = ennemi
-                    return
+            if not modefuite:
+                # Si un ennemi se trouve sur une case adjascente, virer en mode combat
+                for ennemi in self.carte.entités:
+                    # Chercher un ennemi à une distance de 1 ou moins de nous (sur une case adjascente)
+                    if Vec2.distance(ennemi.pos, self.pos) <= self.max_distance_attaque and Vec2.distance(ennemi.pos, self.pos) > self.min_distance_ennemi and (ennemi.camp in self.campsEnnemis or ennemi == self.cible):
+                        print("Un ennemi est à proximité! Mode combat activé.")
+                        self.chemin = []
+                        self.état.v = ÉtatIA.COMBAT
+                        self.cible = ennemi
+                        return
             # Si on n'a pas trouvé d'ennemi, mais qu'on est arrivé au bout du chemin,
             if self.pos == self.destination and self.état.v == ÉtatIA.COMBAT:
                 print("Arrivé à destination. Aucun ennemi à l'horison, Mode recherche activé.")
@@ -310,33 +360,41 @@ class Arbalettier(Paysan):
                     self.état.v = ÉtatIA.IMMOBILE
     
     def _modeCombat(self):
+        if self.pos == Vec2(5,4):
+            print("Hey")
         for entité in self.carte.entités:
-            if Vec2.distance(self.pos, entité.pos) <= self.min_distance_ennemi:
+            if Vec2.distance(self.pos, entité.pos) <= self.min_distance_ennemi and entité.camp in self.campsEnnemis:
+                print(coul("L'ennemi est trop près, fuyons!",ORANGE))
                 self.état.v = ÉtatIA.DÉPLACEMENT
-                direction = Vec2.norm(self.pos - entité.pos)
-
-                xp = direction @ Vec2(1.0,0.0)
-                yp = direction @ Vec2(0.0,1.0)
-                xn = direction @ Vec2(-1.0,0.0)
-                yn = direction @ Vec2(0.0,-1.0)
-
-                maxd = max(max(max(xp,xn),yp),yn)
-                if maxd == xp:
-                    self.destination = self.pos + Vec2(1.0,0.0)
-                elif maxd == xn:
-                    self.destination = self.pos + Vec2(-1.0,0.0)
-                elif maxd == yp:
-                    self.destination = self.pos + Vec2(0.0,1.0)
-                elif maxd == yn:
-                    self.destination = self.pos + Vec2(0.0,-1.0)
-                
                 self.cible = None
-                break
-        if self.cible.estVivant and Vec2.distance(self.cible.pos, self.pos) <= 1:
+                return
+        if self.cible.estVivant and Vec2.distance(self.cible.pos, self.pos) <= self.max_distance_attaque:
             self._AttaquerEnnemi()
         else:
             self.état.v = ÉtatIA.RECHERCHE
             self.estAttaqué = False
             self.cible = None
     
+    def Attaquer(self, attaque : Attaque):
+        """Attaquer Fonction pour recevoir une attaque
+
+        Prend une Attaque en argument. Active l'indice self.estAttaqué et fait virer au mode combat.
+
+        Args:
+            attaque (Attaque): Un objet Attaque qui contient les informations nécessaires pour subir une attaque.
+        """
+        print(TFX(self.nom,gras=True,Pcoul=ORANGE) + TFX(" reçoit une attaque de ",Pcoul=ORANGE) + TFX(attaque.provenance.nom,gras=True,Pcoul=ORANGE))
+        print(gras(self.nom) + " a " + str(self.PV) + " PV, l'attaque fait " + str(attaque.dégats) + " PD")
+        # Virer au mode combat, si on n'y est pas déjà
+        if not self.estAttaqué:
+            self.estAttaqué = True
+    
+        attaque = self._Défense(attaque)    # Évaluer la défense
+        self.PV -= attaque.dégats          # Retirer les points de vies
+        # Évaluer si on est morts
+        if self.PV <= 0.0:
+            print(TFX(self.nom,gras=True,Pcoul=ROUGE) + TFX(" est mort.",Pcoul=ROUGE))
+            self.PV = 0.0
+            self.estVivant = False
+
 

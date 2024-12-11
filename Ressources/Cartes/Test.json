@@ -20,22 +20,22 @@
     ],
     "Entités" : [
         {
-            "ID" : "Golem",
+            "ID" : "Arbalettier",
             "Position" : [0,0],
             "Anim ID" : "Gol1"
         },
         {
-            "ID" : "Gosse",
+            "ID" : "Arbalettier",
             "Position" : [5,4],
             "Anim ID" : "Gos1"
         },
         {
-            "ID" : "Prêtre",
+            "ID" : "Arbalettier",
             "Position" : [5,5],
             "Anim ID" : "Pre1"
         },
         {
-            "ID" : "Chevalier",
+            "ID" : "Arbalettier",
             "Position" : [15,7],
             "Anim ID" : "Che1"
         },
@@ -45,7 +45,7 @@
             "Anim ID" : "Arb1"
         },
         {
-            "ID" : "Mineur",
+            "ID" : "Arbalettier",
             "Position" : [0,7],
             "Anim ID" : "Min1"
         }
