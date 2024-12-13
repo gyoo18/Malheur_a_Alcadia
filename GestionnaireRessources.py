@@ -12,24 +12,19 @@ import codecs
 import traceback
 import json
 import imageio.v3 as ImageIO
+from GUI.TkFenetre import TkFenetre
 
 class Ressources:
 
     ressources : Ressources = None
 
     def __init__(self):
-        self.cartes : list[Carte] = []
-        self.cartes_chargées : list[str] = []
-        self.entités : list[Entité] = []
-        self.entités_chargées : list[str] = []
-        self.dialogues : dict[list[str]] = []
-        self.dialogues_chargés : list[str] = []
-        self.resultat_zone_2 : str = ""
+        self.cartes : dict[Carte] = {}
+        self.entités : dict[Entité] = {}
+        self.dialogues : dict[list[str]] = {}
         self.indexe_ressources : dict = None
-        self.textures : list[Texture] = []
-        self.textures_chargées : list[str] = []
-        self.nuanceurs : list[Nuanceur] = []
-        self.nuanceurs_chargés : list[str] = []
+        self.textures : dict[Texture] = {}
+        self.nuanceurs : dict[Nuanceur] = {}
         try:
             self.indexe_ressources = json.load(codecs.open("Ressources/Définitions.json","r","utf-8"))
         except Exception as e:
@@ -37,6 +32,8 @@ class Ressources:
             traceback.print_exception(e)
             exit(-1)
         self.joueur = None
+
+        self.frames : dict[TkFenetre] = {}
 
     def avoirRessources():
         if Ressources.ressources == None:
@@ -47,8 +44,8 @@ class Ressources:
         pass
 
     def chargerCarte(self, nom : str):
-        if nom in self.cartes_chargées:
-            return self.cartes[self.cartes_chargées.index(nom)]
+        if nom in self.cartes.keys():
+            return self.cartes[nom]
         else: 
             if not nom in self.indexe_ressources["Cartes"]:
                 raise AttributeError("[Charger Carte] La carte " + nom + " n'est pas définie.")
@@ -179,14 +176,13 @@ class Ressources:
             carte = Carte(estScène,colonnes,lignes,matrice,entités,joueur_pos_init,séquences,prochaine)
             carte.estScène = estScène
             carte.script = script
-            self.cartes.append(carte)
-            self.cartes_chargées.append(nom)
+            self.cartes[nom] = carte
 
             return carte
 
     def chargerEntité(self,nom : str):
-        if False and nom in self.entités_chargées:
-            return self.entités[self.entités_chargées.index(nom)]
+        if False and nom in self.entités.keys():
+            return self.entités[nom]
         else :
             if not nom in self.indexe_ressources["Entités"]:
                 raise AttributeError("[Charger Entité] L'entité " + nom + " n'est pas définie.")
@@ -296,14 +292,13 @@ class Ressources:
                         raise TypeError("L'élément 'Caractère Couleur' de " + unitée.nom + " ne doit contenir que des float.")
                     unitée.nomAffichage = coul(unitée.nomAffichage,Vec3(unitée_dict["Caractère Couleur"][0],unitée_dict["Caractère Couleur"][1],unitée_dict["Caractère Couleur"][2]))
                 
-            self.entités.append(unitée)
-            self.entités_chargées.append(nom)
+            self.entités[nom] = unitée
             return unitée
     
     def chargerDialogue(self, groupe : str, ID : list[int]):
         from dialogue import dialogue
 
-        if groupe in self.dialogues_chargés:
+        if groupe in self.dialogues.keys():
             texte = ""
             for i in ID:
                 texte += self.dialogues[groupe][i] + '\n'
@@ -359,7 +354,7 @@ class Ressources:
                         texte += dialogue(d,personnage) + '\n'
                     else:
                         texte += d + '\n'
-                dialogue_texte = (dialogue_texte[0],texte)
+                dialogue_texte = (dialogue_texte[0],texte) # TODO #34 Implémenter la persitstance des dialogues dans la gestion des ressources
             return dialogue_texte
         
     def chargerPlan(self, plan_dict : dict, entités : list[tuple[str,Vec2|None,str|None]], source : str, clé : str|None,):
@@ -527,8 +522,8 @@ class Ressources:
         return m
 
     def chargerTexture(self, nom : str):
-        if nom in self.textures_chargées:
-            return self.textures[self.textures_chargées.index(nom)]
+        if nom in self.textures.keys():
+            return self.textures[nom]
         else:
             source = "Ressources/Textures/" + self.indexe_ressources["Textures"][nom]
             text = None
@@ -540,13 +535,12 @@ class Ressources:
                 exit(-1)
 
             texture = Texture(source,tex)
-            self.textures.append(texture)
-            self.textures_chargées.append(nom)
+            self.textures[nom] = texture
             return texture
 
     def chargerNuanceur(self, nom : str, enfant):
-        if nom in self.nuanceurs_chargés:
-            return self.nuanceurs[self.nuanceurs_chargés.index(nom)]
+        if nom in self.nuanceurs.keys():
+            return self.nuanceurs[nom]
         else:
             source = "Ressources/Nuanceurs/" + self.indexe_ressources["Nuanceurs"][nom]
             fichier = None
@@ -575,6 +569,19 @@ class Ressources:
             fichier.close()
 
             nuanceur = enfant(sommets_source,fragments_source)
-            self.nuanceurs.append(nuanceur)
-            self.nuanceurs_chargés.append(nom)
+            self.nuanceurs[nom] = nuanceur
             return nuanceur
+        
+    def enregistrerMenu(self, frame : Frame, nom : str):
+        if not nom in self.frames.keys():
+            self.frames[nom] = frame
+        else:
+            raise ValueError("[enregistrerMenu] Un menu au nom de " + str(nom) + " existe déjà. Veuillez indiquer un nom unique pour chaque menu.")
+    
+    def obtenirMenu(self, nom : str) -> TkFenetre:
+        if nom in self.frames.keys():
+            return self.frames[nom]
+        else:
+            traceback.print_exc()
+            print(coul(gras("[Erreur : obtenirMenu] Aucun menu du nom de " + str(nom) + " n'existe."),ROUGE))
+            return None

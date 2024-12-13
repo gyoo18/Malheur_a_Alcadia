@@ -12,9 +12,6 @@ import tkinter
 import sys
 import os
 
-import time
-import math
-
 class Peintre(tkinter.Widget, tkinter.Misc):
 
     def __init__(self, parent, cnf={}, **kw):
@@ -24,6 +21,7 @@ class Peintre(tkinter.Widget, tkinter.Misc):
         self.couleur_arrière_plan = (0.8,0.8,0.8)
         self.carte : Carte = None
         self.initialisé = False
+        self.estVisible = False
 
         # !==== Code copié de la librairie tkinter-gl ====!
 
@@ -35,8 +33,7 @@ class Peintre(tkinter.Widget, tkinter.Misc):
             raise RuntimeError('TkGL package directory "%s" is missing.' % pkg_dir)
         parent.tk.call('lappend', 'auto_path', pkg_dir)
         parent.tk.call('package', 'require', 'Tkgl')
-        # if self.profile:
-        #     kw['profile'] = self.profile
+
         tkinter.Widget.__init__(self, parent, 'tkgl', cnf, kw)
         
         # !==== Code copié de la librairie tkinter-gl ====!
@@ -57,7 +54,6 @@ class Peintre(tkinter.Widget, tkinter.Misc):
         self.largeure = self.winfo_width()
         self.hauteure = self.winfo_height()
 
-        # glPointSize(4)
         glViewport(0,0,self.largeure, self.hauteure)
         self.initialisé = True
         print("Peintre Initialisé")

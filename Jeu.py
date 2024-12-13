@@ -11,6 +11,7 @@ import copy
 from Ressources.Scripts import GestionnaireScripts
 import tkinter as tk
 from InclusionsCirculaires.Jeu_Peintre import *
+from GUI.TkFenetre import TkFenetre
 
 class ÉtatJeu:
     MENU = "menu"
@@ -55,6 +56,7 @@ class Jeu:
     jeu : Jeu = None
 
     def __init__(self):
+        import menu
         self.état : ÉtatJeu = ÉtatJeu()    # Indique l'état du jeu
         self.chapitre : Chapitre = Chapitre()   # Indique le chapitre scénaristique actuel et la zone.
         self.choix : str = ""       # Décrit le choix que le joueur a fait à la fin du niveau s'il y a lieu
@@ -62,9 +64,13 @@ class Jeu:
         self.carte : Carte = None
         self.conditionsDeTransitionManuelles = False
 
+        self.dialogue_jeu_temps_début :float = 0.0
+
         self.tkracine = tk.Tk()
+        menu.initialiserMenus(self.tkracine)
         self.peintre = Peintre(self.tkracine)
-        self.peintre.pack(expand=True, fill='both',padx = 10,pady=10)
+
+        self.frame_actuelle : TkFenetre = None
     
     def avoirJeu():
         if Jeu.jeu == None:
@@ -79,7 +85,7 @@ class Jeu:
             menu.displayUI()
         elif self.état.v == ÉtatJeu.MENU_CONTEXTUEL:
             menu.menu_contextuel()
-        else :
+        elif self.état.v in [ÉtatJeu.JEU,ÉtatJeu.DÉBUT,ÉtatJeu.SUCCÈS,ÉtatJeu.ÉCHEC,ÉtatJeu.SCÈNE]:
             menu.ingameUI()
         
         if self.état.v in [ÉtatJeu.DÉBUT,ÉtatJeu.SUCCÈS,ÉtatJeu.ÉCHEC,ÉtatJeu.SCÈNE]:
@@ -138,7 +144,8 @@ class Jeu:
         if self.carte.script != None:
             GestionnaireScripts.MettreÀJourScript(self.carte.script)
 
-        self.tkracine.after_idle(self.peintre.peindre)
+        if self.peintre.estVisible:
+            self.tkracine.after_idle(self.peintre.peindre)
         self.tkracine.update_idletasks()
         self.tkracine.update()
 

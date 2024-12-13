@@ -8,6 +8,25 @@ from Jeu import *
 import dialogue
 from TFX import *
 from Entités.Golem import *
+from tkinter import Frame,Button,Label,Grid
+from GUI.TkFenetre import TkFenetre
+
+def initialiserMenus(tkracine : tkinter.Tk):
+    res = Ressources.avoirRessources()
+    
+    menu_principal = TkFenetre(Frame(tkracine))
+    jeu_principal = TkFenetre(Frame(tkracine))
+    menu_aide = TkFenetre(Frame(tkracine))
+    menu_info = TkFenetre(Frame(tkracine))
+    menu_combat = TkFenetre(Frame(tkracine))
+    menu_select = TkFenetre(Frame(tkracine))
+
+    res.enregistrerMenu(menu_principal,"menu_principal")
+    res.enregistrerMenu(jeu_principal,"jeu_principal")
+    res.enregistrerMenu(menu_aide,"menu_aide")
+    res.enregistrerMenu(menu_info,"menu_info")
+    res.enregistrerMenu(menu_combat,"menu_combat")
+    res.enregistrerMenu(menu_select,"menu_select")
 
 def clearScreen():
     # os.system("cls" if os.name == 'nt' else "clear")
@@ -25,6 +44,7 @@ def effaceCommande():
 
 def ingameUI():
     """Display the in-game UI."""
+    res = Ressources.avoirRessources()
     jeu = Jeu.avoirJeu()
     carte = jeu.carte
     séquence : Séquence = None
@@ -34,160 +54,388 @@ def ingameUI():
         séquence = carte.séquences[jeu.état.v]
     plan = séquence.plans[jeu.état.scène_étape]
 
-    clearScreen()
-
-    # Header
-    header = "=" * 50
-    header2 = gras(plan.titres[jeu.état.scène_animation_étape])
-    header2 = header2.center(50)
-    header3 = "=" * 50
-
-    print(header)
-    print(header2)
-    print(header3)
-
-    # Display game map
-    print(carte.dessiner().center(50))
+    fenetre = res.obtenirMenu("jeu_principal")
     
-    # Footer
-    footer = "=" * 50
-    controls = ""
-    if jeu.état.v == ÉtatJeu.JEU:
-        controls = random.choice(séquence.plans).dialogues[jeu.état.scène_animation_étape]
-        controls += "Tapez « ? » ou « aide » pour obtenir la liste des commandes.\n"
-    else:
-        controls = plan.dialogues[jeu.état.scène_animation_étape]
-    controls = controls.center(50)
-    footer_end = "=" * 50
+    if not fenetre.initialisé:
+        jeu.peintre.pack_forget()
 
-    print(footer)
-    print(controls,end='')
-    print(footer_end)
+        titre = Label(fenetre.frame,text=plan.titres[jeu.état.scène_animation_étape])
+        titre.pack(pady=10)
+
+        jeu.peintre.pack(in_=fenetre.frame,pady=10)
+        jeu.peintre.estVisible = True
+
+        dialogue = Label(fenetre.frame,text="Dialogue")
+        dialogue.pack(pady=10)
+        fenetre.enregistrerWidget(dialogue,"dialogue")
+
+        grille_boutons = Frame(fenetre.frame)
+        grille_boutons.pack(pady=10)
+        fenetre.enregistrerWidget(grille_boutons,"grille_boutons")
+
+        jeu.frame_actuelle.pack_forget()
+        fenetre.frame.pack()
+        jeu.frame_actuelle = fenetre
+        fenetre.initialisé = True
+    elif jeu.frame_actuelle != fenetre:
+        jeu.peintre.pack_forget()
+        jeu.peintre.pack(in_=fenetre.frame,pady=10)
+        jeu.peintre.estVisible = True
+
+        jeu.frame_actuelle.pack_forget()
+        fenetre.frame.pack()
+        jeu.frame_actuelle = fenetre.frame
+
+    dialogue = fenetre.obtenirWidget("dialogue")
+    if jeu.état.v == ÉtatJeu.JEU and time.time()-jeu.dialogue_jeu_temps_début >= 3.0:
+        dialogue["text"] = random.choice(séquence.plans).dialogues[jeu.état.scène_animation_étape]
+        dialogue["text"] += "Tapez « ? » ou « aide » pour obtenir la liste des commandes.\n"
+        jeu.dialogue_jeu_temps_début = time.time()
+    elif jeu.état.v != ÉtatJeu.JEU:
+        dialogue["text"] = plan.dialogues[jeu.état.scène_animation_étape]
+
+    grille_boutons = fenetre.obtenirWidget("grille_boutons")
+    
+    # construire les bouttons
     if jeu.état.v == ÉtatJeu.SCÈNE:
         if plan.estAnimation and jeu.état.scène_animation_étape < len(plan.titres)-1:
             jeu.état.scène_animation_étape += 1
             time.sleep(plan.temps[jeu.état.scène_animation_étape-1])
         elif not plan.estAnimation and jeu.état.scène_étape < len(séquence.plans)-1:
-            jeu.état.scène_étape += 1
-            input("")
+            if fenetre.état != 0:
+                for w in grille_boutons.winfo_children():
+                    w.destroy()
+                def commande(jeu : Jeu):
+                    jeu.état.scène_étape+=1
+
+                bouton_continuer = Button(grille_boutons,text="Continuer",command=lambda: commande(jeu))
+                bouton_continuer.pack(pady=10)
+                fenetre.état = 0
         else:
-            jeu.état.scène_étape = 0
-            jeu.état.scène_animation_étape = 0
-            jeu.état.v = ÉtatJeu.TRANSITION
-            input("")
+            if fenetre.état != 1:
+                for w in grille_boutons.winfo_children():
+                    w.destroy()
+                def commande(jeu : Jeu):
+                    jeu.état.scène_étape = 0
+                    jeu.état.scène_animation_étape = 0
+                    jeu.état.v = ÉtatJeu.TRANSITION
+                bouton_continuer = Button(grille_boutons,text="Continuer",command=lambda: commande(jeu))
+                bouton_continuer.pack(pady=10)
+                fenetre.état = 1
     elif jeu.état.v != ÉtatJeu.JEU and plan.estAnimation and jeu.état.scène_animation_étape < len(plan.titres)-1:
         jeu.état.scène_animation_étape += 1
         time.sleep(plan.temps[jeu.état.scène_animation_étape-1])
     elif jeu.état.v == ÉtatJeu.DÉBUT:
         if carte.estScène:
-            pass
+            pass    # TODO Implémenter cette ligne
         else:
             if jeu.état.scène_étape == len(séquence.plans)-1:
-                jeu.état.v = ÉtatJeu.JEU
-                jeu.état.scène_étape = 0
-                jeu.état.scène_animation_étape = 0
-
-                décalage = 0
-                for i in range(len(carte.entités)):
-                    if type(carte.entités[i]) != Joueur:
-                        carte.entités[i].pos = carte.entités_préchargement[i + décalage][1].copie()
-                    else:
-                        carte.entités[i].pos = carte.joueur_pos_init
-                        décalage = -1
-
-            else:
-                jeu.état.scène_étape += 1
-        input("")
-    elif jeu.état.v == ÉtatJeu.JEU:
-        while True:
-            commande = input("> ").upper().split(" ")
+                if fenetre.état != 2:
+                    for w in grille_boutons.winfo_children():
+                        w.destroy()
+                    def commande(jeu:Jeu):
+                        jeu.état.v = ÉtatJeu.JEU
+                        jeu.état.scène_étape = 0
+                        jeu.état.scène_animation_étape = 0
             
-            if commande[0] == '':
-                jeu.état.v = ÉtatJeu.FIN_TOUR
-                break
-            elif commande[0] == 'I' or commande[0] == "INFO":
-                if commande_menu_info(jeu.état.v,commande):
-                    break
-            elif commande[0] == 'S' or commande[0] == "SELECT":
-                if commande_menu_select(jeu.état.v,commande):
-                    break
-            elif commande[0] == 'C' or commande[0] == "COMBAT":
-                commande_menu_combat(jeu.état.v)
-                break
-            elif commande[0] == '?' or commande[0] == "AIDE":
-                commande_menu_aide(jeu.état.v)
-                break
+                        décalage = 0
+                        for i in range(len(carte.entités)):
+                            if type(carte.entités[i]) != Joueur:
+                                carte.entités[i].pos = carte.entités_préchargement[i + décalage][1].copie()
+                            else:
+                                carte.entités[i].pos = carte.joueur_pos_init
+                                décalage = -1
+                    bouton_continuer = Button(grille_boutons,text="Continuer",command=lambda: commande(jeu))
+                    bouton_continuer.pack(pady=10)
+                    fenetre.état = 2
             else:
-                print(coul("Veuillez entrer une commande valide ou taper",ROUGE)+TFX("entré",gras=True,Pcoul=ROUGE)+coul(" pour finir le tour.",ROUGE))
-                time.sleep(1.5)
-                effaceCommande()
+                if fenetre.état != 3:
+                    for w in grille_boutons.winfo_children():
+                        w.destroy()
+                    def commande(jeu:Jeu):
+                        jeu.état.scène_étape += 1
+                    bouton_continuer = Button(grille_boutons,text="Continuer",command=lambda: commande(jeu))
+                    bouton_continuer.pack(pady=10)
+                    fenetre.état = 3
+    elif jeu.état.v == ÉtatJeu.JEU:
+        if fenetre.état != 4:
+            for w in grille_boutons.winfo_children():
+                w.destroy()
+            def fin_tour(jeu:Jeu):
+                jeu.état.v=ÉtatJeu.FIN_TOUR
+            boutton_fin_tour = Button(grille_boutons,text="Terminer le tour",command=lambda: fin_tour(jeu))
+            boutton_fin_tour.pack(pady=10)
+
+            # boutton_info = Button(grille_boutons,text="Infos",command=lambda: fin_tour(jeu))
+            # boutton_info.pack(pady=10)
+
+            boutton_aide = Button(grille_boutons,text="Aide",command=lambda: commande_menu_aide(jeu.état.v))
+            boutton_aide.pack(pady=10)
+
+            def commande_réussir(jeu:Jeu):
+                for e in jeu.carte.entités:
+                    if e.camp == Entité.CAMP_PAYSANS or e.camp == Entité.CAMP_PERSONNAGES:
+                        e.estVivant = False
+                jeu.état.v = ÉtatJeu.FIN_TOUR
+            boutton_aide = Button(grille_boutons,text="Réussir",command=lambda: commande_réussir(jeu))
+            boutton_aide.pack(pady=10)
+
+            # while True:
+            #     commande = input("> ").upper().split(" ")
+            #     
+            #     if commande[0] == '':
+            #         jeu.état.v = ÉtatJeu.FIN_TOUR
+            #         break
+            #     elif commande[0] == 'I' or commande[0] == "INFO":
+            #         if commande_menu_info(jeu.état.v,commande):
+            #             break
+            #     elif commande[0] == 'S' or commande[0] == "SELECT":
+            #         if commande_menu_select(jeu.état.v,commande):
+            #             break
+            #     elif commande[0] == 'C' or commande[0] == "COMBAT":
+            #         commande_menu_combat(jeu.état.v)
+            #         break
+            #     elif commande[0] == '?' or commande[0] == "AIDE":
+            #         commande_menu_aide(jeu.état.v)
+            #         break
+            #     else:
+            #         print(coul("Veuillez entrer une commande valide ou taper",ROUGE)+TFX("entré",gras=True,Pcoul=ROUGE)+coul(" pour finir le tour.",ROUGE))
+            #         time.sleep(1.5)
+            #         effaceCommande()
+
+            fenetre.état = 4
     elif jeu.état.v == ÉtatJeu.SUCCÈS:
         if carte.estScène:
             pass
         else:
             if jeu.état.scène_étape == len(séquence.plans)-1:
-                jeu.état.v = ÉtatJeu.TRANSITION
-                jeu.état.scène_étape = 0
-                jeu.état.scène_animation_étape = 0
+                if fenetre.état != 5:
+                    for w in grille_boutons.winfo_children():
+                        w.destroy()
+                    def commande(jeu):
+                        jeu.état.v = ÉtatJeu.TRANSITION
+                        jeu.état.scène_étape = 0
+                        jeu.état.scène_animation_étape = 0
+                    bouton_continuer = Button(grille_boutons,text="Continuer",command=lambda: commande(jeu))
+                    bouton_continuer.pack(pady=10)
+                    fenetre.état = 5
             else:
-                jeu.état.scène_étape += 1
-        input("")
+                if fenetre.état != 6:
+                    for w in grille_boutons.winfo_children():
+                        w.destroy()
+                    def commande(jeu):
+                        jeu.état.scène_étape += 1
+                    bouton_continuer = Button(grille_boutons,text="Continuer",command=lambda: commande(jeu))
+                    bouton_continuer.pack(pady=10)
+                    fenetre.état = 6
     elif jeu.état.v == ÉtatJeu.ÉCHEC:
         if carte.estScène:
             pass
         else:
             if jeu.état.scène_étape == len(séquence.plans)-1:
-                jeu.état.v = ÉtatJeu.TERMINÉ
-                jeu.état.scène_étape = 0
-                jeu.état.scène_animation_étape = 0
+                if fenetre.état != 7:
+                    for w in grille_boutons.winfo_children():
+                        w.destroy()
+                    def commande(jeu):
+                        jeu.état.v = ÉtatJeu.TERMINÉ
+                        jeu.état.scène_étape = 0
+                        jeu.état.scène_animation_étape = 0
+                    bouton_continuer = Button(grille_boutons,text="Continuer",command=lambda: commande(jeu))
+                    bouton_continuer.pack(pady=10)
+                    fenetre.état = 7
             else:
-                jeu.état.scène_étape += 1
-        input("")
+                if fenetre.état != 8:
+                    for w in grille_boutons.winfo_children():
+                        w.destroy()
+                    def commande(jeu):
+                        jeu.état.scène_étape += 1
+                    bouton_continuer = Button(grille_boutons,text="Continuer",command=lambda: commande(jeu))
+                    bouton_continuer.pack(pady=10)
+                    fenetre.état = 8
     else:
-        raise ValueError("[inGameUI] L'état du jeu n'est pas reconnus.")
+        print(coul(gras("[inGameUI] L'état du jeu n'est pas reconnus."),ROUGE))
+
+    """
+    # clearScreen()
+    # 
+    # # Header
+    # header = "=" * 50
+    # header2 = gras(plan.titres[jeu.état.scène_animation_étape])
+    # header2 = header2.center(50)
+    # header3 = "=" * 50
+    # 
+    # print(header)
+    # print(header2)
+    # print(header3)
+    # 
+    # # Display game map
+    # print(carte.dessiner().center(50))
+    # 
+    # # Footer
+    # footer = "=" * 50
+    # controls = ""
+    # if jeu.état.v == ÉtatJeu.JEU:
+    #     controls = random.choice(séquence.plans).dialogues[jeu.état.scène_animation_étape]
+    #     controls += "Tapez « ? » ou « aide » pour obtenir la liste des commandes.\n"
+    # else:
+    #     controls = plan.dialogues[jeu.état.scène_animation_étape]
+    # controls = controls.center(50)
+    # footer_end = "=" * 50
+    # 
+    # print(footer)
+    # print(controls,end='')
+    # print(footer_end)
+    """
+    # if jeu.état.v == ÉtatJeu.SCÈNE:
+    #     if plan.estAnimation and jeu.état.scène_animation_étape < len(plan.titres)-1:
+    #         jeu.état.scène_animation_étape += 1
+    #         time.sleep(plan.temps[jeu.état.scène_animation_étape-1])
+    #     elif not plan.estAnimation and jeu.état.scène_étape < len(séquence.plans)-1:
+    #         jeu.état.scène_étape += 1
+    #         input("")
+    #     else:
+    #         jeu.état.scène_étape = 0
+    #         jeu.état.scène_animation_étape = 0
+    #         jeu.état.v = ÉtatJeu.TRANSITION
+    #         input("")
+    # elif jeu.état.v != ÉtatJeu.JEU and plan.estAnimation and jeu.état.scène_animation_étape < len(plan.titres)-1:
+    #     jeu.état.scène_animation_étape += 1
+    #     time.sleep(plan.temps[jeu.état.scène_animation_étape-1])
+    # elif jeu.état.v == ÉtatJeu.DÉBUT:
+    #     if carte.estScène:
+    #         pass
+    #     else:
+    #         if jeu.état.scène_étape == len(séquence.plans)-1:
+    #             jeu.état.v = ÉtatJeu.JEU
+    #             jeu.état.scène_étape = 0
+    #             jeu.état.scène_animation_étape = 0
+    # 
+    #             décalage = 0
+    #             for i in range(len(carte.entités)):
+    #                 if type(carte.entités[i]) != Joueur:
+    #                     carte.entités[i].pos = carte.entités_préchargement[i + décalage][1].copie()
+    #                 else:
+    #                     carte.entités[i].pos = carte.joueur_pos_init
+    #                     décalage = -1
+    # 
+    #         else:
+    #             jeu.état.scène_étape += 1
+    #     input("")
+    # elif jeu.état.v == ÉtatJeu.JEU:
+    #     while True:
+    #         commande = input("> ").upper().split(" ")
+    #         
+    #         if commande[0] == '':
+    #             jeu.état.v = ÉtatJeu.FIN_TOUR
+    #             break
+    #         elif commande[0] == 'I' or commande[0] == "INFO":
+    #             if commande_menu_info(jeu.état.v,commande):
+    #                 break
+    #         elif commande[0] == 'S' or commande[0] == "SELECT":
+    #             if commande_menu_select(jeu.état.v,commande):
+    #                 break
+    #         elif commande[0] == 'C' or commande[0] == "COMBAT":
+    #             commande_menu_combat(jeu.état.v)
+    #             break
+    #         elif commande[0] == '?' or commande[0] == "AIDE":
+    #             commande_menu_aide(jeu.état.v)
+    #             break
+    #         else:
+    #             print(coul("Veuillez entrer une commande valide ou taper",ROUGE)+TFX("entré",gras=True,Pcoul=ROUGE)+coul(" pour finir le tour.",ROUGE))
+    #             time.sleep(1.5)
+    #             effaceCommande()
+    # elif jeu.état.v == ÉtatJeu.SUCCÈS:
+    #     if carte.estScène:
+    #         pass
+    #     else:
+    #         if jeu.état.scène_étape == len(séquence.plans)-1:
+    #             jeu.état.v = ÉtatJeu.TRANSITION
+    #             jeu.état.scène_étape = 0
+    #             jeu.état.scène_animation_étape = 0
+    #         else:
+    #             jeu.état.scène_étape += 1
+    #     input("")
+    # elif jeu.état.v == ÉtatJeu.ÉCHEC:
+    #     if carte.estScène:
+    #         pass
+    #     else:
+    #         if jeu.état.scène_étape == len(séquence.plans)-1:
+    #             jeu.état.v = ÉtatJeu.TERMINÉ
+    #             jeu.état.scène_étape = 0
+    #             jeu.état.scène_animation_étape = 0
+    #         else:
+    #             jeu.état.scène_étape += 1
+    #     input("")
+    # else:
+    #     raise ValueError("[inGameUI] L'état du jeu n'est pas reconnus.")
 
 def displayUI():
+    res = Ressources.avoirRessources()
     jeu = Jeu.avoirJeu()
 
-    clearScreen()
+    fenetre = res.obtenirMenu("menu_principal")
 
-    header = "=" * 50
-    header2 = gras("Malheur à Alcadia!").center(50)
-    header3 = "=" * 50
-
-    print(header)
-    print(header2)
-    print(header3)
-
-    menu = "menu".center(50)
-    inputs = "S = commencer, T = tutoriel, Q = quitter".center(50)
-
-    print(menu)
-    print(inputs)
+    if not fenetre.initialisé:
+        titre = Label(fenetre.frame,text="Malheu à Alcadia!")
+        titre.pack(pady=10)
 
 
-    footer = "=" * 50
-    print(footer)
+        def bouton_commencer(jeu:Jeu):
+            if jeu.carte.estScène:
+                jeu.état.v = ÉtatJeu.SCÈNE
+            else:
+                jeu.état.v = ÉtatJeu.DÉBUT
+        commencer = Button(fenetre.frame,text="Commencer",command=lambda: bouton_commencer(jeu))
+        commencer.pack(pady=10)
+
+        def bouton_Quitter(jeu : Jeu):
+            jeu.état.v = ÉtatJeu.TERMINÉ
+        quitter = Button(fenetre.frame,text="Quitter",command=lambda: bouton_Quitter(jeu))
+        quitter.pack(pady=10)
+
+        fenetre.frame.pack()
+        jeu.frame_actuelle = fenetre.frame
+        fenetre.initialisé = True
+
+    # clearScreen()
+    # 
+    # header = "=" * 50
+    # header2 = gras("Malheur à Alcadia!").center(50)
+    # header3 = "=" * 50
+    # 
+    # print(header)
+    # print(header2)
+    # print(header3)
+    # 
+    # menu = "menu".center(50)
+    # inputs = "S = commencer, T = tutoriel, Q = quitter".center(50)
+    # 
+    # print(menu)
+    # print(inputs)
+    # 
+    # 
+    # footer = "=" * 50
+    # print(footer)
 
     # while True:
-    key = input("Que voulez-vous faire? ").strip().lower()
-    if key == "s":
-        # ingameUI(game_map)  # Pass the game map to the in-game UI
-        if jeu.carte.estScène:
-            jeu.état.v = ÉtatJeu.SCÈNE
-        else:
-            jeu.état.v = ÉtatJeu.DÉBUT
-    elif key == "t":
-        print("W (haut), S (bas), A (gauche), D (droite)")
-        time.sleep(2)
-    elif key == "q":
-        print("Goodbye!")
-        time.sleep(1)
-        jeu.état.v = ÉtatJeu.TERMINÉ
-        # break
-    else:
-        print("Choix invalide, veuillez choisir une option : S, T ou Q")
-        time.sleep(1)
+    #   key = input("Que voulez-vous faire? ").strip().lower()
+    #   if key == "s":
+    #       # ingameUI(game_map)  # Pass the game map to the in-game UI
+    #       if jeu.carte.estScène:
+    #           jeu.état.v = ÉtatJeu.SCÈNE
+    #       else:
+    #           jeu.état.v = ÉtatJeu.DÉBUT
+    #   elif key == "t":
+    #       print("W (haut), S (bas), A (gauche), D (droite)")
+    #       time.sleep(2)
+    #   elif key == "q":
+    #       print("Goodbye!")
+    #       time.sleep(1)
+    #       jeu.état.v = ÉtatJeu.TERMINÉ
+    #       break
+    #   else:
+    #       print("Choix invalide, veuillez choisir une option : S, T ou Q")
+    #       time.sleep(1)
 
 def menu_contextuel():
 
