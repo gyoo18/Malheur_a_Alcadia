@@ -138,10 +138,17 @@ class Golem(Entité):
 
     def __init__(self):
         super().__init__()
-        self.camp = Entité.CAMP_GOLEMS
-        self.campsEnnemis = [Entité.CAMP_PAYSANS]
+        self.camp = "Golems"
+        self.campsEnnemis = ["Paysans"]
         self.nom = "Golem"
+        self.cooldown = 0
 
+    def MiseÀJour(self):
+        if cooldown>0:
+            cooldown=cooldown-1
+        else :
+            cooldown=cooldown
+        self._MiseÀJourIA()
     
     def commande(self, commande : Commande):
         """commande Reçoit et interpète une commande donnée par le joueur
@@ -201,7 +208,7 @@ class Golem(Entité):
 
         self.état.v = ÉtatIA.DÉPLACEMENT
         self.cible = commande.ennemi_cible
-        self.naviguerVers(self.cible.pos,True)
+        self.naviguerVers(self.cible.pos)
     def _commandeAttaqueSpéciale(self, commande : Commande):
         """ Exécute une commande ATTAQUE_SPÉCIALE
 
@@ -298,9 +305,9 @@ class GolemTerre(Golem):
         self.nom=Entité.nom_aléatoire(GolemTerre.noms)
         self.attaque_sol_dégats : float = 1.0
         self.attaque_sol_rayon : float = 2.0
-        
+        self.cooldown_max : int = 2
     def _commandeAttaqueSpéciale(self, commande : Commande):
-        if commande.attaque_spéciale == self.ATTAQUE_SPÉCIALE:
+        if commande.attaque_spéciale == self.ATTAQUE_SPÉCIALE and self.cooldown == 0:
             attaque = Attaque(self)
             attaque.dégats = self.attaque_sol_dégats + self.attaque_chargée*self.chargement
             attaque.élément = Élément.TERRE
@@ -309,7 +316,7 @@ class GolemTerre(Golem):
                     attaque.distance = Vec2.distance(self.pos,ennemi.pos)
                     attaque.direction = ennemi.pos-self.pos
                     ennemi.Attaquer(attaque)
-    
+            self.cooldown=self.cooldown_max
     def _AttaquerCible(self):
         attaque = Attaque(self)
         attaque.dégats = self.attaque_normale_dégats + self.attaque_chargée*self.chargement
@@ -342,11 +349,11 @@ class GolemEau(Golem):
         self.dégats_libre=self.Random_Stats(25,31)
         self.nom=Entité.nom_aléatoire(GolemEau.noms)
         self.tornade_pousser_distance : int = 3
-
-        self.max_distance_attaque : float = 4
+        self.cooldown_max : float = 4.0
+        self.max_distance_attaque : int = 4
 
     def _commandeAttaqueSpéciale(self, commande):
-        if commande.attaque_spéciale == self.ATTAQUE_ and Vec2.distance(self.pos, commande.ennemi_cible.pos) <= self.max_distance_attaque:
+        if commande.attaque_spéciale == self.ATTAQUE_ and Vec2.distance(self.pos, commande.ennemi_cible.pos) <= self.max_distance_attaque and self.cooldown==0:
             for i in range(self.tornade_pousser_distance + self.chargement):
                 direction = Vec2.norm(commande.ennemi_cible.pos - self.pos)
                 direction.x = round(direction.x)
@@ -358,7 +365,7 @@ class GolemEau(Golem):
                     déplacement += direction*Vec2(1,0)
                 commande.ennemi_cible.pos += déplacement
             self.chargement = 0
-    
+            self.cooldown=self.cooldown_max
     def _commandeDéplacement(self, commande):
         print(coul("Le golem d'eau ne peut pas se déplacer!",JAUNE))
 
@@ -439,9 +446,9 @@ class GolemFeu(Golem):
         self.nom=Entité.nom_aléatoire(GolemFeu.noms)
         self.attaque_max_distance : float = 4.0
         self.boule_feu_dégats : int = 3
-
+        self.cooldown_max : int = 3
     def _commandeAttaqueSpéciale(self, commande):
-        if commande.attaque_spéciale == self.ATTAQUE_SPÉCIALE and Vec2.distance(self.pos,commande.ennemi_cible.pos) <= self.attaque_normale_dégats:
+        if commande.attaque_spéciale == self.ATTAQUE_SPÉCIALE and Vec2.distance(self.pos,commande.ennemi_cible.pos) <= self.attaque_normale_dégats and self.cooldown==0:
             attaque = Attaque(self)
             attaque.élément = Élément.FEU
             attaque.est_projectile = True
@@ -449,7 +456,7 @@ class GolemFeu(Golem):
             attaque.direction = commande.ennemi_cible.pos - self.pos
             attaque.dégats = self.boule_feu_dégats + self.attaque_chargée*self.chargement
             commande.ennemi_cible.Attaquer(attaque)
-    
+            self.cooldown=self.cooldown_max
     def _AttaquerCible(self):
         attaque = Attaque(self)
         attaque.dégats = self.attaque_normale_dégats + self.attaque_chargée*self.chargement
