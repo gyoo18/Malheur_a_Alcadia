@@ -9,6 +9,9 @@ from Entités.Paysan import *
 from Entités.Personnages import *
 import copy
 from Ressources.Scripts import GestionnaireScripts
+import tkinter as tk
+from InclusionsCirculaires.Jeu_Peintre import *
+from GUI.TkFenetre import TkFenetre
 
 class ÉtatJeu:
     MENU = "menu"
@@ -53,12 +56,27 @@ class Jeu:
     jeu : Jeu = None
 
     def __init__(self):
+        import menu
         self.état : ÉtatJeu = ÉtatJeu()    # Indique l'état du jeu
         self.chapitre : Chapitre = Chapitre()   # Indique le chapitre scénaristique actuel et la zone.
         self.choix : str = ""       # Décrit le choix que le joueur a fait à la fin du niveau s'il y a lieu
         self.menu : MenuContextuel = MenuContextuel() # Décrit le menu contextuel ouvert ou précédemment ouvert.
         self.carte : Carte = None
         self.conditionsDeTransitionManuelles = False
+
+        self.dialogue_jeu_temps_début :float = 0.0
+
+        self.tkracine = tk.Tk()
+        self.tkracine.geometry("1024x1024")
+        menu.initialiserMenus(self.tkracine)
+        self.peintre = Peintre(self.tkracine)
+
+        self.tkracine.protocol("WM_DELETE_WINDOW",self.surFenêtreFermée)
+
+        self.frame_actuelle : TkFenetre = None
+
+        self.case_sélectionnée : Vec2 = None
+        self.entité_sélectionnée : Vec2 = None
     
     def avoirJeu():
         if Jeu.jeu == None:
@@ -73,14 +91,14 @@ class Jeu:
             menu.displayUI()
         elif self.état.v == ÉtatJeu.MENU_CONTEXTUEL:
             menu.menu_contextuel()
-        else :
+        elif self.état.v in [ÉtatJeu.JEU,ÉtatJeu.DÉBUT,ÉtatJeu.SUCCÈS,ÉtatJeu.ÉCHEC,ÉtatJeu.SCÈNE]:
             menu.ingameUI()
         
         if self.état.v in [ÉtatJeu.DÉBUT,ÉtatJeu.SUCCÈS,ÉtatJeu.ÉCHEC,ÉtatJeu.SCÈNE]:
             for i in range(len(self.carte.entités)):
                 self.carte.entités[i].MiseÀJour()
 
-        os.system("cls" if os.name == 'nt' else "clear")
+        # os.system("cls" if os.name == 'nt' else "clear")
         if self.état.v == ÉtatJeu.FIN_TOUR:
             paysans = False
             joueur = False
@@ -120,17 +138,26 @@ class Jeu:
                 Arbalettier.noms = copy.deepcopy(Arbalettier.noms_originaux)
                 Chevalier.noms = copy.deepcopy(Chevalier.noms_originaux)
                 self.changerCarte(res.chargerCarte(self.carte.prochaine))
+                self.tkracine.after_idle(lambda: self.peintre.surModificationFenetre(None))
                 if self.carte.estScène:
                     self.état.v = ÉtatJeu.SCÈNE
                 else:
                     self.état.v = ÉtatJeu.DÉBUT
                 for e in self.carte.entités:
                     e.MiseÀJour()
+
+                self.entité_sélectionnée = None
+                self.case_sélectionnée = None
             else:
                 self.état.v = ÉtatJeu.TERMINÉ
 
         if self.carte.script != None:
             GestionnaireScripts.MettreÀJourScript(self.carte.script)
+
+        if self.peintre.estVisible:
+            self.tkracine.after_idle(self.peintre.peindre)
+        self.tkracine.update_idletasks()
+        self.tkracine.update()
 
     def changerCarte(self,carte : Carte):
         res = GestionnaireRessources.Ressources.avoirRessources()
@@ -146,6 +173,9 @@ class Jeu:
             entité.carte = self.carte
             self.carte.entités.append(entité)
 
+        if res.joueur == None:
+            res.joueur = Joueur()
+
         joueur = copy.deepcopy(res.joueur)
         joueur.pos = self.carte.joueur_pos_init
         joueur.carte = self.carte
@@ -153,3 +183,13 @@ class Jeu:
 
         if self.carte.script != None:
             GestionnaireScripts.InitialiserScript(self.carte.script)
+        
+        self.peintre.changerCarte(self.carte)
+    
+    def surFenêtreFermée(self):
+        self.état.v = ÉtatJeu.TERMINÉ
+
+    def déselectionner(self):
+        self.case_sélectionnée = None
+        self.entité_sélectionnée = None
+        self.carte.déselectionner()

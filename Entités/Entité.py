@@ -2,7 +2,8 @@ from __future__ import annotations
 from typing_extensions import Self
 import random
 import sys
-from Maths.Vec2 import *
+from Maths.Vec2 import Vec2
+from Maths.Vec4 import Vec4
 from InclusionsCirculaires.Entité_Attaque import *
 from InclusionsCirculaires.Entité_Carte import *
 from copy import deepcopy
@@ -38,6 +39,7 @@ class Entité:
     CAMP_PERSONNAGES = "Personnages"
 
     def __init__(self):
+        from Dessin.Image import Image
         # Charactérisitques décrivant l'entité
         self.PVMax : int = 100         # Points de vies maximum
         self.PV : float = self.PVMax  # Points de vies restants
@@ -73,11 +75,14 @@ class Entité:
 
         self.chemin : list[Vec2] = []  # Liste des tuiles sur le chemin précalculé
         self.carte : Carte = None  # Référence à la carte jouée en ce moment
+        self.dessin_Image : Image = None
 
         noms = ["Jean", "Salom", "Guy", "Pascal", "Eva"]
 
         # Appel de la fonction avec la liste de noms
         self.nom = Entité.nom_aléatoire(noms)
+
+        self.couleur_bordure : Vec4 = Vec4(0.0)
 
     def avoirInfoStr(self):
         # TODO #16 implémenter avoirInfoStr() dur toutes les entitées
@@ -105,6 +110,7 @@ class Entité:
         from Jeu import Jeu,ÉtatJeu
         jeu = Jeu.avoirJeu()
         if jeu.état.v == ÉtatJeu.FIN_TOUR or jeu.état.v == ÉtatJeu.JEU:
+            self.couleur_bordure = Vec4(0.0)
             self._MiseÀJourIA()
         elif jeu.état.v in [ÉtatJeu.DÉBUT,ÉtatJeu.SUCCÈS,ÉtatJeu.ÉCHEC,ÉtatJeu.SCÈNE]:
             personnages : list[str] = None

@@ -2,12 +2,16 @@ from __future__ import annotations
 from InclusionsCirculaires.Entité_Carte import *
 from InclusionsCirculaires.Jeu_Carte import *
 from Maths.Vec2 import Vec2
+from Maths.Vec4 import Vec4
 from Entités.Paysan import *
 from Entités.Golem import *
 from Entités.Personnages import *
 from Carte.Tuile import Tuile
 from TFX import *
 from Ressources.Scripts.GestionnaireScripts import *
+from Dessin.Maillage import Maillage
+from Dessin.Nuanceurs.NuaCarte import NuaCarte
+from Dessin.Texture import Texture
 
 class Plan:
     def __init__(self):
@@ -29,8 +33,17 @@ class Séquence:
         self.plans : list[Plan] = []
 
 class Carte:
+
+    dessin_points : list[float] = [
+        -1.0,-1.0,
+         1.0,-1.0,
+        -1.0, 1.0,
+         1.0, 1.0
+    ]
     
     def __init__(self,estScène : bool, lignes : int ,colonnes :int, matrice : list[list[Tuile]], entités_préchargement : list[tuple[str,Vec2|None,str|None]], joueur_pos_init : Vec2, séquences : Séquence|list[Séquence], prochaine : str):
+        from GestionnaireRessources import Ressources
+        res = Ressources.avoirRessources()
         self.lignes : int = lignes
         self.colonnes : int = colonnes
         self.matrice : list[list[Tuile]] = matrice
@@ -43,6 +56,25 @@ class Carte:
         self.séquences : Séquence|list[Séquence] = séquences
 
         self.script : str = None
+
+        self.dessin_position : Vec2 = Vec2(0,0)
+        self.dessin_rotation : float = 0
+        self.dessin_échelle : Vec2 = Vec2(1,1)
+        self.dessin_taille : Vec2 = Vec2(300,300)
+        self.dessin_maillage : Maillage = Maillage()
+        self.dessin_maillage.créer_bande([self.dessin_points],[2])
+        self.dessin_nuanceur : NuaCarte = res.chargerNuanceur("NuaCarte",NuaCarte)
+        self.dessin_atlas : Texture = res.chargerTexture("Atlas")
+        self.dessin_atlas_taille : Vec2 = Vec2(16,16)
+        self.dessin_atlas_indexes : list[int] = []
+
+        self.case_sélectionnée : int = -1
+        self.case_sélectionnée_couleur : Vec4 = Vec4(JAUNE.x,JAUNE.y,JAUNE.z,0.75)
+        self.case_sélectionnée_bordure : float = 0.20
+        
+        self.case_survol : int = -1
+        self.case_survol_couleur : Vec4 = Vec4(CYAN.x,CYAN.y,CYAN.z,0.75)
+        self.case_survol_bordure : float = 0.15
             
     def peutAller(self, entite: Entité, pos: Vec2):
         if pos.x<0 or pos.x>len(self.matrice)-1 or pos.y<0 or pos.y>len(self.matrice[0])-1:
@@ -155,3 +187,72 @@ class Carte:
                         raise TypeError("Tuile " + str(self.matrice[x][y]) + " de type " + str(self.matrice[x][y].type) + " n'a pas de type valide.")
             dessin += ligne + '\n'
         return dessin
+    
+    def dessin_construire(self):
+        self.dessin_nuanceur.construire()
+        self.dessin_maillage.construire()
+        self.dessin_atlas.construire()
+        
+        for y in range(len(self.matrice[0])):
+            for x in range(len(self.matrice)):
+                match self.matrice[x][y].type:
+                    case Tuile.TYPE_EAU:
+                        self.matrice[x][y].dessin_atlas_indexe = 1
+                        self.dessin_atlas_indexes.append(1)
+                    case Tuile.TYPE_TERRE:
+                        self.matrice[x][y].dessin_atlas_indexe = 0
+                        self.dessin_atlas_indexes.append(0)
+                    case Tuile.TYPE_FEUX:
+                        self.matrice[x][y].dessin_atlas_indexe = 2
+                        self.dessin_atlas_indexes.append(2)
+                    case Tuile.TYPE_MUR:
+                        self.matrice[x][y].dessin_atlas_indexe = 3
+                        self.dessin_atlas_indexes.append(3)
+                    case Tuile.TYPE_OR:
+                        self.matrice[x][y].dessin_atlas_indexe = 4
+                        self.dessin_atlas_indexes.append(4)
+
+        for e in self.entités:
+            if e.dessin_Image != None:
+                e.dessin_Image.construire()
+
+    def curseurSurvol(self, position : Vec2):
+        x = int(position.x*self.colonnes)
+        y = int(position.y*self.lignes)
+        self.case_survol = x + y*self.colonnes
+        for e in self.entités:
+            if e.pos == Vec2(x,y) and e.couleur_bordure == Vec4(0.0):
+                e.couleur_bordure = Vec4(CYAN.x,CYAN.y,CYAN.z,0.75)
+            elif e.pos != Vec2(x,y) and e.couleur_bordure == Vec4(CYAN.x,CYAN.y,CYAN.z,0.75):
+                e.couleur_bordure = Vec4(0.0)
+
+    def curseurClique(self, position : Vec2):
+        from Jeu import Jeu
+        jeu = Jeu.avoirJeu()
+        x = int(position.x*self.colonnes)
+        y = int(position.y*self.lignes)
+        case = x + y*self.colonnes
+        if self.case_sélectionnée == case:
+            self.case_sélectionnée = -1
+            jeu.case_sélectionnée = None
+        else:
+            self.case_sélectionnée = case
+            jeu.case_sélectionnée = Vec2(x,y)
+        for e in self.entités:
+            if e.pos == Vec2(x,y) and self.case_sélectionnée == -1:
+                e.couleur_bordure = Vec4(0.0)
+                jeu.entité_sélectionnée = None
+            elif e.pos == Vec2(x,y) and self.case_sélectionnée != -1:
+                e.couleur_bordure = Vec4(JAUNE.x,JAUNE.y,JAUNE.z,0.75)
+                jeu.entité_sélectionnée = e
+
+    def curseurSort(self):
+        self.case_survol = -1
+        for e in self.entités:
+            if e.couleur_bordure == Vec4(CYAN.x,CYAN.y,CYAN.z,0.75):
+                e.couleur_bordure = Vec4(0.0)
+    
+    def déselectionner(self):
+        self.case_sélectionnée = -1
+        for e in self.entités:
+            e.couleur_bordure = Vec4(0.0)

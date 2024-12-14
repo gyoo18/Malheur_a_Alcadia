@@ -1,5 +1,7 @@
 from __future__ import annotations
 from InclusionsCirculaires.Ressources_Jeu import *
+from Dessin.Texture import Texture
+from Dessin.Nuanceurs.Nuanceur import Nuanceur
 from Carte.Carte import *
 from Carte.Tuile import Tuile
 from Entités.Entité import *
@@ -9,27 +11,29 @@ from Entités.Personnages import *
 import codecs
 import traceback
 import json
+import imageio.v3 as ImageIO
+from GUI.TkFenetre import TkFenetre
 
 class Ressources:
 
     ressources : Ressources = None
 
     def __init__(self):
-        self.cartes : list[Carte] = []
-        self.cartes_chargées : list[str] = []
-        self.entités : list[Entité] = []
-        self.entités_chargées : list[str] = []
-        self.dialogues : dict[list[str]] = []
-        self.dialogues_chargés : list[str] = []
-        self.resultat_zone_2 : str = ""
+        self.cartes : dict[Carte] = {}
+        self.entités : dict[Entité] = {}
+        self.dialogues : dict[list[str]] = {}
         self.indexe_ressources : dict = None
+        self.textures : dict[Texture] = {}
+        self.nuanceurs : dict[Nuanceur] = {}
         try:
             self.indexe_ressources = json.load(codecs.open("Ressources/Définitions.json","r","utf-8"))
         except Exception as e:
             traceback.print_exc()
             traceback.print_exception(e)
             exit(-1)
-        self.joueur = Joueur()
+        self.joueur = None
+
+        self.frames : dict[TkFenetre] = {}
 
     def avoirRessources():
         if Ressources.ressources == None:
@@ -40,8 +44,8 @@ class Ressources:
         pass
 
     def chargerCarte(self, nom : str):
-        if nom in self.cartes_chargées:
-            return self.cartes[self.cartes_chargées.index(nom)]
+        if nom in self.cartes.keys():
+            return self.cartes[nom]
         else: 
             if not nom in self.indexe_ressources["Cartes"]:
                 raise AttributeError("[Charger Carte] La carte " + nom + " n'est pas définie.")
@@ -78,7 +82,7 @@ class Ressources:
             if not "Séquence" in carte_dict:
                 raise AttributeError("La Carte " + str(source) + " doit contenir un attribut 'Séquence' de type liste ou dictionnaire.")
             
-            for x in range(len(carte_dict["Carte"])):
+            for x in range(len(carte_dict["Carte"][0])):
                 colonne = []
                 for y in range(len(carte_dict["Carte"])):
                     match carte_dict["Carte"][y][x]:
@@ -172,14 +176,13 @@ class Ressources:
             carte = Carte(estScène,colonnes,lignes,matrice,entités,joueur_pos_init,séquences,prochaine)
             carte.estScène = estScène
             carte.script = script
-            self.cartes.append(carte)
-            self.cartes_chargées.append(nom)
+            self.cartes[nom] = carte
 
             return carte
 
     def chargerEntité(self,nom : str):
-        if False and nom in self.entités_chargées:
-            return self.entités[self.entités_chargées.index(nom)]
+        if False and nom in self.entités.keys():
+            return self.entités[nom]
         else :
             if not nom in self.indexe_ressources["Entités"]:
                 raise AttributeError("[Charger Entité] L'entité " + nom + " n'est pas définie.")
@@ -289,14 +292,13 @@ class Ressources:
                         raise TypeError("L'élément 'Caractère Couleur' de " + unitée.nom + " ne doit contenir que des float.")
                     unitée.nomAffichage = coul(unitée.nomAffichage,Vec3(unitée_dict["Caractère Couleur"][0],unitée_dict["Caractère Couleur"][1],unitée_dict["Caractère Couleur"][2]))
                 
-            self.entités.append(unitée)
-            self.entités_chargées.append(nom)
+            self.entités[nom] = unitée
             return unitée
     
     def chargerDialogue(self, groupe : str, ID : list[int]):
         from dialogue import dialogue
 
-        if groupe in self.dialogues_chargés:
+        if groupe in self.dialogues.keys():
             texte = ""
             for i in ID:
                 texte += self.dialogues[groupe][i] + '\n'
@@ -352,7 +354,7 @@ class Ressources:
                         texte += dialogue(d,personnage) + '\n'
                     else:
                         texte += d + '\n'
-                dialogue_texte = (dialogue_texte[0],texte)
+                dialogue_texte = (dialogue_texte[0],texte) # TODO #34 Implémenter la persitstance des dialogues dans la gestion des ressources
             return dialogue_texte
         
     def chargerPlan(self, plan_dict : dict, entités : list[tuple[str,Vec2|None,str|None]], source : str, clé : str|None,):
@@ -446,4 +448,140 @@ class Ressources:
                     plan.dialogues[0] = dialogues[1]
                     plan.titres[0] = dialogues[0]
         return plan
+    
+    def chargerObj(self,source : str):
+        fichier = open(source,"r")
+        sommets = []
+        sommets_indexés = []
+        normales = []
+        normales_indexées = []
+        uv = []
+        uv_indexés = []
+        indexes = []
+        for ligne in fichier.readlines():
+            mots = ligne.split(" ")
+            if mots[0] == "v":
+                sommets.append((float(mots[1]),float(mots[2]),float(mots[3])))
+            if mots[0] == "vn":
+                normales.append((float(mots[1]),float(mots[2]),float(mots[3])))
+            if mots[0] == "vt":
+                uv.append((float(mots[1]),float(mots[2])))
+            if mots[0] == "f":
+                obji = []
+                obji.append(mots[1].split("/"))
+                obji.append(mots[2].split("/"))
+                obji.append(mots[3].split("/"))
+
+                for l in range(len(obji)):
+                    est_présent = False
+                    indexe_présent = 0
+                    for i in range(len(sommets_indexés)):
+                        if ( sommets_indexés[i] == sommets[int(obji[l][0])-1]  and 
+                            ( not (len(obji[l]) == 3) or normales_indexées[i] == normales[int(obji[l][2])-1] ) and 
+                            ( not (len(obji[l]) >= 2) or uv_indexés[i] == uv[int(obji[l][1])-1] ) ):
+
+                            est_présent = True
+                            indexe_présent = i
+                            break
+                    
+                    if est_présent:
+                        indexes.append(indexe_présent)
+                    else:
+                        sommets_indexés.append(sommets[int(obji[l][0])-1])
+                        if len(obji[l]) == 3:
+                            normales_indexées.append(normales[int(obji[l][2])-1])
+                        if len(obji[l]) >= 2:
+                            uv_indexés.append(uv[int(obji[l][1])-1])
+                        indexes.append(len(sommets_indexés)-1)
+        sommets_float = []
+        normales_float = []
+        uv_float = []
+        for i in range(len(sommets_indexés)):
+            sommets_float.append(sommets_indexés[i][0])
+            sommets_float.append(sommets_indexés[i][1])
+            sommets_float.append(sommets_indexés[i][2])
+        for i in range(len(normales_indexées)):
+            normales_float.append(normales_indexées[i][0])
+            normales_float.append(normales_indexées[i][1])
+            normales_float.append(normales_indexées[i][2])
+        for i in range(len(uv_indexés)):
+            uv_float.append(uv_indexés[i][0])
+            uv_float.append(uv_indexés[i][1])
+
+        attributs = [sommets_float]
+        attibuts_types = [3]
+        if len(normales_float) > 0:
+            attributs.append(normales_float)
+            attibuts_types.append(3)
+        if len(uv_float) > 0:
+            attributs.append(uv_float)
+            attibuts_types.append(2)
         
+        m = Maillage()
+        m.créer_indexes(attributs,attibuts_types,indexes)
+        return m
+
+    def chargerTexture(self, nom : str):
+        if nom in self.textures.keys():
+            return self.textures[nom]
+        else:
+            source = "Ressources/Textures/" + self.indexe_ressources["Textures"][nom]
+            text = None
+            try:
+                tex = ImageIO.imread(source)
+            except Exception as e:
+                traceback.print_exc()
+                traceback.print_exception(e)
+                exit(-1)
+
+            texture = Texture(source,tex)
+            self.textures[nom] = texture
+            return texture
+
+    def chargerNuanceur(self, nom : str, enfant):
+        if nom in self.nuanceurs.keys():
+            return self.nuanceurs[nom]
+        else:
+            source = "Ressources/Nuanceurs/" + self.indexe_ressources["Nuanceurs"][nom]
+            fichier = None
+            try:
+                fichier  = open(source+".vert","r")
+            except Exception as e:
+                traceback.print_exc()
+                traceback.print_exception(e)
+                exit(-1)
+            lignes = fichier.readlines()
+            sommets_source = ""
+            for ligne in lignes:
+                sommets_source += ligne
+            fichier.close()
+            
+            try:
+                fichier  = open(source+".frag","r")
+            except Exception as e:
+                traceback.print_exc()
+                traceback.print_exception(e)
+                exit(-1)
+            lignes = fichier.readlines()
+            fragments_source = ""
+            for ligne in lignes:
+                fragments_source += ligne
+            fichier.close()
+
+            nuanceur = enfant(sommets_source,fragments_source)
+            self.nuanceurs[nom] = nuanceur
+            return nuanceur
+        
+    def enregistrerMenu(self, frame : Frame, nom : str):
+        if not nom in self.frames.keys():
+            self.frames[nom] = frame
+        else:
+            raise ValueError("[enregistrerMenu] Un menu au nom de " + str(nom) + " existe déjà. Veuillez indiquer un nom unique pour chaque menu.")
+    
+    def obtenirMenu(self, nom : str) -> TkFenetre:
+        if nom in self.frames.keys():
+            return self.frames[nom]
+        else:
+            traceback.print_exc()
+            print(coul(gras("[Erreur : obtenirMenu] Aucun menu du nom de " + str(nom) + " n'existe."),ROUGE))
+            return None

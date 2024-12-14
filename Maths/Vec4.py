@@ -13,17 +13,17 @@ class Vec4:
             self.y = y
             self.z = z
             self.w = w
-        elif (type(x) == int or type(x) ==float) and type(y) == None and type(z) == None and type(w) == None:
+        elif (type(x) == int or type(x) ==float) and y == None and z == None and w == None:
             self.x = x
             self.y = x
             self.z = x
-            self.w = w
-        elif type(x) == Vec4 and type(y) == None and type(z) == None and type(w) == None:
+            self.w = x
+        elif type(x) == Vec4 and y == None and z == None and w == None:
             self.x = x.x
             self.y = x.y
             self.z = x.z
             self.w = x.w
-        elif type(x) == None and type(y) == None and type(z) == None and type(w) == None:
+        elif type(x) == None and y == None and z == None and w == None:
             self.x = 0
             self.y = 0
             self.z = 0

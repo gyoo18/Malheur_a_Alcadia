@@ -107,7 +107,7 @@ class Vec2:
         else :
             raise TypeError("b doit être de type Vec2, float ou int, pas " + str(type(b)) + ".")
     
-    def __div__(a : Self, b):
+    def __truediv__(a : Self, b):
         if type(b) == Vec2:
             return Vec2(a.x/b.x, a.y/b.y)
         elif type(b) == int or type(b) == float :

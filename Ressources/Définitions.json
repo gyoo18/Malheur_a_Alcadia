@@ -29,5 +29,23 @@
         "C2_choix": "Chapitre2_choix_Dialogue.json",
         "Chapitre3": "Chapitre3_Dialogue.json",
         "C3_choix": "Chapitre3_choix_Dialogue.json"
+    },
+    "Textures":{
+        "Test":"Sans nom2.png",
+        "Atlas":"Atlas_textures.png",
+        "Golem_Terre":"Golem_Terre.png",
+        "Mélios":"Mélios.png",
+        "Golem_Eau":"Golem_eau.png",
+        "Golem_Feu":"Golem_Feu.png",
+        "Arbalettier":"Arbalettier.png",
+        "Golem_Or":"Golem_Or.png",
+        "Gosse":"Gosse.png",
+        "Mineur":"Mineur.png",
+        "Prêtre":"Prêtre.png",
+        "Chevalier":"Chevalier.png"
+    },
+    "Nuanceurs":{
+        "NuaImage":"NuaImage",
+        "NuaCarte":"NuaCarte"
     }
 }

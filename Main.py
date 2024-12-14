@@ -2,17 +2,18 @@ from GestionnaireRessources import Ressources
 from Jeu import Jeu, ÉtatJeu
 from random import randrange
 
+import tkinter
+
 jeu : Jeu = None
 
 def Constructeur():
     res = Ressources.avoirRessources()
-    carte = res.chargerCarte("Chapitre3")
+    carte = res.chargerCarte("Intro")
 
     global jeu
     jeu = Jeu.avoirJeu()
     jeu.état.v = ÉtatJeu.MENU
     jeu.changerCarte(carte)
-    pass
 
 def Boucle():
     global jeu
