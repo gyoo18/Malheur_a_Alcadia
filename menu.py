@@ -8,7 +8,8 @@ from Jeu import *
 import dialogue
 from TFX import *
 from Entités.Golem import *
-from tkinter import Frame,Button,Label,Text
+from tkinter import Frame,Button,Label
+from tkinter.font import Font
 from GUI.TkFenetre import TkFenetre
 from GUI.Texte import Texte
 
@@ -39,7 +40,7 @@ def effaceCommande():
     bgcr(Vec2(0,1)) # Efface bouge le curseur vers la ligne précédente
     print(EFL+'\r',end='')      # Efface la ligne et place le curseur au début
 
-def ingameUI():
+def jeu():
     """Display the in-game UI."""
     res = Ressources.avoirRessources()
     jeu = Jeu.avoirJeu()
@@ -254,13 +255,14 @@ def ingameUI():
     else:
         print(coul(gras("[inGameUI] L'état du jeu n'est pas reconnus."),ROUGE))
 
-def displayUI():
+def menuPrincipal():
     res = Ressources.avoirRessources()
     jeu = Jeu.avoirJeu()
 
     fenetre = res.obtenirMenu("menu_principal")
 
     if not fenetre.initialisé:
+        
         titre = Label(fenetre.frame,text="Malheur à Alcadia!")
         titre.pack(pady=10)
 
@@ -819,7 +821,7 @@ def main():
     game_map = [["." for _ in range(width)] for _ in range(eight)]
 
     while True:
-        displayUI(game_map)
+        menuPrincipal(game_map)
         break
 
 if __name__ == "__main__":

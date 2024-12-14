@@ -88,11 +88,11 @@ class Jeu:
         res = GestionnaireRessources.Ressources.avoirRessources()
 
         if self.état.v == ÉtatJeu.MENU:
-            menu.displayUI()
+            menu.menuPrincipal()
         elif self.état.v == ÉtatJeu.MENU_CONTEXTUEL:
             menu.menu_contextuel()
         elif self.état.v in [ÉtatJeu.JEU,ÉtatJeu.DÉBUT,ÉtatJeu.SUCCÈS,ÉtatJeu.ÉCHEC,ÉtatJeu.SCÈNE]:
-            menu.ingameUI()
+            menu.jeu()
         
         if self.état.v in [ÉtatJeu.DÉBUT,ÉtatJeu.SUCCÈS,ÉtatJeu.ÉCHEC,ÉtatJeu.SCÈNE]:
             for i in range(len(self.carte.entités)):
