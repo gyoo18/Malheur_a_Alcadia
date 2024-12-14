@@ -45,17 +45,17 @@ class Texte(Text):
                 police.configure(overstrike=True)
             if niveau_Titre != 0:
                 if niveau_Titre == 1:
-                    police.configure(size=(self.police_défaut.cget("size")*6),weight="bold")
+                    police.configure(size=int(self.police_défaut.cget("size")*6),weight="bold")
                 if niveau_Titre == 2:
-                    police.configure(size=(self.police_défaut.cget("size")*5),weight="bold")
+                    police.configure(size=int(self.police_défaut.cget("size")*5),weight="bold")
                 if niveau_Titre == 3:
-                    police.configure(size=(self.police_défaut.cget("size")*4),weight="bold")
+                    police.configure(size=int(self.police_défaut.cget("size")*4),weight="bold")
                 if niveau_Titre == 4:
-                    police.configure(size=(self.police_défaut.cget("size")*3),weight="bold")
+                    police.configure(size=int(self.police_défaut.cget("size")*3),weight="bold")
                 if niveau_Titre == 5:
-                    police.configure(size=(self.police_défaut.cget("size")*2),weight="bold")
+                    police.configure(size=int(self.police_défaut.cget("size")*2),weight="bold")
                 if niveau_Titre == 6:
-                    police.configure(size=(self.police_défaut.cget("size")*1.5),weight="bold")
+                    police.configure(size=int(self.police_défaut.cget("size")*1.5),weight="bold")
             self.tag_configure(str(indexe),font=police)
             self.polices.append(police)
             self.polices_caracs.append(caracs_police)
