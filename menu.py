@@ -795,7 +795,7 @@ def menu_select():
                 break
         
         elif commande[0] == '?' or commande[0] == "AIDE":
-            commande_menu_aide(MenuContextuel.SELECT,commande)
+            commande_menu_aide(MenuContextuel.SELECT)
             break
 
         elif commande[0] == 'P' or commande[0] == "PRÉCÉDENT":
