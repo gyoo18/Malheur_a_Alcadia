@@ -1,92 +1,63 @@
-import tkinter as tk
-from tkinter import Canvas,Button,Frame,Label
-
-# Initialize the window
-root = tk.Tk()
-root.title("Medieval Game Map")
-root.geometry("600x550")  # Ensure enough height
-root.configure(bg="#d7bd97")  # Parchment-like background
-
-# isFrameVisible = True
-# frame = Frame(root,bg="#000000")
-# frame2 = Frame(root,bg="#000000")
-# 
-# # Add a game title
-# title_label = tk.Label(
-#     frame,
-#     text="le jeux",
-#     font=("Old English Text MT", 24, "bold"),
-#     bg="#d7bd97",
-#     fg="#4b2e83"
-# )
-# title_label.pack(pady=10)
-# 
-# # Add a canvas
-# canvas = Canvas(frame, width=600, height=400, bg="#f4e7c3", relief="ridge", bd=4)
-# canvas.pack()
-# 
-# 
-# # Add a player (Knight token)
-# player = canvas.create_oval(50, 50, 70, 70, fill="#c62828", outline="#7b1b1b")  # Red Knight
-# 
-# # Player movement logic
-# def move_up():
-#     canvas.move(player, 0, -10)
-# 
-# def move_down():
-#     canvas.move(player, 0, 10)
-# 
-# def move_left():
-#     canvas.move(player, -10, 0)
-# 
-# def move_right():
-#     canvas.move(player, 10, 0)
-# 
-# # Add control buttons
-# button_frame = tk.Frame(root, bg="#d7bd97")
-# # button_frame.pack(in_=frame,pady=10)
-# 
-# btn_style = {"font": ("Verdana", 10, "bold"), "bg": "#4b2e83", "fg": "white", "relief": "raised", "width": 5}
-# btn_up = tk.Button(button_frame, btn_style, text="Up", command=move_up)
-# btn_down = tk.Button(button_frame, btn_style, text="Down", command=move_down)
-# btn_left = tk.Button(button_frame, btn_style, text="Left", command=move_left)
-# btn_right = tk.Button(button_frame, btn_style, text="Right", command=move_right)
-# 
-# 
-# # Arrange buttons in a grid
-# btn_up.grid(row=0, column=1, padx=5, pady=5)
-# btn_left.grid(row=1, column=0, padx=5, pady=5)
-# btn_down.grid(row=1, column=1, padx=5, pady=5)
-# btn_right.grid(row=1, column=2, padx=5, pady=5)
-# 
-# frame.pack(fill="both",expand=True,padx=10,pady=10)
-# 
-# def show_hide():
-#     global isFrameVisible
-#     if isFrameVisible:
-#         frame.pack_forget()
-#         isFrameVisible = False
-#     else:
-#         frame.pack(fill="both",expand=True,padx=10,pady=10)
-#         isFrameVisible=True
-# 
-# button_show_hide = Button(root,btn_style, text="Show/Hide", command=show_hide)
-# button_show_hide.pack(pady=10)
-# 
-# # title_label.pack_forget()
-# title_label.pack(in_=frame2)
-# frame2.pack()
-
-label1 = Label(root,text="Test!")
-label2 = Label(root,text="Test2!")
-frame1 = Frame(root)
-frame2 = Frame(root)
-frame1.pack()
-frame2.pack()
-label1.pack(in_=frame1)
-label2.pack(in_=frame1)
-label1.pack_forget()
-label1.pack(in_=frame2)
-
-# Run the application
-root.mainloop()
+import tkinter as tk 
+from tkinter.font import Font 
+  
+# create a Pad class 
+class Pad(tk.Frame): 
+  
+    # constructor to add buttons and text to the window 
+    def __init__(self, parent, *args, **kwargs): 
+        tk.Frame.__init__(self, parent, *args, **kwargs) 
+  
+        self.toolbar = tk.Frame(self, bg="#eee") 
+        self.toolbar.pack(side="top", fill="x") 
+          
+        # this will add Highlight button in the window 
+        self.bold_btn = tk.Button(self.toolbar, text="Highlight", 
+                                  command=self.highlight_text) 
+        self.bold_btn.pack(side="left") 
+  
+        # this will add Clear button in the window 
+        self.clear_btn = tk.Button(self.toolbar, text="Clear", 
+                                   command=self.clear) 
+        self.clear_btn.pack(side="left") 
+  
+        # adding the text  
+        self.text = tk.Text(self) 
+        self.text.insert("end", "Pandemic has resulted in economic slowdown worldwide") 
+        self.text.focus() 
+        self.text.pack(fill="both", expand=True) 
+          
+        #configuring a tag called start 
+        self.text.tag_configure("start", background="black")
+        self.text.tag_configure("start", foreground="red")
+  
+    # method to highlight the selected text 
+    def highlight_text(self): 
+          
+        # if no text is selected then tk.TclError exception occurs 
+        try: 
+            self.text.tag_add("start", "1.0", "1.10")         
+        except tk.TclError: 
+            pass
+  
+    # method to clear all contents from text widget. 
+    def clear(self): 
+        self.text.tag_remove("start",  "1.0", 'end') 
+  
+# function 
+def demo(): 
+  
+    # Create a GUI window  
+    root = tk.Tk() 
+  
+    # place Pad object in the root window 
+    Pad(root).pack(expand=1, fill="both") 
+  
+    # start the GUI 
+    root.mainloop() 
+  
+# Driver code 
+if __name__ == "__main__": 
+  
+    # function calling 
+    demo() 

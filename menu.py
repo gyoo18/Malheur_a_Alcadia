@@ -8,8 +8,9 @@ from Jeu import *
 import dialogue
 from TFX import *
 from Entités.Golem import *
-from tkinter import Frame,Button,Label,Grid
+from tkinter import Frame,Button,Label,Text
 from GUI.TkFenetre import TkFenetre
+from GUI.Texte import Texte
 
 def initialiserMenus(tkracine : tkinter.Tk):
     res = Ressources.avoirRessources()
@@ -100,7 +101,7 @@ def ingameUI():
     if jeu.état.v == ÉtatJeu.SCÈNE:
         if plan.estAnimation and jeu.état.scène_animation_étape < len(plan.titres)-1:
             jeu.état.scène_animation_étape += 1
-            time.sleep(plan.temps[jeu.état.scène_animation_étape-1])
+            time.sleep(plan.temps[jeu.état.scène_animation_étape-1])    # TODO trouver un moyen de ne pas bloquer le jeu
         elif not plan.estAnimation and jeu.état.scène_étape < len(séquence.plans)-1:
             if fenetre.état != 0:
                 for w in grille_boutons.winfo_children():
@@ -124,7 +125,7 @@ def ingameUI():
                 fenetre.état = 1
     elif jeu.état.v != ÉtatJeu.JEU and plan.estAnimation and jeu.état.scène_animation_étape < len(plan.titres)-1:
         jeu.état.scène_animation_étape += 1
-        time.sleep(plan.temps[jeu.état.scène_animation_étape-1])
+        time.sleep(plan.temps[jeu.état.scène_animation_étape-1]) # TODO trouver un moyen de ne pas bloquer le jeu
     elif jeu.état.v == ÉtatJeu.DÉBUT:
         if carte.estScène:
             pass    # TODO Implémenter cette ligne
@@ -166,8 +167,12 @@ def ingameUI():
             boutton_fin_tour = Button(grille_boutons,text="Terminer le tour",command=lambda: fin_tour(jeu))
             boutton_fin_tour.pack(pady=10)
 
-            # boutton_info = Button(grille_boutons,text="Infos",command=lambda: fin_tour(jeu))
-            # boutton_info.pack(pady=10)
+            # TODO implémenter les contrôles pour le menu info
+
+            # TODO implémenter les contrôles pour le menu select
+
+            boutton_combat = Button(grille_boutons,text="Combat",command=lambda: commande_menu_combat(jeu.état.v))
+            boutton_combat.pack(pady=10)
 
             boutton_aide = Button(grille_boutons,text="Aide",command=lambda: commande_menu_aide(jeu.état.v))
             boutton_aide.pack(pady=10)
@@ -179,29 +184,6 @@ def ingameUI():
                 jeu.état.v = ÉtatJeu.FIN_TOUR
             boutton_aide = Button(grille_boutons,text="Réussir",command=lambda: commande_réussir(jeu))
             boutton_aide.pack(pady=10)
-
-            # while True:
-            #     commande = input("> ").upper().split(" ")
-            #     
-            #     if commande[0] == '':
-            #         jeu.état.v = ÉtatJeu.FIN_TOUR
-            #         break
-            #     elif commande[0] == 'I' or commande[0] == "INFO":
-            #         if commande_menu_info(jeu.état.v,commande):
-            #             break
-            #     elif commande[0] == 'S' or commande[0] == "SELECT":
-            #         if commande_menu_select(jeu.état.v,commande):
-            #             break
-            #     elif commande[0] == 'C' or commande[0] == "COMBAT":
-            #         commande_menu_combat(jeu.état.v)
-            #         break
-            #     elif commande[0] == '?' or commande[0] == "AIDE":
-            #         commande_menu_aide(jeu.état.v)
-            #         break
-            #     else:
-            #         print(coul("Veuillez entrer une commande valide ou taper",ROUGE)+TFX("entré",gras=True,Pcoul=ROUGE)+coul(" pour finir le tour.",ROUGE))
-            #         time.sleep(1.5)
-            #         effaceCommande()
 
             fenetre.état = 4
     elif jeu.état.v == ÉtatJeu.SUCCÈS:
@@ -255,120 +237,6 @@ def ingameUI():
     else:
         print(coul(gras("[inGameUI] L'état du jeu n'est pas reconnus."),ROUGE))
 
-    """
-    # clearScreen()
-    # 
-    # # Header
-    # header = "=" * 50
-    # header2 = gras(plan.titres[jeu.état.scène_animation_étape])
-    # header2 = header2.center(50)
-    # header3 = "=" * 50
-    # 
-    # print(header)
-    # print(header2)
-    # print(header3)
-    # 
-    # # Display game map
-    # print(carte.dessiner().center(50))
-    # 
-    # # Footer
-    # footer = "=" * 50
-    # controls = ""
-    # if jeu.état.v == ÉtatJeu.JEU:
-    #     controls = random.choice(séquence.plans).dialogues[jeu.état.scène_animation_étape]
-    #     controls += "Tapez « ? » ou « aide » pour obtenir la liste des commandes.\n"
-    # else:
-    #     controls = plan.dialogues[jeu.état.scène_animation_étape]
-    # controls = controls.center(50)
-    # footer_end = "=" * 50
-    # 
-    # print(footer)
-    # print(controls,end='')
-    # print(footer_end)
-    """
-    # if jeu.état.v == ÉtatJeu.SCÈNE:
-    #     if plan.estAnimation and jeu.état.scène_animation_étape < len(plan.titres)-1:
-    #         jeu.état.scène_animation_étape += 1
-    #         time.sleep(plan.temps[jeu.état.scène_animation_étape-1])
-    #     elif not plan.estAnimation and jeu.état.scène_étape < len(séquence.plans)-1:
-    #         jeu.état.scène_étape += 1
-    #         input("")
-    #     else:
-    #         jeu.état.scène_étape = 0
-    #         jeu.état.scène_animation_étape = 0
-    #         jeu.état.v = ÉtatJeu.TRANSITION
-    #         input("")
-    # elif jeu.état.v != ÉtatJeu.JEU and plan.estAnimation and jeu.état.scène_animation_étape < len(plan.titres)-1:
-    #     jeu.état.scène_animation_étape += 1
-    #     time.sleep(plan.temps[jeu.état.scène_animation_étape-1])
-    # elif jeu.état.v == ÉtatJeu.DÉBUT:
-    #     if carte.estScène:
-    #         pass
-    #     else:
-    #         if jeu.état.scène_étape == len(séquence.plans)-1:
-    #             jeu.état.v = ÉtatJeu.JEU
-    #             jeu.état.scène_étape = 0
-    #             jeu.état.scène_animation_étape = 0
-    # 
-    #             décalage = 0
-    #             for i in range(len(carte.entités)):
-    #                 if type(carte.entités[i]) != Joueur:
-    #                     carte.entités[i].pos = carte.entités_préchargement[i + décalage][1].copie()
-    #                 else:
-    #                     carte.entités[i].pos = carte.joueur_pos_init
-    #                     décalage = -1
-    # 
-    #         else:
-    #             jeu.état.scène_étape += 1
-    #     input("")
-    # elif jeu.état.v == ÉtatJeu.JEU:
-    #     while True:
-    #         commande = input("> ").upper().split(" ")
-    #         
-    #         if commande[0] == '':
-    #             jeu.état.v = ÉtatJeu.FIN_TOUR
-    #             break
-    #         elif commande[0] == 'I' or commande[0] == "INFO":
-    #             if commande_menu_info(jeu.état.v,commande):
-    #                 break
-    #         elif commande[0] == 'S' or commande[0] == "SELECT":
-    #             if commande_menu_select(jeu.état.v,commande):
-    #                 break
-    #         elif commande[0] == 'C' or commande[0] == "COMBAT":
-    #             commande_menu_combat(jeu.état.v)
-    #             break
-    #         elif commande[0] == '?' or commande[0] == "AIDE":
-    #             commande_menu_aide(jeu.état.v)
-    #             break
-    #         else:
-    #             print(coul("Veuillez entrer une commande valide ou taper",ROUGE)+TFX("entré",gras=True,Pcoul=ROUGE)+coul(" pour finir le tour.",ROUGE))
-    #             time.sleep(1.5)
-    #             effaceCommande()
-    # elif jeu.état.v == ÉtatJeu.SUCCÈS:
-    #     if carte.estScène:
-    #         pass
-    #     else:
-    #         if jeu.état.scène_étape == len(séquence.plans)-1:
-    #             jeu.état.v = ÉtatJeu.TRANSITION
-    #             jeu.état.scène_étape = 0
-    #             jeu.état.scène_animation_étape = 0
-    #         else:
-    #             jeu.état.scène_étape += 1
-    #     input("")
-    # elif jeu.état.v == ÉtatJeu.ÉCHEC:
-    #     if carte.estScène:
-    #         pass
-    #     else:
-    #         if jeu.état.scène_étape == len(séquence.plans)-1:
-    #             jeu.état.v = ÉtatJeu.TERMINÉ
-    #             jeu.état.scène_étape = 0
-    #             jeu.état.scène_animation_étape = 0
-    #         else:
-    #             jeu.état.scène_étape += 1
-    #     input("")
-    # else:
-    #     raise ValueError("[inGameUI] L'état du jeu n'est pas reconnus.")
-
 def displayUI():
     res = Ressources.avoirRessources()
     jeu = Jeu.avoirJeu()
@@ -396,46 +264,6 @@ def displayUI():
         fenetre.frame.pack()
         jeu.frame_actuelle = fenetre.frame
         fenetre.initialisé = True
-
-    # clearScreen()
-    # 
-    # header = "=" * 50
-    # header2 = gras("Malheur à Alcadia!").center(50)
-    # header3 = "=" * 50
-    # 
-    # print(header)
-    # print(header2)
-    # print(header3)
-    # 
-    # menu = "menu".center(50)
-    # inputs = "S = commencer, T = tutoriel, Q = quitter".center(50)
-    # 
-    # print(menu)
-    # print(inputs)
-    # 
-    # 
-    # footer = "=" * 50
-    # print(footer)
-
-    # while True:
-    #   key = input("Que voulez-vous faire? ").strip().lower()
-    #   if key == "s":
-    #       # ingameUI(game_map)  # Pass the game map to the in-game UI
-    #       if jeu.carte.estScène:
-    #           jeu.état.v = ÉtatJeu.SCÈNE
-    #       else:
-    #           jeu.état.v = ÉtatJeu.DÉBUT
-    #   elif key == "t":
-    #       print("W (haut), S (bas), A (gauche), D (droite)")
-    #       time.sleep(2)
-    #   elif key == "q":
-    #       print("Goodbye!")
-    #       time.sleep(1)
-    #       jeu.état.v = ÉtatJeu.TERMINÉ
-    #       break
-    #   else:
-    #       print("Choix invalide, veuillez choisir une option : S, T ou Q")
-    #       time.sleep(1)
 
 def menu_contextuel():
 
@@ -525,59 +353,98 @@ def menu_aide():
     res = Ressources.avoirRessources()
     jeu = Jeu.avoirJeu()
 
-    clearScreen()
-    print("="*50)
-    print("Menu d'aide".center(50))
-    print("="*50)
-    print(
-        "\n"+
-        "Tapez « "+gras("C")+" » ou « "+gras("Combat")+" » pour voir les informations relatives au unitées et au combat\n" +
-        "Tapez « "+gras("I")+" » ou « "+gras("Info")+" », suivit de "+gras("<NomUnité>")+" pour voir les information relatives à une unité.\n"
-        "Tapez « "+gras("S")+" » ou « "+gras("Select")+" » suivit de "+gras("<NomUnité>")+" pour sélectionner une unité et lui donner un ordre\n"+
-        "\n"+
-        gras(soul("En mode Select (ces commandes ne sont disponibles que lorsque vous avez sélectionné une unité) :\n"))+
-        "\n"+
-        "  Tapez « "+gras("DP")+" » ou « "+gras("Déplacement")+" » suivit de "+gras("<X>")+" et "+gras("<Y>")+" pour déplacer le golem vers une destination\n"+
-        "\n"+
-        "  "+soul("Golems :\n")+
-        "  Tapez « "+gras("A")+" »  ou « "+gras("Attaque")+" » suivit de "+gras("<NomCible>")+" pour déplacer le golem vers une cible et l'attaquer\n"+
-        "  Tapez « "+gras("AS")+" » ou « "+gras("Attaque-Spéciale")+" » pour activer l'attaque spéciale du golem\n"+
-        "  Tapez « "+gras("DF")+" » ou « "+gras("Défense")+" » pour activer le mode défense du golem\n"+
-        "  Tapez « "+gras("L")+" »  ou « "+gras("Libérer")+" » pour libérer le golem des ordres qui lui ont été donnés\n"+
-        "  Tapez « "+gras("CA")+" » ou « "+gras("Charger-Attaque")+" » pour commencer à charger pour une attaque plus puissante\n"+
-        "  Tapez « "+gras("AC")+" » ou « "+gras("Attaquer-Charge")+" », suivit de "+gras("<NomCible>")+" pour frapper un ennemi avec une attaque plus puissante\n"+
-        "\n"+
-        "  "+soul("Mélios :\n")+
-        "  Tapez « "+gras("CG")+" » ou « "+gras("Créer-Golem")+" », suivit de "+gras("<X>")+" et "+gras("<Y>")+" pour créer un golem à l'endroit spécifié.\n"
-        "\n" +
-        "Tapez « "+gras("?")+" » ou « "+gras("Aide")+" » pour afficher cette liste à tout moment\n"+
-        "Tapez « "+gras("P")+" » ou « "+gras("Précédent")+" » pour revenir au menu précédent.\n"
-        "Tapez « "+gras("Q")+" » ou « "+gras("Quitter")+" » pour quitter.\n"+
-        "\n"
-        )
-    print("="*50)
-    
-    while True:
-        commande = input("> ").upper().split(' ')
-        if commande[0] == 'C' or commande[0] == "COMBAT":
-            if commande_menu_combat(MenuContextuel.AIDE,commande):
-                break
-        elif commande[0] == 'S' or commande[0] == "SELECT":
-            if commande_menu_select(MenuContextuel.AIDE,commande):
-                break
-        elif commande[0] == 'I' or commande[0] == "INFO":
-            if commande_menu_info(MenuContextuel.AIDE,commande):
-                break
-        elif commande[0] == 'Q' or commande[0] == "QUITTER":
-            commande_quitter()
-            break
-        if commande[0] == 'P' or commande[0] == "PRÉCÉDENT":
-            commande_précédent()
-            break
-        else:
-            print(coul("Veuillez entrer une commande valide.",ROUGE))
-            time.sleep(1.5)
-            effaceCommande()
+    fenetre = res.obtenirMenu("menu_aide")
+    jeu.peintre.estVisible = False
+
+    if not fenetre.initialisé:
+        titre = Label(fenetre.frame,text="Menu d'aide")
+        titre.pack(pady=10)
+
+        aide = Texte(fenetre.frame)
+
+        aide.markdownFormattage("\n"+
+             "Tapez « **C** » ou « **Combat** » pour voir les informations relatives au unitées et au combat\n\n"+
+             "Tapez « **I** » ou « **Info** », suivit de **<NomUnité>** pour voir les information relatives à une unité.\n\n"+
+             "Tapez « **S** » ou « **Select** » suivit de **<NomUnité>** pour sélectionner une unité et lui donner un ordre\n\n"+
+             "\n"+
+             "__En mode Select__ *(ces commandes ne sont disponibles que lorsque vous avez sélectionné une unité)* :\n\n"+
+             "\n"+
+             "    - Tapez « **DP** » ou « **Déplacement** » suivit de **<X>** et **<Y>** pour déplacer le golem vers une destination\n"+
+             "\n"+
+             "    - Golems :\n"+
+             "    - Tapez « **A** »  ou « **Attaque** » suivit de **<NomCible>** pour déplacer le golem vers une cible et l'attaquer\n"+
+             "    - Tapez « **AS** » ou « **Attaque-Spéciale** » pour activer l'attaque spéciale du golem\n"+
+             "    - Tapez « **DF** » ou « **Défense** » pour activer le mode défense du golem\n"+
+             "    - Tapez « **L** »  ou « **Libérer** » pour libérer le golem des ordres qui lui ont été donnés\n"+
+             "    - Tapez « **CA** » ou « **Charger-Attaque** » pour commencer à charger pour une attaque plus puissante\n"+
+             "    - Tapez « **AC** » ou « **Attaquer-Charge** », suivit de **<NomCible>** pour frapper un ennemi avec une attaque plus puissante\n"+
+             "\n"+
+             "    - Mélios :\n"+
+             "    - Tapez « **CG** » ou « **Créer-Golem** », suivit de **<X>** et **<Y>** pour créer un golem à l'endroit spécifié.\n"
+             "\n" +
+             "Tapez « **?** » ou « **Aide** » pour afficher cette liste à tout moment\n\n"+
+             "Tapez « **P** » ou « **Précédent** » pour revenir au menu précédent.\n\n"
+             "Tapez « **Q** » ou « **Quitter** » pour quitter.\n\n"+
+             "\n")
+        aide.pack(anchor="center",expand=True,fill="both",pady=10)
+        jeu.frame_actuelle.frame.pack_forget()
+        fenetre.frame.pack(side="top",expand=True,fill="both")
+        jeu.frame_actuelle = fenetre
+        fenetre.initialisé = True
+
+    # clearScreen()
+    # print("="*50)
+    # print("Menu d'aide".center(50))
+    # print("="*50)
+    # print(
+    #     "\n"+
+    #     "Tapez « "+gras("C")+" » ou « "+gras("Combat")+" » pour voir les informations relatives au unitées et au combat\n" +
+    #     "Tapez « "+gras("I")+" » ou « "+gras("Info")+" », suivit de "+gras("<NomUnité>")+" pour voir les information relatives à une unité.\n"
+    #     "Tapez « "+gras("S")+" » ou « "+gras("Select")+" » suivit de "+gras("<NomUnité>")+" pour sélectionner une unité et lui donner un ordre\n"+
+    #     "\n"+
+    #     gras(soul("En mode Select (ces commandes ne sont disponibles que lorsque vous avez sélectionné une unité) :\n"))+
+    #     "\n"+
+    #     "  Tapez « "+gras("DP")+" » ou « "+gras("Déplacement")+" » suivit de "+gras("<X>")+" et "+gras("<Y>")+" pour déplacer le golem vers une destination\n"+
+    #     "\n"+
+    #     "  "+soul("Golems :\n")+
+    #     "  Tapez « "+gras("A")+" »  ou « "+gras("Attaque")+" » suivit de "+gras("<NomCible>")+" pour déplacer le golem vers une cible et l'attaquer\n"+
+    #     "  Tapez « "+gras("AS")+" » ou « "+gras("Attaque-Spéciale")+" » pour activer l'attaque spéciale du golem\n"+
+    #     "  Tapez « "+gras("DF")+" » ou « "+gras("Défense")+" » pour activer le mode défense du golem\n"+
+    #     "  Tapez « "+gras("L")+" »  ou « "+gras("Libérer")+" » pour libérer le golem des ordres qui lui ont été donnés\n"+
+    #     "  Tapez « "+gras("CA")+" » ou « "+gras("Charger-Attaque")+" » pour commencer à charger pour une attaque plus puissante\n"+
+    #     "  Tapez « "+gras("AC")+" » ou « "+gras("Attaquer-Charge")+" », suivit de "+gras("<NomCible>")+" pour frapper un ennemi avec une attaque plus puissante\n"+
+    #     "\n"+
+    #     "  "+soul("Mélios :\n")+
+    #     "  Tapez « "+gras("CG")+" » ou « "+gras("Créer-Golem")+" », suivit de "+gras("<X>")+" et "+gras("<Y>")+" pour créer un golem à l'endroit spécifié.\n"
+    #     "\n" +
+    #     "Tapez « "+gras("?")+" » ou « "+gras("Aide")+" » pour afficher cette liste à tout moment\n"+
+    #     "Tapez « "+gras("P")+" » ou « "+gras("Précédent")+" » pour revenir au menu précédent.\n"
+    #     "Tapez « "+gras("Q")+" » ou « "+gras("Quitter")+" » pour quitter.\n"+
+    #     "\n"
+    #     )
+    # print("="*50)
+    #  
+    # while True:
+    #     commande = input("> ").upper().split(' ')
+    #     if commande[0] == 'C' or commande[0] == "COMBAT":
+    #         if commande_menu_combat(MenuContextuel.AIDE,commande):
+    #             break
+    #     elif commande[0] == 'S' or commande[0] == "SELECT":
+    #         if commande_menu_select(MenuContextuel.AIDE,commande):
+    #             break
+    #     elif commande[0] == 'I' or commande[0] == "INFO":
+    #         if commande_menu_info(MenuContextuel.AIDE,commande):
+    #             break
+    #     elif commande[0] == 'Q' or commande[0] == "QUITTER":
+    #         commande_quitter()
+    #         break
+    #     if commande[0] == 'P' or commande[0] == "PRÉCÉDENT":
+    #         commande_précédent()
+    #         break
+    #     else:
+    #         print(coul("Veuillez entrer une commande valide.",ROUGE))
+    #         time.sleep(1.5)
+    #         effaceCommande()
 
 def menu_combat():
     jeu = Jeu.avoirJeu()

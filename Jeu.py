@@ -67,8 +67,11 @@ class Jeu:
         self.dialogue_jeu_temps_début :float = 0.0
 
         self.tkracine = tk.Tk()
+        self.tkracine.geometry("1024x512")
         menu.initialiserMenus(self.tkracine)
         self.peintre = Peintre(self.tkracine)
+
+        self.tkracine.protocol("WM_DELETE_WINDOW",self.surFenêtreFermée)
 
         self.frame_actuelle : TkFenetre = None
     
@@ -175,3 +178,6 @@ class Jeu:
             GestionnaireScripts.InitialiserScript(self.carte.script)
         
         self.peintre.changerCarte(self.carte)
+    
+    def surFenêtreFermée(self):
+        self.état.v = ÉtatJeu.TERMINÉ
