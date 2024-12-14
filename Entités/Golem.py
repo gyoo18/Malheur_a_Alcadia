@@ -139,17 +139,35 @@ class Golem(Entité):
     def __init__(self):
         super().__init__()
         self.camp = "Golems"
-        self.campsEnnemis = ["Paysans"]
+        self.campsEnnemis = [Entité.CAMP_PAYSANS]
         self.nom = "Golem"
         self.nomAffichage = self.nom
         self.cooldown = 0
 
     def MiseÀJour(self):
-        if cooldown>0:
-            cooldown=cooldown-1
-        else :
-            cooldown=cooldown
-        self._MiseÀJourIA()
+
+        from Jeu import Jeu,ÉtatJeu
+        jeu = Jeu.avoirJeu()
+        if jeu.état.v == ÉtatJeu.FIN_TOUR or jeu.état.v == ÉtatJeu.JEU:
+            if self.cooldown>0:
+                self.cooldown=self.cooldown-1
+            else :
+                self.cooldown=self.cooldown
+            self.couleur_bordure = Vec4(0.0)
+            self._MiseÀJourIA()
+        elif jeu.état.v in [ÉtatJeu.DÉBUT,ÉtatJeu.SUCCÈS,ÉtatJeu.ÉCHEC,ÉtatJeu.SCÈNE]:
+            personnages : list[str] = None
+            personnages_positions : list[Vec2] = None
+            if self.carte.estScène:
+                personnages = self.carte.séquences.plans[jeu.état.scène_étape].personnages[jeu.état.scène_animation_étape]
+                personnages_positions = self.carte.séquences.plans[jeu.état.scène_étape].personnages_positions[jeu.état.scène_animation_étape]
+            else:
+                personnages = self.carte.séquences[jeu.état.v].plans[jeu.état.scène_étape].personnages[jeu.état.scène_animation_étape]
+                personnages_positions = self.carte.séquences[jeu.état.v].plans[jeu.état.scène_étape].personnages_positions[jeu.état.scène_animation_étape]
+
+            for i in range(len(personnages)):
+                if personnages[i] == self.animID:
+                    self.pos = personnages_positions[i]
     
     def commande(self, commande : Commande):
         """commande Reçoit et interpète une commande donnée par le joueur
