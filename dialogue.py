@@ -50,6 +50,8 @@ def script(Zone : str, Timing : str, choix : str, jeu : Jeu) :
             message += ("\nMais pas le temps de le pleurer : un nouvel ennemis s'approche, mais au lieu d'attaquer, il se mit à parler.")
             message += ("\nSa voix était rauque, à peine audible, mais emprunte de tristesse.")
             message += dialogue("S'il vous plait, cessez cette folie... Rentrons à la maison...","Petit Monstre")
+            message += ("\nLes paroles du petit monstre vous emplissent de doute. De quoi parlait il ? Quelle maison ?")
+            message += ("\nIl y avait il vraiment une fin à cet enfer ? Serait-il temps de fuir ? Ou d'achever ce que vous avez commencé ?")
             message += ("\nQue faites-vous ? (fuir : Fuir avec le monstre / tuer : Tuer le monstre)")
             jeu.état.v = ÉtatJeu.CHOIX
             #IL FAUT METTRE UN INPUT "reponse" DE VOTRE COTE !!!! Puis faire script("Cite", "Choix", reponse)
@@ -87,6 +89,9 @@ def script(Zone : str, Timing : str, choix : str, jeu : Jeu) :
             message += dialogue("Mensonges !","Roi")
             message += dialogue("Melios ! Je t'en conjure, arrêtons cette folie, tout le monde est mort...","Monstre (?)")
             message += dialogue("Soldat ! Tuez ce monstre !","Roi")
+            message += dialogue("Je...","Melios")
+            message += ("\nTrois possibilités s'offrent à vous : Fuir vos responsabilités avec le monstre, Tuer le dernier monstre une bonne fois pour toute et Tuer le roi.")
+            message += ("\nC'est le moment de faire un choix. Vous ne pouvez plus faire marche arrière, il est trop tard.")
             message += ("\nQue faites vous ? (fuir : Fuir avec le monstre / tuer : Tuer le monstre / assassiner : Tuer le roi) : ")
             jeu.état.v = ÉtatJeu.CHOIX
             #IL FAUT METTRE UN INPUT "reponse" DE VOTRE COTE !!!! Puis faire script("Chateau", "Choix", reponse)
