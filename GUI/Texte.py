@@ -5,8 +5,8 @@ from Maths.Vec3 import Vec3
 from TFX import *
 
 class Texte(Text):
-    def __init__(self,parent):
-        super().__init__(parent)
+    def __init__(self,parent, cnf={}, **kw):
+        super().__init__(parent, cnf={}, **kw)
 
         self.police_défaut = tkFont.nametofont(self.cget("font"))
         self.police_défaut.configure(weight="normal",slant="roman",underline=False,overstrike=False,size=int(self.police_défaut.cget("size")))
@@ -565,3 +565,5 @@ class Texte(Text):
             
             if ajouter_caractère:
                 string += c
+        if len(string) != 0:
+            self.insérerFormatté(string,Pcoul=couleur_avant,Scoul=couleur_arrière,gras=ouvert_gras,ital=ouvert_italique,soul=ouvert_souligné,barré=ouvert_barré,niveau_Titre=n_header)

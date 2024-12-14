@@ -23,8 +23,10 @@ class Image:
         self.nuanceur : NuaImage = res.chargerNuanceur("NuaImage",NuaImage)
         self.image : Texture = res.chargerTexture(texture)
         self.taille : Vec2 = Vec2(self.image.largeur,self.image.hauteur)
+        self.estConstruit : bool = False
 
     def construire(self):
         self.maillage.construire()
         self.nuanceur.construire()
         self.image.construire()
+        self.estConstruit = True

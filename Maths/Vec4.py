@@ -17,7 +17,7 @@ class Vec4:
             self.x = x
             self.y = x
             self.z = x
-            self.w = w
+            self.w = x
         elif type(x) == Vec4 and y == None and z == None and w == None:
             self.x = x.x
             self.y = x.y

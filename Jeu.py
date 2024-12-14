@@ -67,13 +67,16 @@ class Jeu:
         self.dialogue_jeu_temps_début :float = 0.0
 
         self.tkracine = tk.Tk()
-        self.tkracine.geometry("1024x512")
+        self.tkracine.geometry("1024x1024")
         menu.initialiserMenus(self.tkracine)
         self.peintre = Peintre(self.tkracine)
 
         self.tkracine.protocol("WM_DELETE_WINDOW",self.surFenêtreFermée)
 
         self.frame_actuelle : TkFenetre = None
+
+        self.case_sélectionnée : Vec2 = None
+        self.entité_sélectionnée : Vec2 = None
     
     def avoirJeu():
         if Jeu.jeu == None:
@@ -95,7 +98,7 @@ class Jeu:
             for i in range(len(self.carte.entités)):
                 self.carte.entités[i].MiseÀJour()
 
-        os.system("cls" if os.name == 'nt' else "clear")
+        # os.system("cls" if os.name == 'nt' else "clear")
         if self.état.v == ÉtatJeu.FIN_TOUR:
             paysans = False
             joueur = False
@@ -135,12 +138,16 @@ class Jeu:
                 Arbalettier.noms = copy.deepcopy(Arbalettier.noms_originaux)
                 Chevalier.noms = copy.deepcopy(Chevalier.noms_originaux)
                 self.changerCarte(res.chargerCarte(self.carte.prochaine))
+                self.tkracine.after_idle(lambda: self.peintre.surModificationFenetre(None))
                 if self.carte.estScène:
                     self.état.v = ÉtatJeu.SCÈNE
                 else:
                     self.état.v = ÉtatJeu.DÉBUT
                 for e in self.carte.entités:
                     e.MiseÀJour()
+
+                self.entité_sélectionnée = None
+                self.case_sélectionnée = None
             else:
                 self.état.v = ÉtatJeu.TERMINÉ
 
@@ -181,3 +188,8 @@ class Jeu:
     
     def surFenêtreFermée(self):
         self.état.v = ÉtatJeu.TERMINÉ
+
+    def déselectionner(self):
+        self.case_sélectionnée = None
+        self.entité_sélectionnée = None
+        self.carte.déselectionner()

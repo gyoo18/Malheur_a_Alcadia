@@ -4,6 +4,7 @@ from OpenGL.GLU import *
 
 from Dessin.Maillage import Maillage
 from Maths.Vec2 import Vec2
+from Maths.Vec4 import Vec4
 
 from Carte.Carte import Carte
 from InclusionsCirculaires.Jeu_Peintre import *
@@ -16,8 +17,10 @@ class Peintre(tkinter.Widget, tkinter.Misc):
 
     def __init__(self, parent, cnf={}, **kw):
         print("Création du peintre.")
-        self.hauteure : int = 0
-        self.largeure : int = 0
+        self.hauteure_visuelle : int = 0
+        self.largeure_visuelle : int = 0
+        self.largeure_physique : int = 0
+        self.hauteure_physique : int = 0
         self.couleur_arrière_plan = (0.8,0.8,0.8)
         self.carte : Carte = None
         self.initialisé = False
@@ -41,20 +44,28 @@ class Peintre(tkinter.Widget, tkinter.Misc):
         self.bind("<Map>",self.initialiser)
         self.bind("<Expose>",self.surModificationFenetre)
         self.bind("<Visibility>",self.surModificationFenetre)
+        self.bind("<Configure>",self.surModificationFenetre)
+
+        # self.bind("<Enter>",self.surCurseurEntrer)
+        self.bind("<Leave>",self.surCurseurSortir)
+        self.bind("<Motion>",self.surCurseurMouvement)
+        self.bind("<Button-1>",self.surClique)
 
         print("Peintre créé.")
     
     def initialiser(self,event):
         print("Couleur arrière-plan : ", self.couleur_arrière_plan)
-        glClearColor(self.couleur_arrière_plan[0],self.couleur_arrière_plan[1],self.couleur_arrière_plan[2],1.0)
+        glClearColor(self.couleur_arrière_plan[0],self.couleur_arrière_plan[1],self.couleur_arrière_plan[2],0.0)
         #glEnable(GL_DEPTH_TEST)
         glEnable(GL_BLEND)
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
-        self.largeure = self.winfo_width()
-        self.hauteure = self.winfo_height()
+        self.largeure_visuelle = self.winfo_width()
+        self.hauteure_visuelle = self.winfo_height()
+        self.largeure_physique = self.winfo_width()
+        self.hauteure_physique = self.winfo_height()
 
-        glViewport(0,0,self.largeure, self.hauteure)
+        glViewport(0,0,self.largeure_visuelle, self.hauteure_visuelle)
         self.initialisé = True
         print("Peintre Initialisé")
 
@@ -63,16 +74,29 @@ class Peintre(tkinter.Widget, tkinter.Misc):
             print("[GLError] :",gluErrorString(error))
     
     def surModificationFenetre(self,event):
-        self.largeure = self.winfo_width()
-        self.hauteure = self.winfo_height()
-        glViewport(0,0,self.largeure,self.hauteure)
-        taille = min(self.largeure,self.hauteure)
-        self.carte.dessin_taille = Vec2(taille, taille)
+        print("Fenêtre!")
+        self.largeure_physique = self.winfo_width()
+        self.hauteure_physique = self.winfo_height()
+        if self.carte != None:
+            facteur_x = self.largeure_physique/self.carte.colonnes
+            facteur_y = self.hauteure_physique/self.carte.lignes
+            facteur = min(facteur_x,facteur_y)
+            self.largeure_visuelle = int(facteur*self.carte.colonnes)
+            self.hauteure_visuelle = int(facteur*self.carte.lignes)
+        else:
+            self.largeure_visuelle = self.largeure_physique
+            self.hauteure_visuelle = self.hauteure_physique
+        glViewport((self.largeure_physique-self.largeure_visuelle)//2,(self.hauteure_physique-self.hauteure_visuelle)//2,self.largeure_visuelle,self.hauteure_visuelle)
+        self.carte.dessin_taille = Vec2(self.largeure_visuelle, self.hauteure_visuelle)
 
     def peindre(self):
         self.make_current()
 
         glClear(GL_COLOR_BUFFER_BIT)
+
+        for e in self.carte.entités:
+            if not e.dessin_Image.estConstruit:
+                e.dessin_Image.construire()
 
         self.carte.dessin_nuanceur.démarrer()
 
@@ -80,7 +104,7 @@ class Peintre(tkinter.Widget, tkinter.Misc):
         for i in range(len(self.carte.dessin_maillage.attributs)):
             glEnableVertexAttribArray(i)
 
-        self.carte.dessin_nuanceur.chargerUniformes(self.carte.dessin_position, self.carte.dessin_rotation, self.carte.dessin_taille*self.carte.dessin_échelle, Vec2(self.largeure,self.hauteure), Vec2(self.carte.colonnes,self.carte.lignes),self.carte.dessin_atlas_indexes,self.carte.dessin_atlas_taille)
+        self.carte.dessin_nuanceur.chargerUniformes(self.carte.dessin_position, self.carte.dessin_rotation, self.carte.dessin_taille*self.carte.dessin_échelle, Vec2(self.largeure_visuelle,self.hauteure_visuelle), Vec2(self.carte.colonnes,self.carte.lignes),self.carte.dessin_atlas_indexes,self.carte.dessin_atlas_taille, [self.carte.case_sélectionnée_bordure,self.carte.case_survol_bordure], [self.carte.case_sélectionnée_couleur,self.carte.case_survol_couleur], [self.carte.case_sélectionnée,self.carte.case_survol])
 
         glActiveTexture(GL_TEXTURE0)
         glBindTexture(GL_TEXTURE_2D,self.carte.dessin_atlas.ID)
@@ -109,7 +133,7 @@ class Peintre(tkinter.Widget, tkinter.Misc):
                 image.pos = ((entité.pos+Vec2(0.5))/Vec2(self.carte.colonnes,self.carte.lignes)*2.0 - 1.0)*self.carte.dessin_taille
                 image.pos.y = -image.pos.y
 
-                image.nuanceur.chargerUniformes(image.pos, image.rot, image.taille*image.échelle, Vec2(self.largeure,self.hauteure))
+                image.nuanceur.chargerUniformes(image.pos, image.rot, image.taille*image.échelle, Vec2(self.largeure_visuelle,self.hauteure_visuelle),entité.couleur_bordure)
 
                 glActiveTexture(GL_TEXTURE0)
                 glBindTexture(GL_TEXTURE_2D,image.image.ID)
@@ -133,6 +157,23 @@ class Peintre(tkinter.Widget, tkinter.Misc):
     def changerCarte(self,carte : Carte):
         self.carte = carte
         self.carte.dessin_construire()
+    
+    def surCurseurSortir(self,event):
+        self.carte.curseurSort()
+
+    def surCurseurMouvement(self,event):
+        taille_physique = Vec2(self.largeure_physique,self.hauteure_physique)
+        taille_visuelle = Vec2(self.largeure_visuelle,self.hauteure_visuelle)
+        position_visuelle = ( Vec2(event.x,event.y) - ( ( taille_physique - taille_visuelle )/2.0 ) )
+        if position_visuelle.x > 0 and position_visuelle.x < taille_visuelle.x and position_visuelle.y > 0 and position_visuelle.y < taille_visuelle.y:
+            self.carte.curseurSurvol( position_visuelle/taille_visuelle )
+        else:
+            self.surCurseurSortir(event)
+    
+    def surClique(self,event):
+        taille_physique = Vec2(self.largeure_physique,self.hauteure_physique)
+        taille_visuelle = Vec2(self.largeure_visuelle,self.hauteure_visuelle)
+        self.carte.curseurClique( ( Vec2(event.x,event.y) - ( ( taille_physique - taille_visuelle )/2.0 ) )/taille_visuelle )
 
     # !==== Code copié de la librairie tkinter-gl ====!
 

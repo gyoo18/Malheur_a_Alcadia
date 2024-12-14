@@ -82,7 +82,7 @@ class Ressources:
             if not "Séquence" in carte_dict:
                 raise AttributeError("La Carte " + str(source) + " doit contenir un attribut 'Séquence' de type liste ou dictionnaire.")
             
-            for x in range(len(carte_dict["Carte"])):
+            for x in range(len(carte_dict["Carte"][0])):
                 colonne = []
                 for y in range(len(carte_dict["Carte"])):
                     match carte_dict["Carte"][y][x]:

@@ -2,6 +2,7 @@ from __future__ import annotations
 from InclusionsCirculaires.Entité_Carte import *
 from InclusionsCirculaires.Jeu_Carte import *
 from Maths.Vec2 import Vec2
+from Maths.Vec4 import Vec4
 from Entités.Paysan import *
 from Entités.Golem import *
 from Entités.Personnages import *
@@ -66,6 +67,14 @@ class Carte:
         self.dessin_atlas : Texture = res.chargerTexture("Atlas")
         self.dessin_atlas_taille : Vec2 = Vec2(16,16)
         self.dessin_atlas_indexes : list[int] = []
+
+        self.case_sélectionnée : int = -1
+        self.case_sélectionnée_couleur : Vec4 = Vec4(JAUNE.x,JAUNE.y,JAUNE.z,0.75)
+        self.case_sélectionnée_bordure : float = 0.20
+        
+        self.case_survol : int = -1
+        self.case_survol_couleur : Vec4 = Vec4(CYAN.x,CYAN.y,CYAN.z,0.75)
+        self.case_survol_bordure : float = 0.15
             
     def peutAller(self, entite: Entité, pos: Vec2):
         if pos.x<0 or pos.x>len(self.matrice)-1 or pos.y<0 or pos.y>len(self.matrice[0])-1:
@@ -206,3 +215,44 @@ class Carte:
         for e in self.entités:
             if e.dessin_Image != None:
                 e.dessin_Image.construire()
+
+    def curseurSurvol(self, position : Vec2):
+        x = int(position.x*self.colonnes)
+        y = int(position.y*self.lignes)
+        self.case_survol = x + y*self.colonnes
+        for e in self.entités:
+            if e.pos == Vec2(x,y) and e.couleur_bordure == Vec4(0.0):
+                e.couleur_bordure = Vec4(CYAN.x,CYAN.y,CYAN.z,0.75)
+            elif e.pos != Vec2(x,y) and e.couleur_bordure == Vec4(CYAN.x,CYAN.y,CYAN.z,0.75):
+                e.couleur_bordure = Vec4(0.0)
+
+    def curseurClique(self, position : Vec2):
+        from Jeu import Jeu
+        jeu = Jeu.avoirJeu()
+        x = int(position.x*self.colonnes)
+        y = int(position.y*self.lignes)
+        case = x + y*self.colonnes
+        if self.case_sélectionnée == case:
+            self.case_sélectionnée = -1
+            jeu.case_sélectionnée = None
+        else:
+            self.case_sélectionnée = case
+            jeu.case_sélectionnée = Vec2(x,y)
+        for e in self.entités:
+            if e.pos == Vec2(x,y) and self.case_sélectionnée == -1:
+                e.couleur_bordure = Vec4(0.0)
+                jeu.entité_sélectionnée = None
+            elif e.pos == Vec2(x,y) and self.case_sélectionnée != -1:
+                e.couleur_bordure = Vec4(JAUNE.x,JAUNE.y,JAUNE.z,0.75)
+                jeu.entité_sélectionnée = e
+
+    def curseurSort(self):
+        self.case_survol = -1
+        for e in self.entités:
+            if e.couleur_bordure == Vec4(CYAN.x,CYAN.y,CYAN.z,0.75):
+                e.couleur_bordure = Vec4(0.0)
+    
+    def déselectionner(self):
+        self.case_sélectionnée = -1
+        for e in self.entités:
+            e.couleur_bordure = Vec4(0.0)
