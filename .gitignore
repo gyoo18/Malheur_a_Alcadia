@@ -2,10 +2,3 @@
 .vscode
 __pycache__
 .VSCodeCounter
-
-!.venv/lib/numpy/*
-!.venv/lib/numpy/*/*
-!.venv/lib/numpy/*/*/*
-!.venv/lib/numpy/*/*/*/*
-!.venv/lib/numpy/*/*/*/*/*
-!.venv/lib/numpy/*/*/*/*/*/*
