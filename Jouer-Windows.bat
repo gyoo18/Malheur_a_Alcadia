@@ -53,8 +53,8 @@ goto:fin
 
 ::Message d'erreur, python n'est pas installé
 :erreur
-echo !!====PYTHON N'A PAS ETE DETECTE SUR VOTRE ORDINATEUR. VEUILLEZ INSTALLER PYTHON.====!!
-
+echo !!====PYTHON N'A PAS ETE DETECTE SUR VOTRE ORDINATEUR.====!!
+echo Veuillez installer python au lien suivant : https://www.python.org/downloads/
 
 :fin
 echo Merci d'avoir joue :)

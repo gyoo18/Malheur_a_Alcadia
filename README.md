@@ -6,7 +6,6 @@ Malheur à Alcadia est un petit jeu console de combat stratégique en tour-par-t
 
 ## Comment Jouer?
 1. Assurez-vous d'avoir **python d'installé**. Si vous êtes sur linux, vous devriez déjà l'avoir. Pour vérifier si vous l'avez, ouvrez une invite de commande et tapez `python --version`,`py --version` ou `python3 --version`. Si l'une d'entre elles fonctionnes, python est installé. Si vous n'avez pas python, vous pouvez l'installer ici : https://www.python.org/downloads/
-2. Assurez-vous de posséder **un compilateur C/C++**, tel que **gcc**,**clang** ou **msvc**. Pour vérifer si vous en possédez un, ouvrez une invite de commande et tapez `gcc --version`,`clang --version` ou, sur windows, `"%ProgramFiles(x86)%\Microsoft Visual Studio\Installer\vswhere.exe"`. Si, dans aucun cas vous n'obtenez la version de votre compilateur, vous devrez en installer un. Sur linux, dans une invite de commande, tapez `sudo apt update`, puis `sudo apt install build-essential` pour **installer gcc**, ``
 3. Cliquez sur le lien suivant : https://github.com/gyoo18/Prog1_jeu/releases
 4. Téléchargez la version la plus récente
 5. Vous trouverez un fichier .zip, dézippez-le
