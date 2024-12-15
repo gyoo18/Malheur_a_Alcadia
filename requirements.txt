@@ -2,5 +2,4 @@ typing_extensions
 PyGLM
 PyOpenGL
 PyOpenGL_accelerate
-numpy==1.26.4
 imageio
