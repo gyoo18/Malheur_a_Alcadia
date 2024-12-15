@@ -8,7 +8,7 @@ from Jeu import *
 import dialogue
 from TFX import *
 from Entités.Golem import *
-from tkinter import Frame,Button,Label
+from tkinter.ttk import Frame,Button,Label, Style
 from tkinter.font import Font
 from GUI.TkFenetre import TkFenetre
 from GUI.Texte import Texte
@@ -16,6 +16,10 @@ from GUI.Texte import Texte
 def initialiserMenus(tkracine : tkinter.Tk):
     res = Ressources.avoirRessources()
     
+    style = Style(tkracine)
+    style.configure("TLabel",font=("Noto Sans CJK KR Black",48),foreground="#f2b635",background="#191a1e")
+    style.configure("TFrame",background="#191a1e")
+    style.configure("TButton",font = ("Noto Sans CJK KR Black",24),foreground = "#f7deb7",background="#4e89e8",relief="raised")
     menu_principal = TkFenetre(Frame(tkracine))
     jeu_principal = TkFenetre(Frame(tkracine))
     menu_aide = TkFenetre(Frame(tkracine))
@@ -259,6 +263,7 @@ def menuPrincipal():
     res = Ressources.avoirRessources()
     jeu = Jeu.avoirJeu()
 
+    
     fenetre = res.obtenirMenu("menu_principal")
 
     if not fenetre.initialisé:
@@ -266,6 +271,8 @@ def menuPrincipal():
         titre = Label(fenetre.frame,text="Malheur à Alcadia!")
         titre.pack(pady=10)
 
+        boutons = Frame(fenetre.frame)
+        boutons.pack(anchor="center",expand=True)
 
         def bouton_commencer():
             jeu = Jeu.avoirJeu()
@@ -273,16 +280,16 @@ def menuPrincipal():
                 jeu.état.v = ÉtatJeu.SCÈNE
             else:
                 jeu.état.v = ÉtatJeu.DÉBUT
-        commencer = Button(fenetre.frame,text="Commencer",command=bouton_commencer)
-        commencer.pack(pady=10)
+        commencer = Button(boutons,text="Commencer",command=bouton_commencer)
+        commencer.pack(pady=5)
 
         def bouton_Quitter():
             jeu = Jeu.avoirJeu()
             jeu.état.v = ÉtatJeu.TERMINÉ
-        quitter = Button(fenetre.frame,text="Quitter",command=bouton_Quitter)
-        quitter.pack(pady=10)
+        quitter = Button(boutons,text="Quitter",command=bouton_Quitter)
+        quitter.pack(pady=5)
 
-        fenetre.frame.pack()
+        fenetre.frame.pack(fill="both",expand=True,anchor="center")
         jeu.frame_actuelle = fenetre
         fenetre.initialisé = True
 
