@@ -72,7 +72,7 @@ class Jeu:
         self.tkracine.configure(bg="#191a1e")
         menu.initialiserMenus(self.tkracine)
         self.tkracine.bind("<Configure>",menu.surModificationFenêtre)
-        self.peintre = Peintre(self.tkracine)
+        self.peintre = Peintre(self.tkracine,width=100,height=100)
 
         self.vieille_taille : Vec2 = Vec2(self.tkracine.winfo_width(),self.tkracine.winfo_height())
 
