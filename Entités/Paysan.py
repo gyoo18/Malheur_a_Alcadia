@@ -49,7 +49,7 @@ class Paysan(Entité):
 
 class Gosse(Paysan):
 
-    noms_originaux : list[str] = ["Lhucra","Karck","Gryui","Vhynch"]
+    noms_originaux : list[str] = ["Lhucra","Karck","Gryui","Vhynch","Kurkt","Jauhgne","Pehtere","Fhenced","Fhorestd","Filyppe"]
     noms : list[str] = copy.deepcopy(noms_originaux)
 
     def __init__(self):
@@ -72,7 +72,7 @@ class Gosse(Paysan):
 
 class Mineur(Paysan):
 
-    noms_originaux : list[str] = ["Kol","Patt","Mork","Bury","Jack"]
+    noms_originaux : list[str] = ["Kol","Patt","Mork","Bury","Jack","Molkre","Cohald","Rhubry","Mhika","Rock"]
     noms : list[str] = copy.deepcopy(noms_originaux)
 
     def __init__(self):
@@ -97,7 +97,7 @@ class Mineur(Paysan):
     
 class Prêtre(Paysan):
 
-    noms_originaux : list[str] = ["StFray","StClark","StTurc","StJoph","StLam"]
+    noms_originaux : list[str] = ["StFray","StClark","StTurc","StJoph","StLam","StAnthaunio","StArkaded","StArheye","StBotvid","StKizitau"]
     noms : list[str] = copy.deepcopy(noms_originaux)
 
     def __init__(self):
@@ -178,7 +178,7 @@ class Prêtre(Paysan):
     
 class Chevalier(Paysan):
 
-    noms_originaux : list[str] = ["SirRaudryguish","SirHarchurt","SirMorline","SirLrimqu"]
+    noms_originaux : list[str] = ["SirRaudryguish","SirHarchurt","SirMorline","SirLrimqu","SirEskraanor","SirNhappo","SirHerkkulle","SirGerrahld","SirHelvice","SirPephiml"]
     noms : list[str] = copy.deepcopy(noms_originaux)
 
     def __init__(self):
@@ -225,7 +225,7 @@ class Chevalier(Paysan):
     
 class Arbalettier(Paysan):
     
-    noms_originaux : list[str] = ["Rambo","Rocky","Laçette","Fréch","Chaubin","Soly"]
+    noms_originaux : list[str] = ["Rambo","Rocky","Laçette","Fréch","Chaubin","Soly","Atomh","Lembertgh","Mahxirm","Haumert"]
     noms : list[str] = copy.deepcopy(noms_originaux)
 
     def __init__(self):

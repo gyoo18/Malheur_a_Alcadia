@@ -313,7 +313,7 @@ class GolemTerre(Golem):
     """
     ATTAQUE_SPÉCIALE = "frapper sol"
 
-    noms_originaux : list[str] = ["Gorb","Bob","Pierre","Fero","Crys","Gol","Morb","Pol"]
+    noms_originaux : list[str] = ["Gorb","Bob","Pierre","Fero","Crys","Gol","Morb","Pol","Vidal","Elyahu"]
     noms : list[str] = copy.deepcopy(noms_originaux)
 
     def __init__(self):
@@ -363,7 +363,7 @@ class GolemEau(Golem):
     """
     ATTAQUE_SPÉCIALE = "attaque tornade"
 
-    noms_originaux : list[str] = ["Blob","Plouf","Sploch","Casca","Rive"]
+    noms_originaux : list[str] = ["Blob","Plouf","Sploch","Casca","Rive","Aqua","Kappa","Aviva","Yael","Rivka"]
     noms : list[str] = copy.deepcopy(noms_originaux)
 
     def __init__(self):
@@ -463,7 +463,7 @@ class GolemFeu(Golem):
     """
     ATTAQUE_SPÉCIALE = "attaque boule de feu"
     
-    noms_originaux : list[str]= ["Magme","Fusio","Larva","Manta","Ardenne"]
+    noms_originaux : list[str]= ["Magme","Fusio","Larva","Manta","Ardenne","Blaze","Flama","Toaster","Furn","Torch"]
     noms : list[str]= copy.deepcopy(noms_originaux)
 
     def __init__(self):
@@ -499,7 +499,7 @@ class GolemFeu(Golem):
 
 class GolemDoré(Golem):
 
-    noms_originaux : list[str] = ["Goldy","Flash","Shiny","Conqi","King"]
+    noms_originaux : list[str] = ["Goldy","Flash","Shiny","Conqi","King","Orne","Meltor","Thorn","Smooth","Holy"]
     noms : list[str] = copy.deepcopy(noms_originaux)
 
     def __init__(self):
