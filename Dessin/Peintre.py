@@ -29,7 +29,7 @@ class Peintre(OpenGLFrame):
 
         # self.bind("<Map>",self.initialiser)
         # self.bind("<Expose>",self.surModificationFenetre)
-        # self.bind("<Visibility>",self.surModificationFenetre)
+        self.bind("<Visibility>",self.surModificationFenetre)
         # self.bind("<Configure>",self.surModificationFenetre)
         # 
         # self.bind("<Enter>",self.surCurseurEntrer)

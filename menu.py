@@ -476,16 +476,19 @@ def menu_combat():
         conteneur_descritptions = fenetre.obtenirWidget("descriptions")
          
         for w in conteneur_descritptions.winfo_children():
+            if w in Texte.textes:
+                Texte.textes.remove(w)
             w.destroy()
+            del w
         
         camps = []
         
         for e in jeu.carte.entités:
             if not e.camp in camps:
                 camps.append(e.camp)
-        
+
         for c in camps:
-            texte = Texte(conteneur_descritptions,height=int(2*Texte.police_taille_scalaire),background="#191a1e",foreground="#f7deb7",highlightthickness=0,relief="flat",wrap="word")
+            texte = Texte(conteneur_descritptions,height=int(4.5*jeu.tkracine.winfo_height()/1024),background="#191a1e",foreground="#f7deb7",highlightthickness=0,relief="flat",wrap="word")
             texte.insérerFormatté(c,soul=True,niveau_Titre=5)
             texte.pack(side="top",fill="x",expand=True,pady=0,padx=20)
             for e in jeu.carte.entités:
@@ -516,20 +519,23 @@ def menu_info():
 
     if not fenetre.initialisé:
         titre = Label(fenetre.frame,text="Menu de statistique du combat")
-        titre.pack()
+        titre.pack(pady=10,padx=10)
 
         texte = Texte(fenetre.frame)
-        texte.pack()
+        texte.pack(padx=10,pady=10)
         fenetre.enregistrerWidget(texte,"texte")
 
         boutton_select = Button(fenetre.frame,text="Sélectionner",command=lambda: commande_menu_select(MenuContextuel.INFO,["SELECT",jeu.menu.menu_entité_entité.nom.upper()]))
-        boutton_select.pack()
-        boutton_aide = Button(fenetre.frame,text="Aide",command=lambda: commande_menu_aide(MenuContextuel.INFO))
-        boutton_aide.pack()
-        boutton_retour = Button(fenetre.frame,text="Précédent",command=commande_précédent)
-        boutton_retour.pack()
-        boutton_quitter = Button(fenetre.frame,text="Quitter",command=commande_quitter)
-        boutton_quitter.pack()
+        boutton_select.pack(pady=10,expand=True)
+
+        boutons = Frame(fenetre.frame)
+        boutton_aide = Button(boutons,text="Aide",command=lambda: commande_menu_aide(MenuContextuel.INFO))
+        boutton_aide.grid(column=0,row=0)
+        boutton_retour = Button(boutons,text="Précédent",command=commande_précédent)
+        boutton_retour.grid(column=1,row=0)
+        boutton_quitter = Button(boutons,text="Quitter",command=commande_quitter)
+        boutton_quitter.grid(column=2,row=0)
+        boutons.pack(pady=10,padx=10)
         
         fenetre.initialisé = True
     if jeu.frame_actuelle != fenetre:
@@ -538,7 +544,7 @@ def menu_info():
         texte.markdownFormattage(jeu.menu.menu_entité_entité.avoirInfoStr())
 
         jeu.frame_actuelle.frame.pack_forget()
-        fenetre.frame.pack()
+        fenetre.frame.pack(fill="both",expand=True)
         jeu.frame_actuelle = fenetre
 
 def menu_select():
@@ -556,15 +562,17 @@ def menu_select():
         fenetre.enregistrerWidget(peintre_conteneur,"peintre")
 
         grille_bouttons = Frame(fenetre.frame)
-        grille_bouttons.pack()
+        grille_bouttons.pack(padx = 10, pady = 5)
         fenetre.enregistrerWidget(grille_bouttons,"bouttons")
 
-        boutton_aide = Button(fenetre.frame,text="Aide",command=lambda: commande_menu_aide(MenuContextuel.SELECT))
-        boutton_aide.pack()
-        boutton_retour = Button(fenetre.frame,text="Précédent",command=commande_précédent)
-        boutton_retour.pack()
-        boutton_quitter = Button(fenetre.frame,text="Quitter",command=commande_quitter)
-        boutton_quitter.pack()
+        boutons = Frame(fenetre.frame)
+        boutton_aide = Button(boutons,text="Aide",command=lambda: commande_menu_aide(MenuContextuel.SELECT))
+        boutton_aide.grid(column=0,row=0,padx=5)
+        boutton_retour = Button(boutons,text="Précédent",command=commande_précédent)
+        boutton_retour.grid(column=1,row=0,padx=5)
+        boutton_quitter = Button(boutons,text="Quitter",command=commande_quitter)
+        boutton_quitter.grid(column=2,row=0,padx=5)
+        boutons.pack(padx=10,pady=5)
 
         fenetre.initialisé = True
     if jeu.frame_actuelle != fenetre:
@@ -596,13 +604,13 @@ def menu_select():
                     jeu.menu.menu_select_entité.commande(commande)
                     jeu.déselectionner()
             boutton_cg = Button(grille_bouttons,text="Créer Golem",command=commande_créer_gollem)
-            boutton_cg.pack(side="right")
+            boutton_cg.pack(side="right",padx=5)
 
             boutton_dp = Button(grille_bouttons,text="Déplacer",command=commande_déplacer)
-            boutton_dp.pack(side="left")
+            boutton_dp.pack(side="left",padx=5)
         else:
             boutton_dp = Button(grille_bouttons,text="Déplacer",command=commande_déplacer)
-            boutton_dp.pack(side="left")
+            boutton_dp.grid(column=0,row=0,padx=2,pady=2,sticky="ew")
 
             def commande_attaque():
                 jeu = Jeu.avoirJeu()
@@ -611,8 +619,7 @@ def menu_select():
                     commande.faireCommandeAttaque(jeu.entité_sélectionnée)
                     jeu.menu.menu_select_entité.commande(commande)
             boutton_a = Button(grille_bouttons,text="Attaquer",command=commande_attaque)
-            boutton_a.pack(side="left")
-
+            boutton_a.grid(column=1,row=0,padx=2,pady=2,sticky="ew")
             def commande_attaque_spéciale():
                 jeu = Jeu.avoirJeu()
                 try:
@@ -622,7 +629,7 @@ def menu_select():
                 except:
                     print("HuHo...")
             boutton_as = Button(grille_bouttons,text="Attaque Spéciale",command=commande_attaque_spéciale)
-            boutton_as.pack(side="left")
+            boutton_as.grid(column=2,row=0,padx=2,pady=2,sticky="ew")
         
             def commande_défense():
                 jeu = Jeu.avoirJeu()
@@ -630,7 +637,7 @@ def menu_select():
                 commande.faireCommandeDéfense()
                 jeu.menu.menu_select_entité.commande(commande)
             boutton_df = Button(grille_bouttons,text="Défense",command=commande_défense)
-            boutton_df.pack(side="left")
+            boutton_df.grid(column=0,row=1,padx=2,pady=2,sticky="ew")
 
             def commande_charger_attaque():
                 jeu = Jeu.avoirJeu()
@@ -638,7 +645,7 @@ def menu_select():
                 commande.faireCommandeCharger()
                 jeu.menu.menu_select_entité.commande(commande)
             boutton_ca = Button(grille_bouttons,text="Charger Attaque",command=commande_charger_attaque)
-            boutton_ca.pack(side="left")
+            boutton_ca.grid(column=1,row=1,padx=2,pady=2,sticky="ew")
 
             def commande_attaquer_charge(jeu : Jeu):
                 jeu = Jeu.avoirJeu()
@@ -647,7 +654,7 @@ def menu_select():
                     commande.faireCommandeAttaquerCharge(jeu.entité_sélectionnée)
                     jeu.menu.menu_select_entité.commande(commande)
             boutton_ac = Button(grille_bouttons,text="Attaquer Charge",command=commande_attaquer_charge)
-            boutton_ac.pack(side="left")
+            boutton_ac.grid(column=2,row=1,padx=2,pady=2,sticky="ew")
 
             def commande_libérer(jeu : Jeu):
                 jeu = Jeu.avoirJeu()
@@ -655,10 +662,10 @@ def menu_select():
                 commande.faireCommandeLibérer()
                 jeu.menu.menu_select_entité.commande(commande)
             boutton_l = Button(grille_bouttons,text="Libérer",command=commande_libérer)
-            boutton_l.pack(side="left")
+            boutton_l.grid(column=0,row=2,columnspan=3,padx=2,pady=2,sticky="ew")
 
         jeu.frame_actuelle.frame.pack_forget()
-        fenetre.frame.pack()
+        fenetre.frame.pack(fill="both",expand=True)
         jeu.frame_actuelle = fenetre
     
     """

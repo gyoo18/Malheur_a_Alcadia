@@ -68,7 +68,7 @@ class Jeu:
         self.dialogue_jeu_temps_début :float = 0.0
 
         self.tkracine = tk.Tk()
-        self.tkracine.geometry("1024x1024")
+        self.tkracine.geometry("512x512")
         self.tkracine.configure(bg="#191a1e")
         menu.initialiserMenus(self.tkracine)
         self.tkracine.bind("<Configure>",menu.surModificationFenêtre)

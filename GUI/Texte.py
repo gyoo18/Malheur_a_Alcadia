@@ -9,7 +9,7 @@ import time
 
 class Texte(Text):
     police_taille_scalaire : float = 1.5
-    textes : Texte = []
+    textes : list[Texte] = []
 
     def __init__(self,parent, cnf={}, **kw):
         super().__init__(parent, cnf, **kw)
