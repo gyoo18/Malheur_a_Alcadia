@@ -36,21 +36,21 @@ class Joueur(Golem):
             case Commande.CRÉER_GOLEM:
                 self._commandeCréerGolem(commande)
             case _:
-                print(coul("La commande : " + str(commande.catégorie) + " n'est pas acceptée par Mélios.",ROUGE))
+                Log.mdwn("<r>La commande : "+str(commande.catégorie)+" n'est pas acceptée par Mélios.</>")
                 # raise AttributeError(coul("[Golem.commande] Commande mal construite : catégorie" + str(commande.catégorie) + " invalide.",ROUGE))
     
     def _commandeCréerGolem(self, commande : Commande):
         if Vec2.distance(self.pos, commande.position_création_golem) > self.distance_création_golem:
-            print(coul("L'emplacement spécifié est trop loin. Vous ne pouvez pas créer de golem à plus de " + str(self.distance_création_golem) + " mètres de distance.", ROUGE))
+            Log.mdwn("<r>L'emplacement spécifié est trop loin. Vous ne pouvez pas créer de golem à plus de " + str(self.distance_création_golem) + " mètres de distance.</>")
             return
         
         if self.carte.matrice[int(commande.position_création_golem.x)][int(commande.position_création_golem.y)] == Tuile.TYPE_MUR:
-            print(coul("Impossible de créer un golem à cet endroit : un mur s'y trouve.",ROUGE))
+            Log.mdwn("<r>Impossible de créer un golem à cet endroit : un mur s'y trouve.</>")
             return
         
         for e in self.carte.entités:
             if e.pos == commande.position_création_golem:
-                print(coul("Impossible de créer un golem à cet endroit : ",ROUGE) + gras(coul(e.nom,ROUGE)) + coul(" s'y trouve déjà.",ROUGE))
+                Log.mdwn("<r>Impossible de créer un golem à cet endroit : **"+e.nom,ROUGE+"** s'y trouve déjà.</>")
                 return
             
         élément = ""
@@ -76,7 +76,7 @@ class Joueur(Golem):
         golem.pos = commande.position_création_golem
         golem.carte = self.carte
         self.carte.entités.append(golem)
-        print(coul("Golem de type " + élément + " créé. Son nom : ",VERT) + gras(coul(golem.nom,VERT)))
+        Log.mdwn("<v>Golem de type "+élément+" créé. Son nom : **"+golem.nom+"**</>")
 
     def Attaquer(self, attaque : Attaque):
         """Attaquer Fonction pour recevoir une attaque
@@ -86,8 +86,8 @@ class Joueur(Golem):
         Args:
             attaque (Attaque): Un objet Attaque qui contient les informations nécessaires pour subir une attaque.
         """
-        print(self.nom + " reçoit une attaque de " + attaque.provenance.nom)
-        print(self.nom + " a " + str(self.PV) + " PV, l'attaque fait " + str(attaque.dégats) + " PD")
+        Log.log(self.nom + " reçoit une attaque de " + attaque.provenance.nom)
+        Log.log(self.nom + " a " + str(self.PV) + " PV, l'attaque fait " + str(attaque.dégats) + " PD")
         # Virer au mode combat, si on n'y est pas déjà
         if not self.estAttaqué:
             self.estAttaqué = True
@@ -96,7 +96,7 @@ class Joueur(Golem):
         self.PV -= attaque.dégats          # Retirer les points de vies
         # Évaluer si on est morts
         if self.PV <= 0.0:
-            print(self.nom + " est mort.")
+            Log.mdwn("**<r>"+self.nom+" est mort.</>**")
             self.PV = 0.0
             self.estVivant = False
 
@@ -106,19 +106,19 @@ class Joueur(Golem):
         Calcule un chemin vers la destination et s'y déplace.
         """
             
-        print("Recherche d'un chemin vers " + str(self.destination.x) + ';' + str(self.destination.y))
+        Log.log("Recherche d'un chemin vers " + str(self.destination.x) + ';' + str(self.destination.y))
         self.naviguerVers(self.destination,False)
 
         # Si on n'a pas atteint le bout du chemin
         if len(self.chemin) > 0:
-            print("Un chemin existe, avançons")
+            Log.log("Un chemin existe, avançons")
             # Avancer sur le chemin
             self.direction = self.chemin[0] - self.pos
             self.pos = self.chemin.pop(0)
 
             # Si on n'a pas trouvé d'ennemi, mais qu'on est arrivé au bout du chemin,
             if self.pos == self.destination and self.état.v == ÉtatIA.COMBAT:
-                print("Arrivé à destination. Aucun ennemi à l'horison, Mode recherche activé.")
+                Log.log("Arrivé à destination. Aucun ennemi à l'horison, Mode recherche activé.")
                 # Chercher un autre ennemi si on est dans la boucle normale,
                 # Rester immobile si on se déplace à cause d'une commande
                 self.état.v = ÉtatIA.IMMOBILE
@@ -129,7 +129,7 @@ class Joueur(Golem):
         Vire en mode combat s'il reçoit une attaque
         """
         if self.estAttaqué:
-            print("Je suis attaqué!")
+            Log.mdwn("<o>Je suis attaqué!</>")
 
 class Personnage(Chevalier):
     def __init__(self,nom : str):

@@ -9,17 +9,15 @@ from Maths.Vec4 import Vec4
 from Carte.Carte import Carte
 from InclusionsCirculaires.Jeu_Peintre import *
 
-import tkinter
-import sys
-import os
+from GUI.Log import Log
 
 from pyopengltk import OpenGLFrame
 
 class Peintre(OpenGLFrame):
 
     def __init__(self, parent, cnf={}, **kw):
+        Log.log("Création du peintre.")
         super().__init__(parent,cnf,**kw)
-        print("Création du peintre.")
         self.couleur_arrière_plan = (0.098,0.102,0.118)
         self.carte : Carte = None
         self.initialisé = False
@@ -37,23 +35,24 @@ class Peintre(OpenGLFrame):
         self.bind("<Motion>",self.surCurseurMouvement)
         self.bind("<Button-1>",self.surClique)
 
-        print("Peintre créé.")
+        Log.log("Peintre créé.")
     
     def initialiser(self,event):
-        print("Couleur arrière-plan : ", self.couleur_arrière_plan)
+        Log.log("Initialisation du peintre.")
         glClearColor(self.couleur_arrière_plan[0],self.couleur_arrière_plan[1],self.couleur_arrière_plan[2],1.0)
         #glEnable(GL_DEPTH_TEST)
         glEnable(GL_BLEND)
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
         glViewport(0,0,self.width, self.height)
-        print("Fenêtre! : " + str(Vec2(self.width,self.height)))
+        Log.log("Fenêtre de taille : " + str(Vec2(self.width,self.height)))
         self.initialisé = True
-        print("Peintre Initialisé")
 
         error = glGetError()
         if error != GL_NO_ERROR:
-            print("[GLError] :",gluErrorString(error))
+            Log.mdwn("<r>[GLError] :",gluErrorString(error)+"</>")
+
+        Log.log("Peintre Initialisé")
     
     def surModificationFenetre(self,event):
         if self.carte != None:
@@ -128,7 +127,7 @@ class Peintre(OpenGLFrame):
 
         error = glGetError()
         if error != GL_NO_ERROR:
-            print("[GLError] :",gluErrorString(error))
+            Log.mdwn("<r>[GLError] :",gluErrorString(error)+"</>")
 
     def changerCarte(self,carte : Carte):
         self.carte = carte

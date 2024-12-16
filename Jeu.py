@@ -13,6 +13,7 @@ import tkinter as tk
 from InclusionsCirculaires.Jeu_Peintre import *
 from GUI.TkFenetre import TkFenetre
 from Maths.Vec2 import Vec2
+from GUI.Log import Log
 
 class ÉtatJeu:
     MENU = "menu"
@@ -71,8 +72,9 @@ class Jeu:
         self.tkracine.geometry("512x512")
         self.tkracine.configure(bg="#191a1e")
         menu.initialiserMenus(self.tkracine)
+        Log.initLogger(self.tkracine,width=10,height=10,background="#292c33",foreground="#bed5e0",relief="ridge",wrap="word",borderwidth=5)
         self.tkracine.bind("<Configure>",menu.surModificationFenêtre)
-        self.peintre = Peintre(self.tkracine,width=100,height=100)
+        self.peintre = Peintre(self.tkracine,width=10,height=10)
 
         self.vieille_taille : Vec2 = Vec2(self.tkracine.winfo_width(),self.tkracine.winfo_height())
 
@@ -119,14 +121,14 @@ class Jeu:
             elif not joueur and not self.conditionsDeTransitionManuelles:
                 self.état.v = ÉtatJeu.ÉCHEC
             else :
-                print("Mise à jour des entitées.")
+                Log.log("Mise à jour des entitées.")
                 for i in range(len(self.carte.entités)):
                     self.carte.entités[i].MiseÀJour()
                 lo = len(self.carte.entités) -1
                 for i in range(len(self.carte.entités)):
                     if not self.carte.entités[lo-i].estVivant:
                         self.carte.entités.pop(lo-i)
-                print("Entitées mises à jours.")
+                Log.log("Entitées mises à jours.")
                 self.état.v = ÉtatJeu.JEU
         
         elif self.état.v == ÉtatJeu.TRANSITION:

@@ -5,6 +5,7 @@ from Entités.Attaque import Attaque, Élément
 from Maths.Vec2 import *
 from TFX import *
 import copy
+from GUI.Log import Log
 
 class Commande:
     """ Classe décrivant une commande à un Golem
@@ -194,7 +195,7 @@ class Golem(Entité):
             case Commande.ATTAQUER_CHARGE:
                 self._commandeAttaquerCharge(commande)
             case _:
-                print(coul("La commande " + str(commande.catégorie) + " n'est pas accepté par un golem.",ROUGE))
+                Log.mdwn("<r>La commande " + str(commande.catégorie) + " n'est pas accepté par un golem.</>")
                 # raise AttributeError(coul("[Golem.commande] Commande mal construite : catégorie" + str(commande.catégorie) + " invalide.",ROUGE))
 
     def _commandeDéplacement(self, commande : Commande):
@@ -237,7 +238,7 @@ class Golem(Entité):
         if self.étatCombat.v == ÉtatCombat.CHARGER:
             self.chargement = 0
 
-        print(coul("[ATTENTION] Le golem de base n'a pas d'attaque spéciale.",JAUNE))
+        Log.mdwn("<j>[ATTENTION] Le golem de base n'a pas d'attaque spéciale.</>")
     def _commandeDéfense(self, commande : Commande):
         """ Exécute la commande DÉFENSE
         """
@@ -263,7 +264,7 @@ class Golem(Entité):
         """_commandeAttaquerCharge Exécute la commande ATTAQUER_CHARGE
         """
         if Vec2.distance(self.pos,commande.ennemi_cible.pos) > 1.0:
-            print(coul("La cible est trop loin.",ROUGE))  
+            Log.mdwn("<r>La cible est trop loin.</>")  
             return
 
         self.cible = commande.ennemi_cible
@@ -280,13 +281,13 @@ class Golem(Entité):
         Incrémente le compteur de chargement et appelle self._AttaquerCible()
         """
         if self.étatCombat.v == ÉtatCombat.CHARGER:
-            print("Chargement de l'attaque à : " + str(self.chargement))
+            Log.log("Chargement de l'attaque à : " + str(self.chargement))
             self.chargement += 1
         elif self.cible.estVivant and Vec2.distance(self.cible.pos, self.pos) <= 1:
-            print("Attaque de l'ennemi")
+            Log.log("**Attaque de l'ennemi**")
             self._AttaquerCible()
         else:
-            print("L'ennemi est soit mort, soit partis. À la recherche d'un nouvel ennemi.")
+            Log.mdwn("<o>L'ennemi est soit mort, soit partis. À la recherche d'un nouvel ennemi.</>")
             self.état.v = ÉtatIA.RECHERCHE
             self.estAttaqué = False
             self.cible = None
@@ -395,7 +396,7 @@ class GolemEau(Golem):
             self.chargement = 0
             self.cooldown=self.cooldown_max
     def _commandeDéplacement(self, commande):
-        print(coul("Le golem d'eau ne peut pas se déplacer!",JAUNE))
+        Log.mdwn("<j>Le golem d'eau ne peut pas se déplacer!</>")
 
     def _commandeAttaquerCharge(self, commande : Commande):
         """_commandeAttaquerCharge Exécute la commande ATTAQUER_CHARGE
@@ -406,7 +407,7 @@ class GolemEau(Golem):
                     self.cible = e
                     break
                 else:
-                    print(coul("La cible est trop loin.",ROUGE))
+                    Log.mdwn("<r>La cible est trop loin.</>")
                     return
         
         self.état.v = ÉtatIA.COMBAT

@@ -13,6 +13,7 @@ import traceback
 import json
 import imageio.v3 as ImageIO
 from GUI.TkFenetre import TkFenetre
+from GUI.Log import Log
 
 class Ressources:
 
@@ -583,5 +584,5 @@ class Ressources:
             return self.frames[nom]
         else:
             traceback.print_exc()
-            print(coul(gras("[Erreur : obtenirMenu] Aucun menu du nom de " + str(nom) + " n'existe."),ROUGE))
+            Log.mdwn("<r>**[Erreur : obtenirMenu] Aucun menu du nom de " + str(nom) + " n'existe.**</>")
             return None

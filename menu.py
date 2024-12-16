@@ -10,10 +10,11 @@ from TFX import *
 from Entités.Golem import *
 from tkinter.ttk import Frame,Button,Label, Style
 import customtkinter
+from tkinter import Tk
 from GUI.TkFenetre import TkFenetre
 from GUI.Texte import Texte
 
-def initialiserMenus(tkracine : tkinter.Tk):
+def initialiserMenus(tkracine : Tk):
     res = Ressources.avoirRessources()
 
     customtkinter.FontManager.load_font("Ressources/Polices/Old English Text MT Regular/Old English Text MT Regular.ttf")
@@ -43,10 +44,10 @@ def surModificationFenêtre(event):
         style.configure("TFrame",background="#191a1e")
         style.configure("TButton",font = ("Old English Text MT",int(taille_police/1.5)),foreground = "#000000",background="#e5b464",borderwidth=5)
         style.map("TButton",relief=[("disabled","raised"),("active","sunken")],background=[("disabled","#e5b464"),("active","#44618c")])
-        style.configure("Boutons_Combat.TButton",font=("Old English Text MT",taille_police//3))
+        style.configure("Boutons_Combat.TButton",font=("Old English Text MT",int(taille_police/3)))
         style.configure("conteneur_entité.TFrame",borderwidth=5,relief="ridge")
-        style.configure("espace.TButton",borderwidth=5,font=("Old English Text MT",taille_police//3))
-        style.map("espace.TButton",background=[("active","#a8a5a5"),("!active","#a8a5a5")],foreground=[("active","#a8a5a5"),("!active","#a8a5a5")],relief=[("active","flat"),("!active","flat")])
+        style.configure("espace.TButton",borderwidth=5,font=("Old English Text MT",int(taille_police/3)))
+        style.map("espace.TButton",background=[("active","#191a1e"),("!active","#191a1e")],foreground=[("active","#191a1e"),("!active","#191a1e")],relief=[("active","flat"),("!active","flat")])
 
         Texte.surModificationFenêtre(jeu.tkracine)
 
@@ -98,9 +99,20 @@ def jeu():
     if jeu.frame_actuelle != fenetre:
         conteneur_peintre = fenetre.obtenirWidget("conteneur_peintre")
 
-        jeu.peintre.pack_forget()
-        jeu.peintre.pack(in_=conteneur_peintre,fill="both",expand=True)
-        jeu.peintre.estVisible = True
+        if 1.5*jeu.tkracine.winfo_width() >= jeu.tkracine.winfo_height():
+            jeu.peintre.pack_forget()
+            jeu.peintre.place(in_=conteneur_peintre,anchor="nw",relx=0.0,rely=0.0,relwidth=0.66,relheight=1.0)
+            jeu.peintre.estVisible = True
+
+            Log.logger.pack_forget()
+            Log.logger.place(in_=conteneur_peintre,anchor="ne",relx=1.0,rely=0.0,relwidth=0.33,relheight=1.0)
+        else:
+            jeu.peintre.pack_forget()
+            jeu.peintre.place(in_=conteneur_peintre,anchor="nw",relx=0.0,rely=0.0,relwidth=1.0,relheight=0.66)
+            jeu.peintre.estVisible = True
+
+            Log.logger.pack_forget()
+            Log.logger.place(in_=conteneur_peintre,anchor="sw",relx=0.0,rely=1.0,relwidth=1.0,relheight=0.33)
 
         jeu.frame_actuelle.frame.pack_forget()
         fenetre.frame.pack(fill="both",expand=True)
@@ -268,7 +280,7 @@ def jeu():
                     bouton_continuer.pack(pady=10)
                     fenetre.état = 8
     else:
-        print(coul(gras("[menu.jeu] L'état du jeu n'est pas reconnus."),ROUGE))
+        Log.mdwn("<r>**Erreur : [menu.jeu] L'état du jeu n'est pas reconnus.**</>")
 
 def menuPrincipal():
     res = Ressources.avoirRessources()
@@ -322,7 +334,6 @@ def menu_contextuel():
 
 
 def commande_menu_aide(historique):
-    print(gras("Aide!"))
     jeu = Jeu.avoirJeu()
     jeu.menu.menu_historique.append(historique)
     jeu.état.v = ÉtatJeu.MENU_CONTEXTUEL
@@ -344,7 +355,7 @@ def commande_menu_select(historique, commande : list[str]):
             if e.nom.upper() == nom:
 
                 if e.camp == Entité.CAMP_PAYSANS:
-                    print(coul("Vous ne pouvez pas donner d'ordres aux paysans.",ROUGE))
+                    Log.mdwn("<r>Vous ne pouvez pas donner d'ordres aux paysans.</>")
                     return False
 
                 for i in range(len(jeu.menu.menu_historique)):
@@ -358,7 +369,7 @@ def commande_menu_select(historique, commande : list[str]):
                 jeu.menu.menu_select_entité = e
                 jeu.déselectionner()
                 return True
-    print(coul("Veuillez entrer un nom qui se trouve dans la liste.",ROUGE))
+    Log.mdwn("<r>Veuillez entrer un nom qui se trouve dans la liste.</>")
     time.sleep(1.5)
     effaceCommande()
     return False
@@ -375,7 +386,7 @@ def commande_menu_info(historique, commande : list[str]):
                 jeu.menu.menu_entité_entité = e
                 jeu.déselectionner()
                 return True
-    print(coul("Veuillez entrer un nom qui se trouve dans la liste.",ROUGE))
+    Log.mdwn("<r>Veuillez entrer un nom qui se trouve dans la liste.</>")
     time.sleep(1.5)
     effaceCommande()
     return False
@@ -578,9 +589,21 @@ def menu_select():
         fenetre.initialisé = True
     if jeu.frame_actuelle != fenetre:
         peintre_conteneur = fenetre.obtenirWidget("peintre")
-        jeu.peintre.pack_forget()
-        jeu.peintre.pack(in_=peintre_conteneur,fill="both",expand=True)
-        jeu.peintre.estVisible = True
+        
+        if 1.5*jeu.tkracine.winfo_width() >= jeu.tkracine.winfo_height():
+            jeu.peintre.pack_forget()
+            jeu.peintre.place(in_=peintre_conteneur,anchor="nw",relx=0.0,rely=0.0,relwidth=0.66,relheight=1.0)
+            jeu.peintre.estVisible = True
+
+            Log.logger.pack_forget()
+            Log.logger.place(in_=peintre_conteneur,anchor="ne",relx=1.0,rely=0.0,relwidth=0.33,relheight=1.0)
+        else:
+            jeu.peintre.pack_forget()
+            jeu.peintre.place(in_=peintre_conteneur,anchor="nw",relx=0.0,rely=0.0,relwidth=1.0,relheight=0.66)
+            jeu.peintre.estVisible = True
+
+            Log.logger.pack_forget()
+            Log.logger.place(in_=peintre_conteneur,anchor="sw",relx=0.0,rely=1.0,relwidth=1.0,relheight=0.33)
 
         grille_bouttons = fenetre.obtenirWidget("bouttons")
 
@@ -628,7 +651,7 @@ def menu_select():
                     commande.faireCommandeAttaqueSpéciale(jeu.menu.menu_select_entité.ATTAQUE_SPÉCIALE)
                     jeu.menu.menu_select_entité.commande(commande)
                 except:
-                    print("HuHo...")
+                    Log.mdwn("<r>" + jeu.menu.menu_entité_entité.nomAffichage + " n'a pas d'attaque spéciale.</>")
             boutton_as = Button(grille_bouttons,text="Attaque Spéciale",command=commande_attaque_spéciale)
             boutton_as.grid(column=2,row=0,padx=2,pady=2,sticky="ew")
         
@@ -668,181 +691,6 @@ def menu_select():
         jeu.frame_actuelle.frame.pack_forget()
         fenetre.frame.pack(fill="both",expand=True)
         jeu.frame_actuelle = fenetre
-    
-    """
-    print("="*50)
-    print(("Donnez un ordre à " + jeu.menu.menu_select_entité.nomAffichage).center(50))
-    print("="*50)
-
-    print(jeu.carte.dessiner().center(50))
-
-    print("="*50)
-    print("Tapez « ? » ou « Aide » pour obtenir la liste des commandes.".center(50))
-    print("="*50)
-
-    while True:
-        commande = input("> ").upper().split(' ')
-        if commande[0] == "DP" or commande[0] == "DÉPLACEMENT":
-            if len(commande) < 3:
-                print("La commande Déplacement nécessite les arguements X et Y.")
-                time.sleep(1.5)
-                effaceCommande()
-                continue
-            try:
-                x = int(commande[1])
-                y = int(commande[2])
-            except:
-                print("Veuillez préciser deux entiers positifs décrivant la destination de " + jeu.menu.menu_select_entité.nomAffichage)
-                time.sleep(1.5)
-                effaceCommande()
-                continue
-            
-            if x < 0 or x > jeu.carte.colonnes or y < 0 or y > jeu.carte.lignes:
-                print("Veuillez entrer des nombres entre 0 et " + str(int(jeu.carte.colonnes)) + " pour les X et entre 0 et " + str(int(jeu.carte.lignes)) + " pour les Y.")
-                time.sleep(1.5)
-                effaceCommande()
-                continue
-
-            objetCommande = Commande()
-            objetCommande.faireCommandeDéplacement(Vec2(x,y))
-            jeu.menu.menu_select_entité.commande(objetCommande)
-                
-        elif commande[0] == "A" or commande[0] == "ATTAQUE":
-            if len(commande) < 2:
-                print("Veuillez préciser le nom de la cible à attaquer.")
-                time.sleep(1.5)
-                effaceCommande()
-                continue
-
-            nom = commande[1]
-            entité = None
-            for e in jeu.carte.entités:
-                if e.nom.upper() == nom:
-                    entité = e
-            
-            if entité == None:
-                print("Veuillez utiliser le nom d'une entité sur le champ de bataille.")
-                time.sleep(1.5)
-                effaceCommande()
-                continue
-
-            objetCommande = Commande()
-            objetCommande.faireCommandeAttaque(entité)
-            jeu.menu.menu_select_entité.commande(objetCommande)
-
-        elif commande[0] == "AS" or commande[0] == "ATTAQUE-SPÉCIALE":
-            try:
-                attaque = jeu.menu.menu_select_entité.ATTAQUE_SPÉCIALE
-            except:
-                print(jeu.menu.menu_select_entité.nom + " n'a pas d'attaque spéciale.")
-                time.sleep(1.5)
-                effaceCommande()
-                continue
-            
-            objetCommande = Commande()
-            objetCommande.faireCommandeAttaqueSpéciale(attaque)
-            jeu.menu.menu_select_entité.commande(objetCommande)
-
-        elif commande[0] == "DF" or commande[0] == "DÉFENSE":
-            objetCommande = Commande()
-            objetCommande.faireCommandeDéfense()
-            jeu.menu.menu_select_entité.commande(objetCommande)
-            
-        elif commande[0] == "L" or commande[0] == "LIBÉRER":
-            objetCommande = Commande()
-            objetCommande.faireCommandeLibérer()
-            jeu.menu.menu_select_entité.commande(objetCommande)
-
-        elif commande[0] == "CA" or commande[0] == "CHARGER-ATTAQUE":
-            objetCommande = Commande()
-            objetCommande.faireCommandeCharger()
-            jeu.menu.menu_select_entité.commande(objetCommande)
-
-        elif commande[0] == "AC" or commande[0] == "ATTAQUER-CHARGE":
-            if len(commande) < 2:
-                print("Veuillez préciser le nom de la cible à attaquer.")
-                time.sleep(1.5)
-                effaceCommande()
-                continue
-
-            nom = commande[1]
-            entité = None
-            for e in jeu.carte.entités:
-                if e.nom.upper() == nom:
-                    entité = e
-            
-            if entité == None:
-                print("Veuillez utiliser le nom d'une entité sur le champ de bataille.")
-                time.sleep(1.5)
-                effaceCommande()
-                continue
-
-            objetCommande = Commande()
-            objetCommande.faireCommandeAttaquerCharge(entité)
-            jeu.menu.menu_select_entité.commande(objetCommande)
-
-        elif commande[0] == 'CG' or commande[0] == "CRÉER-GOLEM":
-            if len(commande) < 3:
-                print("La commande Créer-Golem nécessite les arguements X et Y.")
-                time.sleep(1.5)
-                effaceCommande()
-                continue
-            try:
-                x = int(commande[1])
-                y = int(commande[2])
-            except:
-                print("Veuillez préciser deux entiers positifs décrivant la l'emplacement de la création du Golem.")
-                time.sleep(1.5)
-                effaceCommande()
-                continue
-            
-            if x < 0 or x > jeu.carte.colonnes or y < 0 or y > jeu.carte.lignes:
-                print("Veuillez entrer des nombres entre 0 et " + str(int(jeu.carte.colonnes)) + " pour les X et entre 0 et " + str(int(jeu.carte.lignes)) + " pour les Y.")
-                time.sleep(1.5)
-                effaceCommande()
-                continue
-
-            if jeu.carte.matrice[x][y].type == Tuile.TYPE_MUR:
-                print(coul("Impossible de placer un golem à " + str(x) + ',' + str(y) + ", il y a un mur dans le chemin!",ROUGE))
-                time.sleep(1.5)
-                effaceCommande()
-                continue
-
-
-            objetCommande = Commande()
-            objetCommande.faireCommandeCréerGolem(Vec2(x,y))
-            jeu.menu.menu_select_entité.commande(objetCommande)
-        
-        elif commande[0] == 'C' or commande[0] == "COMBAT":
-            commande_menu_combat(MenuContextuel.SELECT,commande)
-            break
-        
-        elif commande[0] == 'S' or commande[0] == "SELECT":
-            if commande_menu_select(MenuContextuel.SELECT,commande):
-                break
-        
-        elif commande[0] == 'I' or commande[0] == "INFO":
-            if commande_menu_info(MenuContextuel.SELECT,commande):
-                break
-        
-        elif commande[0] == '?' or commande[0] == "AIDE":
-            commande_menu_aide(MenuContextuel.SELECT)
-            break
-
-        elif commande[0] == 'P' or commande[0] == "PRÉCÉDENT":
-            commande_précédent()
-            break
-        
-        elif commande[0] == 'Q' or commande[0] == "QUITTER":
-            commande_quitter()
-            break
-        
-        else:
-            print(coul("Veuillez entrer une commande valide.",ROUGE))
-            time.sleep(1.5)
-            effaceCommande()
-    """
-
 
 def main():
     width, eight = 20, 10

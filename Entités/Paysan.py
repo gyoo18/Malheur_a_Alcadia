@@ -4,6 +4,7 @@ from Maths.Vec2 import *
 from math import acos, sqrt
 import copy
 from TFX import *
+from GUI.Log import Log
 
 class Paysan(Entité):
 
@@ -249,7 +250,7 @@ class Arbalettier(Paysan):
         # Passe à travers tout les ennemis, si l'ennemi évalué est plus près que le plus près trouvé jusqu'à présent,
         #   il est l'ennemi le plus près, jusqu'à nouvel ordre
 
-        print("Recherche d'ennemi")
+        Log.log("Recherche d'ennemi")
         ennemiPlusPrès = None   # Ennemi le plus près
         distanceMinimale = sys.float_info.max   # Distance à laquelle se trouve l'ennemi trouvé le plus près
 
@@ -261,7 +262,7 @@ class Arbalettier(Paysan):
                 distanceMinimale = Vec2.distance(ennemi.pos,self.pos)
         # Si on a trouvé un ennemi le plus près
         if ennemiPlusPrès != None:
-            print("Ennemi trouvé : " + gras(ennemiPlusPrès.nom) + " à " + str(ennemiPlusPrès.pos.x) + ":" + str(ennemiPlusPrès.pos.y))
+            Log.log("Ennemi trouvé : " + gras(ennemiPlusPrès.nom) + " à " + str(ennemiPlusPrès.pos.x) + ":" + str(ennemiPlusPrès.pos.y))
             # Se mettre en mode déplacement vers l'ennemi
             self.état.v = ÉtatIA.DÉPLACEMENT
             self.destination = ennemiPlusPrès.pos
@@ -323,7 +324,7 @@ class Arbalettier(Paysan):
             for ennemi in self.carte.entités:
                 # Chercher un ennemi à une distance de 1 ou moins de nous (sur une case adjascente)
                 if Vec2.distance(ennemi.pos, self.pos) <= self.max_distance_attaque and Vec2.distance(ennemi.pos, self.pos) > self.min_distance_ennemi and (ennemi.camp in self.campsEnnemis or ennemi == self.cible):
-                    print("Un ennemi est à proximité! Mode combat activé.")
+                    Log.mdwn("<o>Un ennemi est à proximité! Mode combat activé.</>")
                     self.chemin = []
                     self.état.v = ÉtatIA.COMBAT
                     self.cible = ennemi
@@ -331,21 +332,21 @@ class Arbalettier(Paysan):
             
         if self.état.v == ÉtatIA.DÉPLACEMENT:
             if self.cible != None and self.cible.estVivant :
-                print("Recherche d'un chemin vers " + self.cible.nom)
+                Log.log("Recherche d'un chemin vers " + self.cible.nom)
                 self.naviguerVers(self.cible.pos,True)
             elif self.cible != None and not self.cible.estVivant:
-                print("La cible est morte. À la recherche d'un nouvel ennemi")
+                Log.mdwn("<j>La cible est morte. À la recherche d'un nouvel ennemi</>")
                 self.état.v = ÉtatIA.RECHERCHE
             elif self.pos != self.destination:
-                print("Recherche d'un chemin ver " + str(self.destination))
+                Log.log("Recherche d'un chemin ver " + str(self.destination))
                 self.naviguerVers(self.destination,False)
         elif self.état.v == ÉtatIA.DÉPLACEMENT_IMMOBILE:
-            print("Recherche d'un chemin vers " + str(self.destination.x) + ';' + str(self.destination.y))
+            Log.log("Recherche d'un chemin vers " + str(self.destination.x) + ';' + str(self.destination.y))
             self.naviguerVers(self.destination,False)
 
         # Si on n'a pas atteint le bout du chemin
         if len(self.chemin) > 0:
-            print("Un chemin existe, avançons")
+            Log.log("Un chemin existe, avançons")
             # Avancer sur le chemin
             self.direction = self.chemin[0] - self.pos
             self.pos = self.chemin.pop(0)
@@ -355,14 +356,14 @@ class Arbalettier(Paysan):
                 for ennemi in self.carte.entités:
                     # Chercher un ennemi à une distance de 1 ou moins de nous (sur une case adjascente)
                     if Vec2.distance(ennemi.pos, self.pos) <= self.max_distance_attaque and Vec2.distance(ennemi.pos, self.pos) > self.min_distance_ennemi and (ennemi.camp in self.campsEnnemis or ennemi == self.cible):
-                        print("Un ennemi est à proximité! Mode combat activé.")
+                        Log.mdwn("<o>Un ennemi est à proximité! Mode combat activé.</r>")
                         self.chemin = []
                         self.état.v = ÉtatIA.COMBAT
                         self.cible = ennemi
                         return
             # Si on n'a pas trouvé d'ennemi, mais qu'on est arrivé au bout du chemin,
             if self.pos == self.destination and self.état.v == ÉtatIA.COMBAT:
-                print("Arrivé à destination. Aucun ennemi à l'horison, Mode recherche activé.")
+                Log.log("Arrivé à destination. Aucun ennemi à l'horison, Mode recherche activé.")
                 # Chercher un autre ennemi si on est dans la boucle normale,
                 # Rester immobile si on se déplace à cause d'une commande
                 if self.état.v == ÉtatIA.DÉPLACEMENT:
@@ -371,11 +372,9 @@ class Arbalettier(Paysan):
                     self.état.v = ÉtatIA.IMMOBILE
     
     def _modeCombat(self):
-        if self.pos == Vec2(5,4):
-            print("Hey")
         for entité in self.carte.entités:
             if Vec2.distance(self.pos, entité.pos) <= self.min_distance_ennemi and entité.camp in self.campsEnnemis:
-                print(coul("L'ennemi est trop près, fuyons!",ORANGE))
+                Log.mdwn("<o>L'ennemi est trop près, fuyons!</>")
                 self.état.v = ÉtatIA.DÉPLACEMENT
                 self.cible = None
                 return
@@ -394,8 +393,8 @@ class Arbalettier(Paysan):
         Args:
             attaque (Attaque): Un objet Attaque qui contient les informations nécessaires pour subir une attaque.
         """
-        print(TFX(self.nom,gras=True,Pcoul=ORANGE) + TFX(" reçoit une attaque de ",Pcoul=ORANGE) + TFX(attaque.provenance.nom,gras=True,Pcoul=ORANGE))
-        print(gras(self.nom) + " a " + str(self.PV) + " PV, l'attaque fait " + str(attaque.dégats) + " PD")
+        Log.mdwn("<o>**"+self.nom+"** reçoit une attaque de **"+attaque.provenance.nom+"</>")
+        Log.mdwn("**"+self.nom+"** a "+str(self.PV)+" PV, l'attaque fait "+str(attaque.dégats)+" PD")
         # Virer au mode combat, si on n'y est pas déjà
         if not self.estAttaqué:
             self.estAttaqué = True
@@ -404,7 +403,7 @@ class Arbalettier(Paysan):
         self.PV -= attaque.dégats          # Retirer les points de vies
         # Évaluer si on est morts
         if self.PV <= 0.0:
-            print(TFX(self.nom,gras=True,Pcoul=ROUGE) + TFX(" est mort.",Pcoul=ROUGE))
+            Log.mdwn("<r>**"+self.nom+" est mort.**</>")
             self.PV = 0.0
             self.estVivant = False
 
