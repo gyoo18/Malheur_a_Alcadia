@@ -1,0 +1,5 @@
+typing_extensions
+PyGLM
+numpy==1.26.4
+imageio
+tk
