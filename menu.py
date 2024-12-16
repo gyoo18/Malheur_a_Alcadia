@@ -1,5 +1,5 @@
 #premier test de UI
-import os
+import os, pyglet
 import time
 from Carte.Carte import Carte
 from Carte.Tuile import Tuile
@@ -9,12 +9,14 @@ import dialogue
 from TFX import *
 from Entités.Golem import *
 from tkinter.ttk import Frame,Button,Label, Style
-from tkinter.font import Font
+import customtkinter
 from GUI.TkFenetre import TkFenetre
 from GUI.Texte import Texte
 
 def initialiserMenus(tkracine : tkinter.Tk):
     res = Ressources.avoirRessources()
+
+    customtkinter.FontManager.load_font("Ressources/Polices/Old English Text MT Regular/Old English Text MT Regular.ttf")
     
     menu_principal = TkFenetre(Frame(tkracine))
     jeu_principal = TkFenetre(Frame(tkracine))

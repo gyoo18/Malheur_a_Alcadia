@@ -70,7 +70,6 @@ class Peintre(OpenGLFrame):
         pass
 
     def peindre(self):
-        print("draw!")
         glClear(GL_COLOR_BUFFER_BIT)
 
         for e in self.carte.entités:
