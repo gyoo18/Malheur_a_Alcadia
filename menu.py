@@ -44,6 +44,8 @@ def surModificationFenêtre(event):
         style.map("TButton",relief=[("disabled","raised"),("active","sunken")],background=[("disabled","#314775"),("active","#44618c")])
         style.configure("Boutons_Combat.TButton",font=("Old English Text MT",taille_police//3))
         style.configure("conteneur_entité.TFrame",borderwidth=5,relief="ridge")
+        style.configure("espace.TButton",borderwidth=5,font=("Old English Text MT",taille_police//3))
+        style.map("espace.TButton",background=[("active","#a8a5a5"),("!active","#a8a5a5")],foreground=[("active","#a8a5a5"),("!active","#a8a5a5")],relief=[("active","flat"),("!active","flat")])
 
         Texte.surModificationFenêtre(jeu.tkracine)
 
@@ -453,16 +455,19 @@ def menu_combat():
         titre = Label(fenetre.frame,text="Menu combat")
         titre.pack(pady=10,padx=10)
 
-        conteneur_descritptions = Frame(fenetre.frame)
-        conteneur_descritptions.pack(pady=10)
+        conteneur_descritptions = customtkinter.CTkScrollableFrame(fenetre.frame)
+        conteneur_descritptions.pack(fill="both",expand=True,pady=10)
         fenetre.enregistrerWidget(conteneur_descritptions,"descriptions")
 
-        boutton_retour = Button(fenetre.frame,text="Retour",command=commande_précédent)
-        boutton_retour.pack(pady=10)
-        boutton_quitter = Button(fenetre.frame,text="Quitter",command=commande_quitter)
-        boutton_quitter.pack(pady=10)
-        bouton_aide = Button(fenetre.frame,text="Aide",command=lambda: commande_menu_aide(MenuContextuel.COMBAT))
-        bouton_aide.pack(pady=10)
+        boutons = Frame(fenetre.frame)
+        boutons.pack(side="bottom",pady=10)
+
+        boutton_retour = Button(boutons,text="Retour",command=commande_précédent)
+        boutton_retour.grid(column=0,row=0)
+        boutton_quitter = Button(boutons,text="Quitter",command=commande_quitter)
+        boutton_quitter.grid(column=1,row=0)
+        bouton_aide = Button(boutons,text="Aide",command=lambda: commande_menu_aide(MenuContextuel.COMBAT))
+        bouton_aide.grid(column=2,row=0)
 
         fenetre.initialisé = True
 
@@ -478,23 +483,26 @@ def menu_combat():
         for e in jeu.carte.entités:
             if not e.camp in camps:
                 camps.append(e.camp)
-
+        
         for c in camps:
             texte = Texte(conteneur_descritptions,height=int(2*Texte.police_taille_scalaire),background="#191a1e",foreground="#f7deb7",highlightthickness=0,relief="flat",wrap="word")
             texte.insérerFormatté(c,soul=True,niveau_Titre=5)
-            texte.pack(side="top",fill="x",expand=True,pady=0)
+            texte.pack(side="top",fill="x",expand=True,pady=0,padx=20)
             for e in jeu.carte.entités:
                 if e.camp == c:
                     conteneur_entité = Frame(conteneur_descritptions,style="conteneur_entité.TFrame")
-                    texte = Texte(conteneur_entité,height=1,background="#191a1e",foreground="#f7deb7",highlightthickness=0,relief="flat",wrap="word")
-                    texte.markdownFormattage("**"+e.nomAffichage+"** > PV : " +  str(int(e.PV)))
-                    texte.pack(side="left",fill="x")
-                    bouton_info = Button(conteneur_entité, text="Info",command=lambda e=e: commande_menu_info(MenuContextuel.COMBAT,["INFO",e.nom.upper()]), style="Boutons_Combat.TButton")
-                    bouton_info.pack(side="left",padx=10)
                     if e.camp in [Entité.CAMP_JOUEUR,Entité.CAMP_GOLEMS]:
                         bouton_select = Button(conteneur_entité, text="Sélectionner", command=lambda e=e: commande_menu_select(MenuContextuel.COMBAT,["select",e.nom.upper()]), style="Boutons_Combat.TButton")
-                        bouton_select.pack(side = "left",padx=10)
-                    conteneur_entité.pack(side="top",pady=0,fill="x",expand=True,ipadx=5,ipady=5)
+                        bouton_select.pack(side ="right",padx=5,pady=5)
+                    else:
+                        espace = Button(conteneur_entité,style="espace.TButton", text="Sélectionner")
+                        espace.pack(side ="right",padx=5,pady=5)
+                    bouton_info = Button(conteneur_entité, text="Info",command=lambda e=e: commande_menu_info(MenuContextuel.COMBAT,["INFO",e.nom.upper()]), style="Boutons_Combat.TButton")
+                    bouton_info.pack(side="right",padx=5,pady=5)
+                    texte = Texte(conteneur_entité,height=1,background="#191a1e",foreground="#f7deb7",highlightthickness=0,relief="flat",wrap="word")
+                    texte.markdownFormattage("**"+e.nomAffichage+"** > PV : " +  str(int(e.PV)))
+                    texte.pack(side="right",fill="x",expand=True,padx=5,pady=5)
+                    conteneur_entité.pack(side="top",pady=0,fill="x",expand=True)
 
         jeu.frame_actuelle.frame.pack_forget()
         fenetre.frame.pack(fill="both",expand=True)

@@ -22,11 +22,9 @@ class Texte(Text):
         Texte.textes.append(self)
 
     def surModificationFenêtre(tkracine : Tk):
-        print(str(time.time()) + "Début de l'ajustement de Texte")
         Texte.police_taille_scalaire = 1.5*min(tkracine.winfo_width(),tkracine.winfo_height())/1024
         for t in Texte.textes:
             t.ajusterPolice()
-        print(str(time.time()) + "Fin de l'ajustement de Texte")
         pass
 
     def ajusterPolice(self):
