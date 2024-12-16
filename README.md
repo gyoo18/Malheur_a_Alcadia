@@ -6,11 +6,11 @@ Malheur à Alcadia est un petit jeu console de combat stratégique en tour-par-t
 
 ## Comment Jouer?
 1. Assurez-vous d'avoir **python d'installé**. Si vous êtes sur linux, vous devriez déjà l'avoir. Pour vérifier si vous l'avez, ouvrez une invite de commande et tapez `python --version`,`py --version` ou `python3 --version`. Si l'une d'entre elles fonctionnes, python est installé. Si vous n'avez pas python, vous pouvez l'installer ici : https://www.python.org/downloads/
-2. Assurez-vous d'avoir **un compilateur C/C++** parmis les suivant : **gcc**, **clang** ou **MSVC**. Pour vérifier si vous en possédez un, dans une invite de commande, tapez `gcc --version`, `clang --version` ou `"%ProgramFiles(x86)%\Microsoft Visual Studio\Installer\vswhere.exe"`. Si aucune des commandes ne fonctionne, veuillez installer l'un des trois compilateurs. Sur Linux, entrez la commande `sudo apt install build-essential` pou **installer gcc** ou `sudo apt install clang` pour **clang**. Sur Windows, dirigez-vous vers https://stackoverflow.com/questions/40504552/how-to-install-visual-c-build-tools pour installer **MSVC**, https://www.wikihow.com/Install-Clang-on-Windows pour **clang** et https://terminalroot.com/how-to-install-gcc-gpp-mingw-on-windows/ pour **gcc**.
-3. Cliquez sur le lien suivant : https://github.com/gyoo18/Prog1_jeu/releases
-4. Téléchargez la version la plus récente
-5. Vous trouverez un fichier .zip, dézippez-le
-6. Cliquez sur `Jouer-Windows.bat` ou `Jouer-Linux.sh`, tout dépedant du système que vous possédez. *Il se peut que vous ayez à changer les permissions du fichier*.
+    - Si vous êtes sur linux, assurez-vous d'avoir **un compilateur C/C++** entre **gcc** et **clang**. Pour vérifier si vous possédez l'un ou l'autre, dans une invite de commande, tapez `gcc --version` ou `clang --version`. Si aucune des commandes ne fonctionne, veuillez installer l'un des deux compilateurs en tapant la commande `sudo apt install build-essential` pou **installer gcc** ou `sudo apt install clang` pour **clang**. *Notez qu'Ubuntu et ses distributions viennent avec gcc*.
+2. Cliquez sur le lien suivant : https://github.com/gyoo18/Prog1_jeu/releases
+3. Téléchargez la version la plus récente, sous **Assets>Source code (.zip)**
+4. Vous trouverez un fichier .zip, dézippez-le
+5. Cliquez sur `Jouer-Windows.bat` ou `Jouer-Linux.sh`, tout dépedant du système que vous possédez. *Il se peut que vous ayez à changer les permissions du fichier*.
 
 ## Structure générale
 ### Dossier principal

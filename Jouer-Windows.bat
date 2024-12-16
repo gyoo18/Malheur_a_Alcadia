@@ -8,16 +8,6 @@ if errorlevel 1 goto venv
 ::Si oui, lancer le programme
 goto:demarrer
 
-gcc --version || clang --version || "%ProgramFiles(x86)%\Microsoft Visual Studio\Installer\vswhere.exe"
-if errorlevel 1 goto installercompilateur
-
-goto:venv
-
-:installercompilateur
-echo !==== AUCUN COMPILATEUR C/C++ N'A ETE DETECTE SUR VOTRE SYSTEME ====!
-echo Veuillez installer gcc, clang ou msvc. Vous pouvez cliquer sur le lien suivant pour installer ce dernier : https://visualstudio.microsoft.com/fr/downloads/#build-tools-for-visual-studio-2022
-goto:fin
-
 :venv
 ::Détection de python sous la commande 'python'
 python --version 3>NUL
