@@ -37,11 +37,12 @@ def surModificationFenêtre(event):
 
     if jeu.vieille_taille != Vec2(jeu.tkracine.winfo_width(),jeu.tkracine.winfo_height()):
         style = Style(jeu.tkracine)
-        taille_police = min(jeu.tkracine.winfo_width(),jeu.tkracine.winfo_height())//21
-        style.configure("TLabel",font=("Old English Text MT",taille_police),foreground="#000000",background="#f5ebd5")
-        style.configure("TFrame",background="#a8a5a5")
-        style.configure("TButton",font = ("Old English Text MT",taille_police//2),foreground = "#000000",background="#edd08c",borderwidth=5)
-        style.map("TButton",relief=[("disabled","raised"),("active","sunken")],background=[("disabled","#314775"),("active","#44618c")])
+        taille_police = min(jeu.tkracine.winfo_width(),jeu.tkracine.winfo_height())/21
+        style.configure("TLabel",font=("Old English Text MT",int(taille_police*1.5)),foreground="#eaa941",background="#191a1e")
+        style.configure("titre.TLabel",font=("Old English Text MT",int(taille_police*2)),foreground="#eaa941",background="#191a1e")
+        style.configure("TFrame",background="#191a1e")
+        style.configure("TButton",font = ("Old English Text MT",int(taille_police/1.5)),foreground = "#000000",background="#e5b464",borderwidth=5)
+        style.map("TButton",relief=[("disabled","raised"),("active","sunken")],background=[("disabled","#e5b464"),("active","#44618c")])
         style.configure("Boutons_Combat.TButton",font=("Old English Text MT",taille_police//3))
         style.configure("conteneur_entité.TFrame",borderwidth=5,relief="ridge")
         style.configure("espace.TButton",borderwidth=5,font=("Old English Text MT",taille_police//3))
@@ -85,7 +86,7 @@ def jeu():
         grille_boutons.pack(pady=10,side="bottom",expand=False)
         fenetre.enregistrerWidget(grille_boutons,"grille_boutons")
 
-        dialogue = Texte(fenetre.frame,background="#ffffff",foreground="#000000",relief="flat",wrap="word",highlightthickness=0,height=5)
+        dialogue = Texte(fenetre.frame,background="#191a1e",foreground="#bed5e0",relief="flat",wrap="word",highlightthickness=0,height=5)
         dialogue.pack(padx=100,pady=10,side="bottom",fill="both",expand=False)
         fenetre.enregistrerWidget(dialogue,"dialogue")
 
@@ -278,8 +279,8 @@ def menuPrincipal():
 
     if not fenetre.initialisé:
         
-        titre = Label(fenetre.frame,text="Malheur à Alcadia!")
-        titre.pack(pady=10)
+        titre = Label(fenetre.frame,text="Malheur à Alcadia!",style="titre.TLabel")
+        titre.pack(fill="y",pady=10,padx=5)
 
         boutons = Frame(fenetre.frame)
         boutons.pack(anchor="center",expand=True)
