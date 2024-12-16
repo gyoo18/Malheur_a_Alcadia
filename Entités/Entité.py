@@ -152,7 +152,7 @@ class Entité:
         #                           |                               |                           |
         #
         # L'algorithme fonctionne sur une base de fonctions, pour faciliter la spécialisation dans les classes enfants
-        Log.mdwn("\nMise à jour de l'IA de **"+self.nom+"**, état : **"+self.état.v+"**")
+        Log.mdwn("\nMise à jour de l'IA de **"+self.nom+"**, état : **"+self.état.v+"**.")
         match self.état.v:
             case ÉtatIA.RECHERCHE:
                 Log.log("Mode recherche activé.")

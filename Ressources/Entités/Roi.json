@@ -2,6 +2,7 @@
     "Nom":"Roi",
     "Type":"Personnage",
     "Caractère":"MM",
+    "Texture":"Roi",
     "Caractère Couleur" : [0.93,0.87,0.12],
     "PVMax": 50,
     "PV": 50,

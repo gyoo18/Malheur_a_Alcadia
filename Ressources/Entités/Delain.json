@@ -2,6 +2,7 @@
     "Nom" : "Monstre",
     "Type" : "Personnage",
     "Caractère" : "DI",
+    "Texture":"Delain",
     "Caractère Couleur" : [0.86,0.12,0.77],
     "PVMax" : 50.0,
     "PV" : 12.0,

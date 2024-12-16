@@ -2,6 +2,7 @@
     "Nom" : "Petit_Monstre",
     "Type" : "Personnage",
     "Caractère" : " Ç",
+    "Texture":"Gosse",
     "Caractère Couleur" : [0.92,0.12,0.12],
     "PVMax" : 75,
     "PV" : 10,

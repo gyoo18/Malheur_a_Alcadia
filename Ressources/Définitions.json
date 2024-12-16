@@ -42,7 +42,10 @@
         "Gosse":"Gosse.png",
         "Mineur":"Mineur.png",
         "Prêtre":"Prêtre.png",
-        "Chevalier":"Chevalier.png"
+        "Chevalier":"Chevalier.png",
+        "Guildart":"Guildart.png",
+        "Delain":"Delain.png",
+        "Roi":"Roi.png"
     },
     "Nuanceurs":{
         "NuaImage":"NuaImage",

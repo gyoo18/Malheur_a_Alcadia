@@ -2,6 +2,7 @@ from __future__ import annotations
 from InclusionsCirculaires.Ressources_Jeu import *
 from Dessin.Texture import Texture
 from Dessin.Nuanceurs.Nuanceur import Nuanceur
+from Dessin.Image import Image
 from Carte.Carte import *
 from Carte.Tuile import Tuile
 from Entités.Entité import *
@@ -226,6 +227,11 @@ class Ressources:
                     raise TypeError("[Création de carte] L'élément 'Nom' d'une entité doit être un string.")
                 unitée.nom = unitée_dict["Nom"]
                 unitée.nomAffichage = unitée.nom
+                        
+            if "Texture" in unitée_dict:
+                if type(unitée_dict["Texture"]) != str:
+                    raise TypeError("L'élément 'Texture' de " + unitée.nom + " doit être de type str.")
+                unitée.dessin_Image = Image(unitée_dict["Texture"])
 
             if "PVMax" in unitée_dict:
                 if type(unitée_dict["PVMax"]) != int and type(unitée_dict["PVMax"]) != float:
