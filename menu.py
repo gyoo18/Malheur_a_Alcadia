@@ -36,9 +36,9 @@ def surModificationFenêtre(event):
     if jeu.vieille_taille != Vec2(jeu.tkracine.winfo_width(),jeu.tkracine.winfo_height()):
         style = Style(jeu.tkracine)
         taille_police = min(jeu.tkracine.winfo_width(),jeu.tkracine.winfo_height())//21
-        style.configure("TLabel",font=("Old English Text MT",taille_police),foreground="#000000",background="#bfb6a8")
-        style.configure("TFrame",background="#d7bd97")
-        style.configure("TButton",font = ("Old English Text MT",taille_police//2),foreground = "#000000",background="#4e89e8",borderwidth=5)
+        style.configure("TLabel",font=("Old English Text MT",taille_police),foreground="#000000",background="#f5e7c6")
+        style.configure("TFrame",background="#c9c9c7")
+        style.configure("TButton",font = ("Old English Text MT",taille_police//2),foreground = "#000000",background="#edd08c",borderwidth=5)
         style.map("TButton",relief=[("disabled","raised"),("active","sunken")],background=[("disabled","#314775"),("active","#44618c")])
         style.configure("Boutons_Combat.TButton",font=("Old English Text MT",taille_police//3))
         style.configure("conteneur_entité.TFrame",borderwidth=5,relief="ridge")
@@ -81,7 +81,7 @@ def jeu():
         grille_boutons.pack(pady=10,side="bottom",expand=False)
         fenetre.enregistrerWidget(grille_boutons,"grille_boutons")
 
-        dialogue = Texte(fenetre.frame,background="#bfb6a8",foreground="#000000",relief="flat",wrap="word",highlightthickness=0,height=5)
+        dialogue = Texte(fenetre.frame,background="#ffffff",foreground="#000000",relief="flat",wrap="word",highlightthickness=0,height=5)
         dialogue.pack(padx=100,pady=10,side="bottom",fill="both",expand=False)
         fenetre.enregistrerWidget(dialogue,"dialogue")
 
