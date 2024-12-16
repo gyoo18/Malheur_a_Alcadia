@@ -38,8 +38,8 @@ def surModificationFenêtre(event):
     if jeu.vieille_taille != Vec2(jeu.tkracine.winfo_width(),jeu.tkracine.winfo_height()):
         style = Style(jeu.tkracine)
         taille_police = min(jeu.tkracine.winfo_width(),jeu.tkracine.winfo_height())//21
-        style.configure("TLabel",font=("Old English Text MT",taille_police),foreground="#000000",background="#f5e7c6")
-        style.configure("TFrame",background="#c9c9c7")
+        style.configure("TLabel",font=("Old English Text MT",taille_police),foreground="#000000",background="#f5ebd5")
+        style.configure("TFrame",background="#a8a5a5")
         style.configure("TButton",font = ("Old English Text MT",taille_police//2),foreground = "#000000",background="#edd08c",borderwidth=5)
         style.map("TButton",relief=[("disabled","raised"),("active","sunken")],background=[("disabled","#314775"),("active","#44618c")])
         style.configure("Boutons_Combat.TButton",font=("Old English Text MT",taille_police//3))
