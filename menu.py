@@ -542,7 +542,7 @@ def menu_select():
         titre.pack()
 
         peintre_conteneur = Frame(fenetre.frame)
-        peintre_conteneur.pack()
+        peintre_conteneur.pack(fill="both",expand=True)
         fenetre.enregistrerWidget(peintre_conteneur,"peintre")
 
         grille_bouttons = Frame(fenetre.frame)
@@ -560,7 +560,7 @@ def menu_select():
     if jeu.frame_actuelle != fenetre:
         peintre_conteneur = fenetre.obtenirWidget("peintre")
         jeu.peintre.pack_forget()
-        jeu.peintre.pack(in_=peintre_conteneur)
+        jeu.peintre.pack(in_=peintre_conteneur,fill="both",expand=True)
         jeu.peintre.estVisible = True
 
         grille_bouttons = fenetre.obtenirWidget("bouttons")

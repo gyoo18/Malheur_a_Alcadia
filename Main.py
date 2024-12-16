@@ -13,6 +13,12 @@ def Constructeur():
     global jeu
     jeu = Jeu.avoirJeu()
     jeu.état.v = ÉtatJeu.MENU
+    jeu.peintre.pack()
+    jeu.tkracine.update_idletasks()
+    jeu.tkracine.update()
+    jeu.peintre.pack_forget()
+    jeu.tkracine.update_idletasks()
+    jeu.tkracine.update()
     jeu.changerCarte(carte)
 
 def Boucle():

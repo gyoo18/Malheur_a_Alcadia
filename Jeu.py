@@ -160,9 +160,10 @@ class Jeu:
             GestionnaireScripts.MettreÀJourScript(self.carte.script)
 
         if self.peintre.estVisible:
-            self.tkracine.after_idle(self.peintre.peindre)
+            self.tkracine.after_idle(self.peintre._display)
         self.tkracine.update_idletasks()
         self.tkracine.update()
+        # self.tkracine.mainloop()
 
     def changerCarte(self,carte : Carte):
         res = GestionnaireRessources.Ressources.avoirRessources()

@@ -1,8 +1,12 @@
-from Dessin.Fenêtre import Fenetre
-from GUI.TkFenetre import TkFenetre
+from Dessin.Peintre import Peintre
+from tkinter import Tk, Label
 
-# fenetre = Fenetre(500,500)
-# fenetre.partirGL()
+root = Tk()
+label = Label(root,text="test")
+label.pack()
+peintre = Peintre(root,width=100,height=100)
+peintre.pack(fill="both",expand=True)
 
-fenetre = TkFenetre()
-fenetre.démarrer()
+while True:
+    root.update_idletasks()
+    root.update()
