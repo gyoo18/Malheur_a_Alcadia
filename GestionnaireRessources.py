@@ -261,17 +261,17 @@ class Ressources:
             if "Dégats Défense" in unitée_dict:
                 if type(unitée_dict["Dégats Défense"]) != int and type(unitée_dict["Dégats Défense"]) != float:
                     raise TypeError("L'élément 'Dégats Défense' de " + unitée.nom + " doit être un int ou un float.")
-                unitée.dégats_défense = unitée_dict["Dégats Défense"]
+                unitée.défense_défense = unitée_dict["Dégats Défense"]
 
             if "Dégats Libres" in unitée_dict:
                 if type(unitée_dict["Dégats Libres"]) != int and type(unitée_dict["Dégats Libres"]) != float:
                     raise TypeError("L'élément 'Dégats Libres' de " + unitée.nom + " doit être un int ou un float.")
-                unitée.dégats_libre = unitée_dict["Dégats Libres"]
+                unitée.défense_libre = unitée_dict["Dégats Libres"]
 
             if "Dégats Charger" in unitée_dict:
                 if type(unitée_dict["Dégats Charger"]) != int and type(unitée_dict["Dégats Charger"]) != float:
                     raise TypeError("L'élément 'Dégats Charger' de " + unitée.nom + " doit être un int ou un float.")
-                unitée.dégats_charger = unitée_dict["Dégats Charger"]
+                unitée.défense_charger = unitée_dict["Dégats Charger"]
 
             if "Camp" in unitée_dict:
                 if type(unitée_dict["Camp"]) != str:

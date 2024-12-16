@@ -209,6 +209,7 @@ class Golem(Entité):
         if self.étatCombat.v == ÉtatCombat.CHARGER:
             self.chargement = 0
 
+        Log.mdwn("**"+self.nom+"** se déplacera vers "+str(commande.destination))
         self.naviguerVers(commande.destination)
         self.état.v = ÉtatIA.DÉPLACEMENT_IMMOBILE
     def _commandeAttaque(self, commande : Commande):
@@ -226,6 +227,7 @@ class Golem(Entité):
         if self.étatCombat.v == ÉtatCombat.CHARGER:
             self.chargement = 0
 
+        Log.mdwn("**"+self.nom+"** se déplacera vers "+str(commande.ennemi_cible.pos)+" pour attaquer **"+commande.ennemi_cible.nom+"**.")
         self.état.v = ÉtatIA.DÉPLACEMENT
         self.cible = commande.ennemi_cible
         self.naviguerVers(self.cible.pos)
@@ -245,6 +247,7 @@ class Golem(Entité):
         if self.étatCombat.v == ÉtatCombat.CHARGER:
             self.chargement = 0
 
+        Log.mdwn("**"+self.nom+"** se met en mode défense.")
         self.état.v = ÉtatIA.COMBAT
         self.étatCombat.v = ÉtatCombat.DÉFENSE
     def _commandeLibérer(self, commande : Commande):
@@ -252,11 +255,13 @@ class Golem(Entité):
         """
         if self.étatCombat.v == ÉtatCombat.CHARGER:
             self.chargement = 0
-
+        
+        Log.mdwn("**"+self.nom+"** est <b>libéré,</> <cyan>délivéré</>.")
         self.état.v = ÉtatIA.RECHERCHE
     def _commandeChargerAttaque(self, commande : Commande):
         """_commandeChargerAttaque Exécute la commande CHARGER_ATTAQUE
         """
+        Log.mdwn("**"+self.nom+"** commence à charger une attaque.")
         self.état.v = ÉtatIA.COMBAT
         self.étatCombat.v = ÉtatCombat.CHARGER
 
@@ -267,6 +272,7 @@ class Golem(Entité):
             Log.mdwn("<r>La cible est trop loin.</>")  
             return
 
+        Log.mdwn("**"+self.nom+"** attaque avec une charge de "+str(self.chargement))
         self.cible = commande.ennemi_cible
         self.état.v = ÉtatIA.COMBAT
         self._AttaquerCible()
@@ -283,8 +289,10 @@ class Golem(Entité):
         if self.étatCombat.v == ÉtatCombat.CHARGER:
             Log.log("Chargement de l'attaque à : " + str(self.chargement))
             self.chargement += 1
+        elif self.étatCombat.v == ÉtatCombat.DÉFENSE:
+            Log.log("Mode défense activé.")
         elif self.cible.estVivant and Vec2.distance(self.cible.pos, self.pos) <= 1:
-            Log.log("**Attaque de l'ennemi**")
+            Log.mdwn("**Attaque de l'ennemi**")
             self._AttaquerCible()
         else:
             Log.mdwn("<o>L'ennemi est soit mort, soit partis. À la recherche d'un nouvel ennemi.</>")
@@ -324,7 +332,7 @@ class GolemTerre(Golem):
         self.PVMax=150
         self.PV = self.PVMax
         self.attaque_normale_dégats= self.Random_Stats(10,16)
-        self.dégats_libre= self.Random_Stats(39,46)
+        self.défense_libre= self.Random_Stats(39,46)
         self.nom=Entité.nom_aléatoire(GolemTerre.noms)
         self.nomAffichage = self.nom
         self.attaque_sol_dégats : float = 1.0
@@ -333,6 +341,7 @@ class GolemTerre(Golem):
         self.cooldown_max : int = 2
     def _commandeAttaqueSpéciale(self, commande : Commande):
         if commande.attaque_spéciale == self.ATTAQUE_SPÉCIALE and self.cooldown == 0:
+            Log.mdwn("**"+self.nom+"** attaque : <brun>**FRAPPE LE SOL**</>.")
             attaque = Attaque(self)
             attaque.dégats = self.attaque_sol_dégats + self.attaque_chargée*self.chargement
             attaque.élément = Élément.TERRE
@@ -372,7 +381,7 @@ class GolemEau(Golem):
         self.PVMax=90
         self.PV = self.PVMax
         self.attaque_normale_dégats=self.Random_Stats(20,26)
-        self.dégats_libre=self.Random_Stats(25,31)
+        self.défense_libre=self.Random_Stats(25,31)
         self.nom=Entité.nom_aléatoire(GolemEau.noms)
         self.nomAffichage = self.nom
         self.tornade_pousser_distance : int = 3
@@ -383,6 +392,7 @@ class GolemEau(Golem):
 
     def _commandeAttaqueSpéciale(self, commande):
         if commande.attaque_spéciale == self.ATTAQUE_ and Vec2.distance(self.pos, commande.ennemi_cible.pos) <= self.max_distance_attaque and self.cooldown==0:
+            Log.mdwn("**"+self.nom+"** attaque : <bleu>**TORNADE D'EAU**</>.")
             for i in range(self.tornade_pousser_distance + self.chargement):
                 direction = Vec2.norm(commande.ennemi_cible.pos - self.pos)
                 direction.x = round(direction.x)
@@ -404,6 +414,7 @@ class GolemEau(Golem):
         for e in self.carte.entités:
             if commande.ennemi_cible == e.nom:
                 if Vec2.distance(self.pos,e.pos) <= self.max_distance_attaque:
+                    Log.mdwn("**"+self.nom+"** attaque **"+commande.ennemi_cible.nom+"** avec une charge de "+str(self.chargement))
                     self.cible = e
                     break
                 else:
@@ -472,7 +483,7 @@ class GolemFeu(Golem):
         self.PVMax=120
         self.PV = self.PVMax
         self.attaque_normale_dégats=self.Random_Stats(26,29)
-        self.dégats_libre=self.Random_Stats(35,39)
+        self.défense_libre=self.Random_Stats(35,39)
         self.nom=Entité.nom_aléatoire(GolemFeu.noms)
         self.nomAffichage = self.nom
         self.attaque_max_distance : float = 4.0
@@ -482,6 +493,7 @@ class GolemFeu(Golem):
 
     def _commandeAttaqueSpéciale(self, commande):
         if commande.attaque_spéciale == self.ATTAQUE_SPÉCIALE and Vec2.distance(self.pos,commande.ennemi_cible.pos) <= self.attaque_normale_dégats and self.cooldown==0:
+            Log.mdwn("**"+self.nom+"** attaque : <r>**BOULE DE FEU**</>.")
             attaque = Attaque(self)
             attaque.élément = Élément.FEU
             attaque.est_projectile = True
@@ -508,7 +520,7 @@ class GolemDoré(Golem):
         self.PVMax=150
         self.PV = self.PVMax
         self.attaque_normale_dégats=self.Random_Stats(25,31)
-        self.dégats_libre=self.Random_Stats(36,42)
+        self.défense_libre=self.Random_Stats(36,42)
         self.nom=Entité.nom_aléatoire(GolemDoré.noms)
         self.nomAffichage = self.nom
 

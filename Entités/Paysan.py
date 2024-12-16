@@ -5,6 +5,7 @@ from math import acos, sqrt
 import copy
 from TFX import *
 from GUI.Log import Log
+from Entités.Golem import *
 
 class Paysan(Entité):
 
@@ -15,33 +16,42 @@ class Paysan(Entité):
         self.nom = "Paysan"
         self.nomAffichage = self.nom
 
-    def _AttaquerEnnemi(self):
+    def _modeCombat(self):
+        if not self.cible.estVivant or Vec2.distance(self.pos,self.cible.pos) >= 1:
+            Log.log("L'ennemi est soit mort, soit partis. Mode recherche activé.")
+            self.état.v = ÉtatIA.RECHERCHE
         match self.étatCombat.v:
             case ÉtatCombat.CHARGER:
                 self.chargement += 1
+                Log.mdwn("**"+self.nom+"** charge. Niveau : "+str(self.chargement))
                 if self.chargement >= self.TEMP_CHARGEMENT:
-                    self._exécuterAttaque()
+                    Log.mdwn("**"+self.nom+"** a terminé de charger, attaque puissante!")
+                    self._AttaquerCible()
                     self.chargement = 0
                     self.étatCombat.v = ÉtatCombat.LIBRE
 
             case ÉtatCombat.DÉFENSE:
                 if self.cible.étatCombat.v != ÉtatCombat.CHARGER:
+                    Log.mdwn("L'ennemi a cessé de charger, **"+self.nom+"** sort du mode défense.")
                     self.étatCombat.v = ÉtatCombat.LIBRE
 
             case ÉtatCombat.LIBRE:
                 match self.cible.étatCombat.v:
                     case ÉtatCombat.LIBRE:
+                        Log.mdwn("L'ennemi est en mode libre, **"+self.nom+"** attaque.")
                         attaque = Attaque(self)
                         attaque.dégats = self.attaque_normale_dégats
                         self.cible.Attaquer(attaque)
 
                     case ÉtatCombat.DÉFENSE:
-                        self.étatCombat = ÉtatCombat.CHARGER
+                        Log.mdwn("L'ennemi est en mode défense, **"+self.nom+"** commence à charger une attaque.")
+                        self.étatCombat.v = ÉtatCombat.CHARGER
 
                     case ÉtatCombat.CHARGER:
-                        self.étatCombat = ÉtatCombat.DÉFENSE
+                        Log.mdwn("L'ennemi charge une attaque, **"+self.nom+"** se met en mode défense.")
+                        self.étatCombat.v = ÉtatCombat.DÉFENSE
     
-    def _exécuterAttaque(self):
+    def _AttaquerCible(self):
         attaque = Attaque(self)
         attaque.dégats = self.attaque_normale_dégats + self.chargement*self.attaque_chargée
         self.cible.Attaquer(attaque)
@@ -58,13 +68,13 @@ class Gosse(Paysan):
         self.PVMax=75
         self.PV = self.PVMax
         self.attaque_normale_dégats=self.Random_Stats(8,11)
-        self.dégats_libre=self.Random_Stats(5,11)
+        self.défense_libre=self.Random_Stats(5,11)
         self.nom=Entité.nom_aléatoire(Gosse.noms)
         self.nomAffichage = self.nom
 
         self.dessin_Image : Image = Image("Gosse")
 
-    def _exécuterAttaque(self):
+    def _AttaquerCible(self):
         attaque = Attaque(self)
         attaque.dégats = self.attaque_normale_dégats + self.chargement*self.attaque_chargée
         self.cible.Attaquer(attaque)
@@ -81,13 +91,13 @@ class Mineur(Paysan):
         self.PVMax=75
         self.PV = self.PVMax
         self.attaque_normale_dégats=self.Random_Stats(14,21)
-        self.dégats_libre=self.Random_Stats(10,16)
+        self.défense_libre=self.Random_Stats(10,16)
         self.nom=Entité.nom_aléatoire(Mineur.noms)
         self.nomAffichage = self.nom
         self.bonus_terre : int = 2 # Bonus contre les golems de terre
         self.dessin_Image : Image = Image("Mineur")
 
-    def _exécuterAttaque(self):
+    def _AttaquerCible(self):
         attaque = Attaque(self)
         attaque.dégats = self.attaque_normale_dégats + self.chargement*self.attaque_chargée
         if type(self.cible) == GolemTerre:
@@ -106,7 +116,7 @@ class Prêtre(Paysan):
         self.PVMax=75
         self.PV = self.PVMax
         self.attaque_normale_dégats=self.Random_Stats(12,17)
-        self.dégats_libre=self.Random_Stats(12,15)
+        self.défense_libre=self.Random_Stats(12,15)
         self.nom=Entité.nom_aléatoire(Prêtre.noms)   
         self.nomAffichage = self.nom     
         self.PVAddition : int = 2
@@ -163,7 +173,7 @@ class Prêtre(Paysan):
         if faire_pathfinding:
             self.chemin = self._A_étoile(self.carte, self.pos, self.destination)
     
-    def _exécuterAttaque(self):
+    def _AttaquerCible(self):
         attaque = Attaque(self)
         attaque.dégats = self.attaque_normale_dégats + self.chargement*self.attaque_chargée
         self.cible.Attaquer(attaque)
@@ -187,12 +197,12 @@ class Chevalier(Paysan):
         self.PVMax=125
         self.PV = self.PVMax
         self.attaque_normale_dégats=self.Random_Stats(19,26)
-        self.dégats_libre=self.Random_Stats(30,36)
+        self.défense_libre=self.Random_Stats(30,36)
         self.nom=Entité.nom_aléatoire(Chevalier.noms)
         self.nomAffichage = self.nom
         self.dessin_Image : Image = Image("Chevalier")
 
-    def _exécuterAttaque(self):
+    def _AttaquerCible(self):
         attaque = Attaque(self)
         attaque.dégats = self.attaque_normale_dégats + self.chargement*self.attaque_chargée
         if self.chargement > 0:
@@ -234,7 +244,7 @@ class Arbalettier(Paysan):
         self.PVMax=int(50)
         self.PV = self.PVMax
         self.attaque_normale_dégats=self.Random_Stats(30,33)
-        self.dégats_libre=self.Random_Stats(5,11)
+        self.défense_libre=self.Random_Stats(5,11)
         self.nom=Entité.nom_aléatoire(Arbalettier.noms)   
         self.nomAffichage = self.nom     
         self.max_distance_attaque : float = 3.0

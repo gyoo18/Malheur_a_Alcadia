@@ -383,7 +383,7 @@ def commande_menu_info(historique, commande : list[str]):
                 jeu.menu.menu_historique.append(historique)
                 jeu.état.v = ÉtatJeu.MENU_CONTEXTUEL
                 jeu.menu.v = MenuContextuel.INFO
-                jeu.menu.menu_entité_entité = e
+                jeu.menu.menu_info_entité = e
                 jeu.déselectionner()
                 return True
     Log.mdwn("<r>Veuillez entrer un nom qui se trouve dans la liste.</>")
@@ -537,7 +537,7 @@ def menu_info():
         texte.pack(padx=10,pady=10)
         fenetre.enregistrerWidget(texte,"texte")
 
-        boutton_select = Button(fenetre.frame,text="Sélectionner",command=lambda: commande_menu_select(MenuContextuel.INFO,["SELECT",jeu.menu.menu_entité_entité.nom.upper()]))
+        boutton_select = Button(fenetre.frame,text="Sélectionner",command=lambda: commande_menu_select(MenuContextuel.INFO,["SELECT",jeu.menu.menu_info_entité.nom.upper()]))
         boutton_select.pack(pady=10,expand=True)
 
         boutons = Frame(fenetre.frame)
@@ -553,7 +553,7 @@ def menu_info():
     if jeu.frame_actuelle != fenetre:
         texte = fenetre.obtenirWidget("texte")
         texte.delete('1.0',"end")
-        texte.markdownFormattage(jeu.menu.menu_entité_entité.avoirInfoStr())
+        texte.markdownFormattage(jeu.menu.menu_info_entité.avoirInfoStr())
 
         jeu.frame_actuelle.frame.pack_forget()
         fenetre.frame.pack(fill="both",expand=True)
@@ -651,7 +651,7 @@ def menu_select():
                     commande.faireCommandeAttaqueSpéciale(jeu.menu.menu_select_entité.ATTAQUE_SPÉCIALE)
                     jeu.menu.menu_select_entité.commande(commande)
                 except:
-                    Log.mdwn("<r>" + jeu.menu.menu_entité_entité.nomAffichage + " n'a pas d'attaque spéciale.</>")
+                    Log.mdwn("<r>" + jeu.menu.menu_info_entité.nomAffichage + " n'a pas d'attaque spéciale.</>")
             boutton_as = Button(grille_bouttons,text="Attaque Spéciale",command=commande_attaque_spéciale)
             boutton_as.grid(column=2,row=0,padx=2,pady=2,sticky="ew")
         

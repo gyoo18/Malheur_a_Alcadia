@@ -48,9 +48,9 @@ class Entité:
         self.TEMP_CHARGEMENT : int = 3      # Temps nécessaire pour charger une attaque puissante
         self.attaque_chargée : float = 30.0 # Dégats associés à l'attaque chargée
 
-        self.dégats_défense : float = 30.0  # Pourcentage de réduction des dégats en mode défense
-        self.dégats_libre : float = 10.0    # Pourcentage de réduction des dégats en mode libre
-        self.dégats_charger : float = 0.0   # Pourcentage de réduction des dégats en mode charger  
+        self.défense_défense : float = 30.0  # Pourcentage de réduction des dégats en mode défense
+        self.défense_libre : float = 10.0    # Pourcentage de réduction des dégats en mode libre
+        self.défense_charger : float = 0.0   # Pourcentage de réduction des dégats en mode charger  
 
         self.attaque_normale_dégats : int = 10.0
 
@@ -91,7 +91,7 @@ class Entité:
                 gras("PV")+"      : " + str(int(self.PV)) + '\n' +
                 gras("PVMax")+"   : " + str(int(self.PVMax)) + '\n' +
                 gras("Attaque")+" : " + str(int(self.attaque_normale_dégats)) + '\n' +
-                gras("Défense")+" : " + str(int(self.dégats_libre)) + '\n')
+                gras("Défense")+" : " + str(int(self.défense_libre)) + '\n')
 
     def Random_Stats(self,x,y):
         Stats=int(random.choice(range(x,y)))
@@ -353,14 +353,14 @@ class Entité:
         """
         match self.étatCombat.v:
             case ÉtatCombat.DÉFENSE:
-                Log.mdwn("**"+self.nom+"** bloque "+str(self.dégats_défense)+f"% des dégats.")
-                attaque.dégats -= attaque.dégats*(self.dégats_défense/100)
+                Log.mdwn("**"+self.nom+"** bloque "+str(self.défense_défense)+f"% des dégats.")
+                attaque.dégats -= attaque.dégats*(self.défense_défense/100)
             case ÉtatCombat.LIBRE:
-                Log.mdwn("**"+self.nom+"** bloque "+str(self.dégats_défense)+f"% des dégats.")
-                attaque.dégats -= attaque.dégats*(self.dégats_libre/100)
+                Log.mdwn("**"+self.nom+"** bloque "+str(self.défense_défense)+f"% des dégats.")
+                attaque.dégats -= attaque.dégats*(self.défense_libre/100)
             case ÉtatCombat.CHARGER:
-                Log.mdwn("**"+self.nom+"** bloque "+str(self.dégats_défense)+f"% des dégats.")
-                attaque.dégats -= attaque.dégats*(self.dégats_charger/100)
+                Log.mdwn("**"+self.nom+"** bloque "+str(self.défense_défense)+f"% des dégats.")
+                attaque.dégats -= attaque.dégats*(self.défense_charger/100)
             case _:
                 raise ValueError("Éntité.Défense() L'état de combat " + self.étatCombat.v + " n'est pas un état valide.")
         

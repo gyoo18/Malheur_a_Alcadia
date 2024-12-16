@@ -50,7 +50,7 @@ class MenuContextuel:
 
     def __init__(self, valeur = AIDE):
         self.v = valeur
-        self.menu_entité_entité : Entité = None
+        self.menu_info_entité : Entité = None
         self.menu_historique : list[str] = []
         self.menu_select_entité : Golem = None
 
@@ -61,7 +61,6 @@ class Jeu:
         import menu
         self.état : ÉtatJeu = ÉtatJeu()    # Indique l'état du jeu
         self.chapitre : Chapitre = Chapitre()   # Indique le chapitre scénaristique actuel et la zone.
-        self.choix : str = ""       # Décrit le choix que le joueur a fait à la fin du niveau s'il y a lieu
         self.menu : MenuContextuel = MenuContextuel() # Décrit le menu contextuel ouvert ou précédemment ouvert.
         self.carte : Carte = None
         self.conditionsDeTransitionManuelles = False
