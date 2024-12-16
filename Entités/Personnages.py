@@ -14,7 +14,7 @@ class Joueur(Golem):
         self.état.v = ÉtatIA.IMMOBILE
         self.PVMax = 20
         self.PV = self.PVMax
-        
+        self.limite_golem = 4
         self.distance_création_golem = 4.0
 
     def commande(self, commande):
@@ -50,29 +50,33 @@ class Joueur(Golem):
                 return
             
         élément = ""
-
-        golem : Golem = None
-        carte = self.carte.matrice
-        cp = commande.position_création_golem
-        match carte[int(cp.x)][int(cp.y)].type:
-            case Tuile.TYPE_TERRE:
-                golem = GolemTerre()
-                élément = "Terre"
-            case Tuile.TYPE_EAU:
-                golem = GolemEau()
-                élément = "Eau"
-            case Tuile.TYPE_FEUX:
-                golem = GolemFeu()
-                élément = "Feu"
-            case Tuile.TYPE_OR:
-                golem = GolemDoré()
-                élément = "Or"
-            case _:
-                raise TypeError("[Joueur._commandeCréerGolem] Impossible de créer un golem sur une tuile de type " + str(carte[int(cp.x)][int(cp.y)].type) + '.')
+        if self.limite_golem ==0:
+            print("Limite de golems atteinte.")
+            return
+        else :
+            golem : Golem = None
+            carte = self.carte.matrice
+            cp = commande.position_création_golem
+            match carte[int(cp.x)][int(cp.y)].type:
+                case Tuile.TYPE_TERRE:
+                    golem = GolemTerre()
+                    élément = "Terre"
+                case Tuile.TYPE_EAU:
+                    golem = GolemEau()
+                    élément = "Eau"
+                case Tuile.TYPE_FEUX:
+                    golem = GolemFeu()
+                    élément = "Feu"
+                case Tuile.TYPE_OR:
+                    golem = GolemDoré()
+                    élément = "Or"
+                case _:
+                    raise TypeError("[Joueur._commandeCréerGolem] Impossible de créer un golem sur une tuile de type " + str(carte[int(cp.x)][int(cp.y)].type) + '.')
         golem.pos = commande.position_création_golem
         golem.carte = self.carte
         self.carte.entités.append(golem)
         print(coul("Golem de type " + élément + " créé. Son nom : ",VERT) + gras(coul(golem.nom,VERT)))
+        self.limite_golem=self.limite_golem-1
 
     def Attaquer(self, attaque : Attaque):
         """Attaquer Fonction pour recevoir une attaque
