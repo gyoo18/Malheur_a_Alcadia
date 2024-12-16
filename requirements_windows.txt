@@ -3,3 +3,4 @@ PyGLM
 numpy==1.26.4
 imageio
 tk
+pyopengltk

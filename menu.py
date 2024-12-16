@@ -541,20 +541,20 @@ def menu_select():
         titre = Label(fenetre.frame,text="Donnez un ordre à " + jeu.menu.menu_select_entité.nomAffichage)
         titre.pack()
 
-        peintre_conteneur = Frame(fenetre.frame)
+        peintre_conteneur = Frame(fenetre.frame, width=100,height=100,style="conteneur_entité.TFrame")
         peintre_conteneur.pack(fill="both",expand=True)
         fenetre.enregistrerWidget(peintre_conteneur,"peintre")
 
         grille_bouttons = Frame(fenetre.frame)
-        grille_bouttons.pack()
+        grille_bouttons.pack(side="bottom")
         fenetre.enregistrerWidget(grille_bouttons,"bouttons")
 
         boutton_aide = Button(fenetre.frame,text="Aide",command=lambda: commande_menu_aide(MenuContextuel.SELECT))
-        boutton_aide.pack()
+        boutton_aide.pack(side="bottom")
         boutton_retour = Button(fenetre.frame,text="Précédent",command=commande_précédent)
-        boutton_retour.pack()
+        boutton_retour.pack(side="bottom")
         boutton_quitter = Button(fenetre.frame,text="Quitter",command=commande_quitter)
-        boutton_quitter.pack()
+        boutton_quitter.pack(side="bottom")
 
         fenetre.initialisé = True
     if jeu.frame_actuelle != fenetre:
