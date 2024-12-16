@@ -12,6 +12,7 @@ from Ressources.Scripts import GestionnaireScripts
 import tkinter as tk
 from InclusionsCirculaires.Jeu_Peintre import *
 from GUI.TkFenetre import TkFenetre
+from Maths.Vec2 import Vec2
 
 class ÉtatJeu:
     MENU = "menu"
@@ -68,8 +69,12 @@ class Jeu:
 
         self.tkracine = tk.Tk()
         self.tkracine.geometry("1024x1024")
+        self.tkracine.configure(bg="#191a1e")
         menu.initialiserMenus(self.tkracine)
+        self.tkracine.bind("<Configure>",menu.surModificationFenêtre)
         self.peintre = Peintre(self.tkracine)
+
+        self.vieille_taille : Vec2 = Vec2(self.tkracine.winfo_width(),self.tkracine.winfo_height())
 
         self.tkracine.protocol("WM_DELETE_WINDOW",self.surFenêtreFermée)
 

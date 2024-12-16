@@ -16,10 +16,6 @@ from GUI.Texte import Texte
 def initialiserMenus(tkracine : tkinter.Tk):
     res = Ressources.avoirRessources()
     
-    style = Style(tkracine)
-    style.configure("TLabel",font=("Noto Sans CJK KR Black",48),foreground="#f2b635",background="#191a1e")
-    style.configure("TFrame",background="#191a1e")
-    style.configure("TButton",font = ("Noto Sans CJK KR Black",24),foreground = "#f7deb7",background="#4e89e8",relief="raised")
     menu_principal = TkFenetre(Frame(tkracine))
     jeu_principal = TkFenetre(Frame(tkracine))
     menu_aide = TkFenetre(Frame(tkracine))
@@ -33,6 +29,23 @@ def initialiserMenus(tkracine : tkinter.Tk):
     res.enregistrerMenu(menu_info,"menu_info")
     res.enregistrerMenu(menu_combat,"menu_combat")
     res.enregistrerMenu(menu_select,"menu_select")
+
+def surModificationFenêtre(event):
+    jeu = Jeu.avoirJeu()
+
+    if jeu.vieille_taille != Vec2(jeu.tkracine.winfo_width(),jeu.tkracine.winfo_height()):
+        style = Style(jeu.tkracine)
+        taille_police = min(jeu.tkracine.winfo_width(),jeu.tkracine.winfo_height())//21
+        style.configure("TLabel",font=("Noto Sans CJK KR Black",taille_police),foreground="#f2b635",background="#191a1e")
+        style.configure("TFrame",background="#191a1e")
+        style.configure("TButton",font = ("Noto Sans CJK KR Black",taille_police//2),foreground = "#f7deb7",background="#4e89e8",borderwidth=5)
+        style.map("TButton",relief=[("disabled","raised"),("active","sunken")],background=[("disabled","#314775"),("active","#44618c")])
+        style.configure("Boutons_Combat.TButton",font=("Noto Sans CJK KR Black",taille_police//3))
+        style.configure("conteneur_entité.TFrame",borderwidth=5,relief="ridge")
+
+        Texte.surModificationFenêtre(jeu.tkracine)
+
+        jeu.vieille_taille = Vec2(jeu.tkracine.winfo_width(),jeu.tkracine.winfo_height())
 
 def effaceCommande():
     """Efface la commande invalide et son message d'erreur précédent.
@@ -64,26 +77,17 @@ def jeu():
         titre = Label(fenetre.frame,text=plan.titres[jeu.état.scène_animation_étape])
         titre.pack(pady=10)
 
-        conteneur_peintre = Frame(fenetre.frame,background="black")
-        conteneur_peintre.pack(fill="both",expand=True)
-        fenetre.enregistrerWidget(conteneur_peintre,"conteneur_peintre")
-        def a(event):
-            print("A "+str(event.type))
-        def b(event):
-            print("B "+str(event.type))
-        def c(event):
-            print("C "+str(event.type))
-        conteneur_peintre.bind("<Configure>",a)
-        conteneur_peintre.bind("<Expose>",b)
-        conteneur_peintre.bind("<Visibility>",c)
+        grille_boutons = Frame(fenetre.frame)
+        grille_boutons.pack(pady=10,side="bottom",expand=False)
+        fenetre.enregistrerWidget(grille_boutons,"grille_boutons")
 
-        dialogue = Label(fenetre.frame,text="Dialogue")
-        dialogue.pack(pady=10)
+        dialogue = Texte(fenetre.frame,background="#191a1e",foreground="#f7deb7",relief="flat",wrap="word",highlightthickness=0,height=5)
+        dialogue.pack(padx=100,pady=10,side="bottom",fill="both",expand=False)
         fenetre.enregistrerWidget(dialogue,"dialogue")
 
-        grille_boutons = Frame(fenetre.frame)
-        grille_boutons.pack(pady=10)
-        fenetre.enregistrerWidget(grille_boutons,"grille_boutons")
+        conteneur_peintre = Frame(fenetre.frame)
+        conteneur_peintre.pack(fill="both",expand=True)
+        fenetre.enregistrerWidget(conteneur_peintre,"conteneur_peintre")
 
         fenetre.initialisé = True
     if jeu.frame_actuelle != fenetre:
@@ -99,11 +103,13 @@ def jeu():
 
     dialogue = fenetre.obtenirWidget("dialogue")
     if jeu.état.v == ÉtatJeu.JEU and time.time()-jeu.dialogue_jeu_temps_début >= 3.0:
-        dialogue["text"] = random.choice(séquence.plans).dialogues[jeu.état.scène_animation_étape]
-        dialogue["text"] += "Tapez « ? » ou « aide » pour obtenir la liste des commandes.\n"
+        dialogue.delete('1.0',"end")
+        dialogue.markdownFormattage(random.choice(séquence.plans).dialogues[jeu.état.scène_animation_étape],retirerNL=False)
+        dialogue.markdownFormattage("Tapez « ? » ou « aide » pour obtenir la liste des commandes.\n",retirerNL=False)
         jeu.dialogue_jeu_temps_début = time.time()
     elif jeu.état.v != ÉtatJeu.JEU:
-        dialogue["text"] = plan.dialogues[jeu.état.scène_animation_étape]
+        dialogue.delete('1.0',"end")
+        dialogue.markdownFormattage(plan.dialogues[jeu.état.scène_animation_étape],retirerNL=False)
 
     grille_boutons = fenetre.obtenirWidget("grille_boutons")
     
@@ -180,19 +186,19 @@ def jeu():
                 jeu = Jeu.avoirJeu()
                 jeu.état.v=ÉtatJeu.FIN_TOUR
             boutton_fin_tour = Button(grille_boutons,text="Terminer le tour",command=fin_tour)
-            boutton_fin_tour.pack(pady=10)
+            boutton_fin_tour.grid(column=2,row=0,padx=5,pady=5,sticky="ew")
 
             boutton_info = Button(grille_boutons,text="Info",command=lambda: commande_menu_info(jeu.état.v,["INFO",jeu.entité_sélectionnée.nom.upper()]))
-            boutton_info.pack()
+            boutton_info.grid(column=0,row=0,padx=5,pady=5,sticky="ew")
 
             boutton_select = Button(grille_boutons,text="Sélectionner",command=lambda: commande_menu_select(jeu.état.v,["SELECT",jeu.entité_sélectionnée.nom.upper()]))
-            boutton_select.pack()
+            boutton_select.grid(column=1,row=0,padx=5,pady=5,sticky="ew")
 
             boutton_combat = Button(grille_boutons,text="Combat",command=lambda: commande_menu_combat(jeu.état.v))
-            boutton_combat.pack(pady=10)
+            boutton_combat.grid(column=0,row=1,padx=5,pady=5,sticky="ew")
 
             boutton_aide = Button(grille_boutons,text="Aide",command=lambda: commande_menu_aide(jeu.état.v))
-            boutton_aide.pack(pady=10)
+            boutton_aide.grid(column=1,row=1,padx=5,pady=5,sticky="ew")
 
             def commande_réussir():
                 jeu = Jeu.avoirJeu()
@@ -201,7 +207,7 @@ def jeu():
                         e.estVivant = False
                 jeu.état.v = ÉtatJeu.FIN_TOUR
             boutton_aide = Button(grille_boutons,text="Réussir",command=commande_réussir)
-            boutton_aide.pack(pady=10)
+            boutton_aide.grid(column=2,row=1,padx=5,pady=5,sticky="ew")
 
             fenetre.état = 4
     elif jeu.état.v == ÉtatJeu.SUCCÈS:
@@ -257,7 +263,7 @@ def jeu():
                     bouton_continuer.pack(pady=10)
                     fenetre.état = 8
     else:
-        print(coul(gras("[inGameUI] L'état du jeu n'est pas reconnus."),ROUGE))
+        print(coul(gras("[menu.jeu] L'état du jeu n'est pas reconnus."),ROUGE))
 
 def menuPrincipal():
     res = Ressources.avoirRessources()
@@ -394,14 +400,14 @@ def menu_aide():
         titre = Label(fenetre.frame,text="Menu d'aide")
         titre.pack(pady=10)
 
-        aide = Texte(fenetre.frame)
+        aide = Texte(fenetre.frame,background="#191a1e",foreground="#f7deb7",highlightthickness=0,relief="flat",wrap="word")
 
         aide.markdownFormattage("\n"+
-             "Tapez « **C** » ou « **Combat** » pour voir les informations relatives au unitées et au combat\n\n"+
-             "Tapez « **I** » ou « **Info** », suivit de **<NomUnité>** pour voir les information relatives à une unité.\n\n"+
-             "Tapez « **S** » ou « **Select** » suivit de **<NomUnité>** pour sélectionner une unité et lui donner un ordre\n\n"+
+             "Tapez « **C** » ou « **Combat** » pour voir les informations relatives au unitées et au combat\n"+
+             "Tapez « **I** » ou « **Info** », suivit de **<NomUnité>** pour voir les information relatives à une unité.\n"+
+             "Tapez « **S** » ou « **Select** » suivit de **<NomUnité>** pour sélectionner une unité et lui donner un ordre\n"+
              "\n"+
-             "__En mode Select__ *(ces commandes ne sont disponibles que lorsque vous avez sélectionné une unité)* :\n\n"+
+             "__En mode Select__ *(ces commandes ne sont disponibles que lorsque vous avez sélectionné une unité)* :\n"+
              "\n"+
              "    - Tapez « **DP** » ou « **Déplacement** » suivit de **<X>** et **<Y>** pour déplacer le golem vers une destination\n"+
              "\n"+
@@ -416,24 +422,23 @@ def menu_aide():
              "    - Mélios :\n"+
              "    - Tapez « **CG** » ou « **Créer-Golem** », suivit de **<X>** et **<Y>** pour créer un golem à l'endroit spécifié.\n"
              "\n" +
-             "Tapez « **?** » ou « **Aide** » pour afficher cette liste à tout moment\n\n"+
-             "Tapez « **P** » ou « **Précédent** » pour revenir au menu précédent.\n\n"
-             "Tapez « **Q** » ou « **Quitter** » pour quitter.\n\n"+
-             "\n")
-        aide.pack(anchor="center",expand=True,fill="both",pady=10)
+             "Tapez « **?** » ou « **Aide** » pour afficher cette liste à tout moment\n"+
+             "Tapez « **P** » ou « **Précédent** » pour revenir au menu précédent.\n"
+             "Tapez « **Q** » ou « **Quitter** » pour quitter.\n"+
+             "\n",retirerNL=False)
+        aide.pack(anchor="center",expand=True,fill="both",pady=10,padx=10)
 
-        bouton_retour = Button(fenetre.frame,text="Retour",command=commande_précédent)
-        bouton_retour.pack(pady=10)
-        bouton_quitter = Button(fenetre.frame,text="Quitter",command=commande_quitter)
-        bouton_quitter.pack(pady=10)
+        boutons = Frame(fenetre.frame)
+        bouton_retour = Button(boutons,text="Retour",command=commande_précédent)
+        bouton_retour.pack(side="left",padx=5,fill="both",expand=True)
+        bouton_quitter = Button(boutons,text="Quitter",command=commande_quitter)
+        bouton_quitter.pack(side="left",padx=5,fill="both",expand=True)
+        boutons.pack(pady=10)
 
+        fenetre.initialisé = True
+    if jeu.frame_actuelle != fenetre:
         jeu.frame_actuelle.frame.pack_forget()
         fenetre.frame.pack(side="top",expand=True,fill="both")
-        jeu.frame_actuelle = fenetre
-        fenetre.initialisé = True
-    elif jeu.frame_actuelle != fenetre:
-        jeu.frame_actuelle.frame.pack_forget()
-        fenetre.frame.pack()
         jeu.frame_actuelle = fenetre
 
 def menu_combat():
@@ -443,8 +448,8 @@ def menu_combat():
     fenetre = res.obtenirMenu("menu_combat")
 
     if not fenetre.initialisé:
-        titre = Label(fenetre.frame,text="Menu de statistiques du combat")
-        titre.pack(pady=10)
+        titre = Label(fenetre.frame,text="Menu combat")
+        titre.pack(pady=10,padx=10)
 
         conteneur_descritptions = Frame(fenetre.frame)
         conteneur_descritptions.pack(pady=10)
@@ -462,36 +467,35 @@ def menu_combat():
     if jeu.frame_actuelle != fenetre:
 
         conteneur_descritptions = fenetre.obtenirWidget("descriptions")
-
+         
         for w in conteneur_descritptions.winfo_children():
             w.destroy()
-
+        
         camps = []
-
+        
         for e in jeu.carte.entités:
             if not e.camp in camps:
                 camps.append(e.camp)
 
         for c in camps:
-            print("\n" + soul(c) + " : \n")
-            texte = Texte(conteneur_descritptions,height=3)
-            texte.insérerFormatté("\n"+c+"\n",soul=True)
+            texte = Texte(conteneur_descritptions,height=int(2*Texte.police_taille_scalaire),background="#191a1e",foreground="#f7deb7",highlightthickness=0,relief="flat",wrap="word")
+            texte.insérerFormatté(c,soul=True,niveau_Titre=5)
             texte.pack(side="top",fill="x",expand=True,pady=0)
             for e in jeu.carte.entités:
                 if e.camp == c:
-                    conteneur_entité = Frame(conteneur_descritptions)
-                    texte = Texte(conteneur_entité,height=1)
+                    conteneur_entité = Frame(conteneur_descritptions,style="conteneur_entité.TFrame")
+                    texte = Texte(conteneur_entité,height=1,background="#191a1e",foreground="#f7deb7",highlightthickness=0,relief="flat",wrap="word")
                     texte.markdownFormattage("**"+e.nomAffichage+"** > PV : " +  str(int(e.PV)))
-                    texte.pack(side="left")
-                    bouton_info = Button(conteneur_entité, text="Info",command=lambda e=e: commande_menu_info(MenuContextuel.COMBAT,["INFO",e.nom.upper()]))
+                    texte.pack(side="left",fill="x")
+                    bouton_info = Button(conteneur_entité, text="Info",command=lambda e=e: commande_menu_info(MenuContextuel.COMBAT,["INFO",e.nom.upper()]), style="Boutons_Combat.TButton")
                     bouton_info.pack(side="left",padx=10)
                     if e.camp in [Entité.CAMP_JOUEUR,Entité.CAMP_GOLEMS]:
-                        bouton_select = Button(conteneur_entité, text="Sélectionner", command=lambda e=e: commande_menu_select(MenuContextuel.COMBAT,["select",e.nom.upper()]))
+                        bouton_select = Button(conteneur_entité, text="Sélectionner", command=lambda e=e: commande_menu_select(MenuContextuel.COMBAT,["select",e.nom.upper()]), style="Boutons_Combat.TButton")
                         bouton_select.pack(side = "left",padx=10)
-                    conteneur_entité.pack(side="top",pady=0,fill="x",expand=True)
+                    conteneur_entité.pack(side="top",pady=0,fill="x",expand=True,ipadx=5,ipady=5)
 
         jeu.frame_actuelle.frame.pack_forget()
-        fenetre.frame.pack()
+        fenetre.frame.pack(fill="both",expand=True)
         jeu.frame_actuelle = fenetre
 
 def menu_info():

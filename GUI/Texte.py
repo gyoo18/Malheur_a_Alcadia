@@ -1,18 +1,52 @@
+from __future__ import annotations
 from tkinter import Text
+from tkinter import Tk
 from tkinter import font as tkFont
 from tkinter.font import Font
 from Maths.Vec3 import Vec3
 from TFX import *
+import time
 
 class Texte(Text):
+    police_taille_scalaire : float = 1.5
+    textes : Texte = []
+
     def __init__(self,parent, cnf={}, **kw):
-        super().__init__(parent, cnf={}, **kw)
+        super().__init__(parent, cnf, **kw)
 
         self.police_défaut = tkFont.nametofont(self.cget("font"))
-        self.police_défaut.configure(weight="normal",slant="roman",underline=False,overstrike=False,size=int(self.police_défaut.cget("size")))
+        self.police_défaut.configure(weight="normal",slant="roman",underline=False,overstrike=False,size=int(10*Texte.police_taille_scalaire))
         self.polices : list[Font] = [self.police_défaut]
         self.polices_caracs : list[tuple[Vec3|None,Vec3|None,bool,bool,bool,bool,int]] = [(None,None,False,False,False,False,0)]
         self.tag_configure("0",font=self.police_défaut)
+        Texte.textes.append(self)
+
+    def surModificationFenêtre(tkracine : Tk):
+        print(str(time.time()) + "Début de l'ajustement de Texte")
+        Texte.police_taille_scalaire = 1.5*min(tkracine.winfo_width(),tkracine.winfo_height())/1024
+        for t in Texte.textes:
+            t.ajusterPolice()
+        print(str(time.time()) + "Fin de l'ajustement de Texte")
+        pass
+
+    def ajusterPolice(self):
+        self.police_défaut.configure(size=int(10*Texte.police_taille_scalaire))
+        for i in range(len(self.polices)):
+            match self.polices_caracs[i][6]:
+                case 1:
+                    self.polices[i].configure(size=int(self.police_défaut.cget("size")*6))
+                case 2:
+                    self.polices[i].configure(size=int(self.police_défaut.cget("size")*5))
+                case 3:
+                    self.polices[i].configure(size=int(self.police_défaut.cget("size")*4))
+                case 4:
+                    self.polices[i].configure(size=int(self.police_défaut.cget("size")*3))
+                case 5:
+                    self.polices[i].configure(size=int(self.police_défaut.cget("size")*2))
+                case 6:
+                    self.polices[i].configure(size=int(self.police_défaut.cget("size")*1.5))
+                case 0:
+                    self.polices[i].configure(size=int(self.police_défaut.cget("size")))
 
     def i(index,chars,*args):
         super.insert("end",chars,args)
@@ -29,6 +63,7 @@ class Texte(Text):
         
         if police == None:
             police = Font(**self.police_défaut.configure())
+            police.configure(size=int(10*Texte.police_taille_scalaire))
             indexe = len(self.polices)
 
             if Pcoul != None:
@@ -45,24 +80,24 @@ class Texte(Text):
                 police.configure(overstrike=True)
             if niveau_Titre != 0:
                 if niveau_Titre == 1:
-                    police.configure(size=int(self.police_défaut.cget("size")*6),weight="bold")
+                    police.configure(size=int(10*6*Texte.police_taille_scalaire),weight="bold")
                 if niveau_Titre == 2:
-                    police.configure(size=int(self.police_défaut.cget("size")*5),weight="bold")
+                    police.configure(size=int(10*5*Texte.police_taille_scalaire),weight="bold")
                 if niveau_Titre == 3:
-                    police.configure(size=int(self.police_défaut.cget("size")*4),weight="bold")
+                    police.configure(size=int(10*4*Texte.police_taille_scalaire),weight="bold")
                 if niveau_Titre == 4:
-                    police.configure(size=int(self.police_défaut.cget("size")*3),weight="bold")
+                    police.configure(size=int(10*3*Texte.police_taille_scalaire),weight="bold")
                 if niveau_Titre == 5:
-                    police.configure(size=int(self.police_défaut.cget("size")*2),weight="bold")
+                    police.configure(size=int(10*2*Texte.police_taille_scalaire),weight="bold")
                 if niveau_Titre == 6:
-                    police.configure(size=int(self.police_défaut.cget("size")*1.5),weight="bold")
+                    police.configure(size=int(10*1.5*Texte.police_taille_scalaire),weight="bold")
             self.tag_configure(str(indexe),font=police)
             self.polices.append(police)
             self.polices_caracs.append(caracs_police)
 
         self.insert("end",texte,str(indexe))
 
-    def markdownFormattage(self,texte : str):
+    def markdownFormattage(self,texte : str, retirerNL : bool = True):
         string = ""
         ouvert_italique = False
         ouvert_gras = False
@@ -491,77 +526,78 @@ class Texte(Text):
                     pass
                 n_espaces = 0
 
-            if c == '\n' and not ouvert_code_grand:
-                n_RL +=1
-                if not ouvert_RL:
-                    ouvert_RL = True
-            if c != '\n' and ouvert_RL  and not ouvert_code_grand:
-                ouvert_RL = False
-                
-                garder = False
-                défaut = False
-                match c:
-                    case '#':
-                        j = 1
-                        while True:
-                            if len(texte)-1 >= i+j and texte[i+j] == ' ':
+            if retirerNL:
+                if c == '\n' and not ouvert_code_grand:
+                    n_RL +=1
+                    if not ouvert_RL:
+                        ouvert_RL = True
+                if c != '\n' and ouvert_RL  and not ouvert_code_grand:
+                    ouvert_RL = False
+                    
+                    garder = False
+                    défaut = False
+                    match c:
+                        case '#':
+                            j = 1
+                            while True:
+                                if len(texte)-1 >= i+j and texte[i+j] == ' ':
+                                    garder = True
+                                    break
+                                elif len(texte)-1 >= i+j and texte[i+j] != '#':
+                                    garder = False
+                                    break
+                                if len(texte)-1 < i+j:
+                                    break
+                                j+=1
+                        case '*'|'-'|'_':
+                            if ( ( (c == '*' or c == '-') and len(texte)-1 >= i+1 and texte[i+1] == ' ') or
+                                (len(texte)-1 >= i+2 and texte[i+1] == c and texte[i+2] == c) ):
                                 garder = True
-                                break
-                            elif len(texte)-1 >= i+j and texte[i+j] != '#':
-                                garder = False
-                                break
-                            if len(texte)-1 < i+j:
-                                break
-                            j+=1
-                    case '*'|'-'|'_':
-                        if ( ( (c == '*' or c == '-') and len(texte)-1 >= i+1 and texte[i+1] == ' ') or
-                            (len(texte)-1 >= i+2 and texte[i+1] == c and texte[i+2] == c) ):
-                            garder = True
-                    case '1'|'2'|'3'|'4'|'5'|'6'|'7'|'8'|'9':
-                        j = 1
-                        while True:
-                            if len(texte)-1 >= i+j+1 and texte[i+j] == '.' and texte[i+j+1] == ' ':
-                                garder = True
-                                break
-                            elif len(texte)-1 >= i+j and not texte[i+j] in '123456789':
-                                garder = False
-                                break
-                            if len(texte)-1 < i+j:
-                                break
-                            j+=1
-                    case ' ':
-                        j = 1
-                        while True:
-                            if len(texte)-1 >= i+j+1 and texte[i+j] in '*-.' and texte[i+j+1] == ' ':
-                                garder = True
-                                break
-                            elif len(texte)-1 >= i+j and not texte[i+j] in ' 123456789':
-                                garder = False
-                                break
-                            if len(texte)-1 < i+j:
-                                break
-                            j+=1
-                    case '>':
-                        j = 1
-                        while True:
-                            if len(texte)-1 >= i+j and texte[i+j] == ' ':
-                                garder = True
-                                break
-                            elif len(texte)-1 >= i+j and texte[i+j] != '>':
-                                garder = False
-                                break
-                            if len(texte)-1 < i+j:
-                                break
-                            j+=1
-                    case _:
-                        if n_RL == 1:
-                            string = string[:-1] + ' '
-                        elif not échap: 
-                            string = string[:-1]
-                        n_RL = 0
-                        défaut = True
-                if not défaut and not garder:
-                    string = string[:-1]
+                        case '1'|'2'|'3'|'4'|'5'|'6'|'7'|'8'|'9':
+                            j = 1
+                            while True:
+                                if len(texte)-1 >= i+j+1 and texte[i+j] == '.' and texte[i+j+1] == ' ':
+                                    garder = True
+                                    break
+                                elif len(texte)-1 >= i+j and not texte[i+j] in '123456789':
+                                    garder = False
+                                    break
+                                if len(texte)-1 < i+j:
+                                    break
+                                j+=1
+                        case ' ':
+                            j = 1
+                            while True:
+                                if len(texte)-1 >= i+j+1 and texte[i+j] in '*-.' and texte[i+j+1] == ' ':
+                                    garder = True
+                                    break
+                                elif len(texte)-1 >= i+j and not texte[i+j] in ' 123456789':
+                                    garder = False
+                                    break
+                                if len(texte)-1 < i+j:
+                                    break
+                                j+=1
+                        case '>':
+                            j = 1
+                            while True:
+                                if len(texte)-1 >= i+j and texte[i+j] == ' ':
+                                    garder = True
+                                    break
+                                elif len(texte)-1 >= i+j and texte[i+j] != '>':
+                                    garder = False
+                                    break
+                                if len(texte)-1 < i+j:
+                                    break
+                                j+=1
+                        case _:
+                            if n_RL == 1:
+                                string = string[:-1] + ' '
+                            elif not échap: 
+                                string = string[:-1]
+                            n_RL = 0
+                            défaut = True
+                    if not défaut and not garder:
+                        string = string[:-1]
             
             if ajouter_caractère:
                 string += c

@@ -21,7 +21,7 @@ class Peintre(tkinter.Widget, tkinter.Misc):
         self.largeure_visuelle : int = 0
         self.largeure_physique : int = 0
         self.hauteure_physique : int = 0
-        self.couleur_arrière_plan = (0.8,0.8,0.8)
+        self.couleur_arrière_plan = (0.098,0.102,0.118)
         self.carte : Carte = None
         self.initialisé = False
         self.estVisible = False
@@ -74,7 +74,6 @@ class Peintre(tkinter.Widget, tkinter.Misc):
             print("[GLError] :",gluErrorString(error))
     
     def surModificationFenetre(self,event):
-        print("Fenêtre!")
         self.largeure_physique = self.winfo_width()
         self.hauteure_physique = self.winfo_height()
         if self.carte != None:
