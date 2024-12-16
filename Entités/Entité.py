@@ -152,7 +152,7 @@ class Entité:
         #                           |                               |                           |
         #
         # L'algorithme fonctionne sur une base de fonctions, pour faciliter la spécialisation dans les classes enfants
-        Log.log("\nMise à jour de l'IA de " + gras(self.nom) + ", état : " + gras(self.état.v))
+        Log.mdwn("\nMise à jour de l'IA de **"+self.nom+"**, état : **"+self.état.v+"**")
         match self.état.v:
             case ÉtatIA.RECHERCHE:
                 Log.log("Mode recherche activé.")
@@ -208,7 +208,7 @@ class Entité:
                 distanceMinimale = Vec2.distance(ennemi.pos,self.pos)
         # Si on a trouvé un ennemi le plus près
         if ennemiPlusPrès != None:
-            Log.log("Ennemi trouvé : " + gras(ennemiPlusPrès.nom) + " à " + str(ennemiPlusPrès.pos.x) + ":" + str(ennemiPlusPrès.pos.y))
+            Log.mdwn("Ennemi trouvé : **"+ennemiPlusPrès.nom+"** à " + str(ennemiPlusPrès.pos.x) + ":" + str(ennemiPlusPrès.pos.y))
             # Se mettre en mode déplacement vers l'ennemi
             self.état.v = ÉtatIA.DÉPLACEMENT
             self.destination = ennemiPlusPrès.pos

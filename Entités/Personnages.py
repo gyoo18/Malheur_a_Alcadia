@@ -55,7 +55,7 @@ class Joueur(Golem):
             
         élément = ""
         if self.limite_golem ==0:
-            print("Limite de golems atteinte.")
+            Log.mdwn("<r>Vous êtes à bout de forces! Vous ne pouvez plus créer de Golems.</>")
             return
         else :
             golem : Golem = None
