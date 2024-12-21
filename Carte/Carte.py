@@ -41,7 +41,7 @@ class Carte:
          1.0, 1.0
     ]
     
-    def __init__(self,estScène : bool, lignes : int ,colonnes :int, matrice : list[list[Tuile]], entités_préchargement : list[tuple[str,Vec2|None,str|None]], joueur_pos_init : Vec2, séquences : Séquence|list[Séquence], prochaine : str):
+    def __init__(self,estScène : bool, lignes : int ,colonnes :int, matrice : list[list[Tuile]], entités_préchargement : list[tuple[str,Vec2|None,str|None]], joueur_pos_init : Vec2, séquences : Séquence|dict[Séquence], prochaine : str):
         from GestionnaireRessources import Ressources
         res = Ressources.avoirRessources()
         self.lignes : int = lignes
@@ -53,7 +53,7 @@ class Carte:
         self.joueur_pos_init : Vec2 = joueur_pos_init
 
         self.estScène : bool = estScène
-        self.séquences : Séquence|list[Séquence] = séquences
+        self.séquences : Séquence|dict[Séquence] = séquences
 
         self.script : str = None
 
