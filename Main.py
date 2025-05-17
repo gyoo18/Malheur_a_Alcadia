@@ -4,27 +4,28 @@ from random import randrange
 
 import tkinter
 
-jeu : Jeu = None
 
 def Constructeur():
-    res = Ressources.avoirRessources()
-    carte = res.chargerCarte("Intro")
+    res = Ressources.avoirRessources()  # Initialiser le gestionnaire de ressources
+    carte = res.chargerCarte("Intro")   # Charger la première carte
 
-    global jeu
-    jeu = Jeu.avoirJeu()
-    jeu.état.v = ÉtatJeu.MENU
+    jeu = Jeu.avoirJeu()        # Initialiser le jeu
+    jeu.état.v = ÉtatJeu.MENU   # Démarrer avec le menu principal
+    # Initialiser OpenGL
     jeu.peintre.pack()
     jeu.tkracine.update_idletasks()
     jeu.tkracine.update()
     jeu.peintre.pack_forget()
     jeu.tkracine.update_idletasks()
     jeu.tkracine.update()
-    jeu.changerCarte(carte)
+
+    jeu.changerCarte(carte) # Assigner la carte au jeu
 
 def Boucle():
-    global jeu
-    jeu.miseÀJour()
-    return jeu.état.v != ÉtatJeu.TERMINÉ
+    jeu = Jeu.avoirJeu()
+    # Boucle principale
+    while jeu.état.v != ÉtatJeu.TERMINÉ:
+        jeu.miseÀJour()
 
 def Destructeur():
     Ressources.avoirRessources().détruire()
@@ -32,11 +33,7 @@ def Destructeur():
 
 def main():
     Constructeur()
-
-    continuer = True
-    while continuer:
-        continuer = Boucle()
-    
+    Boucle()
     Destructeur()
 
 if __name__ == "__main__":

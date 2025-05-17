@@ -5,7 +5,7 @@ from Maths.Vec3 import Vec3
 
 def dialogue(texte, personnage) :
     # Melios = protag / # Guildart / # Roi / #Enfant / #Partenaire
-    return "\n" + (f"{personnage} : {texte}")
+    return (f"{personnage} : {texte}")
 
 def titre(nombreZone):
     if(nombreZone == 1):

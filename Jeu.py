@@ -91,9 +91,10 @@ class Jeu:
         return Jeu.jeu
 
     def miseÀJour(self):
-        import menu
+        import menu # Présent à cause d'inclusions circulaires
         res = GestionnaireRessources.Ressources.avoirRessources()
 
+        # Mise à jour des menus
         if self.état.v == ÉtatJeu.MENU:
             menu.menuPrincipal()
         elif self.état.v == ÉtatJeu.MENU_CONTEXTUEL:
